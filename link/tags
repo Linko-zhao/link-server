@@ -1,0 +1,32 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+LOG_H	log.h	2;"	d
+LogAppender	log.h	/^class LogAppender {$/;"	c	namespace:slyar
+LogEvent	log.h	/^    LogEvent();$/;"	p	class:slyar::LogEvent	access:public	signature:()
+LogEvent	log.h	/^class LogEvent{$/;"	c	namespace:slyar
+LogFormatter	log.h	/^    LogFormatter(const std::string& pattern);$/;"	p	class:slyar::LogFormatter	access:public	signature:(const std::string& pattern)
+LogFormatter	log.h	/^class LogFormatter{$/;"	c	namespace:slyar
+Logger	log.h	/^    Logger();$/;"	p	class:slyar::Logger	access:public	signature:()
+Logger	log.h	/^class Logger {$/;"	c	namespace:slyar
+m_logger	log.h	/^    std::shared_ptr<Logger> m_logger;$/;"	m	class:slyar::LogEvent	access:private
+m_ss	log.h	/^    std::stringstream m_ss;$/;"	m	class:slyar::LogEvent	access:private
+m_threadName	log.h	/^    std::string m_threadName;$/;"	m	class:slyar::LogEvent	access:private
+ptr	log.h	/^    typedef std::shared_ptr<LogFormatter> ptr;$/;"	t	class:slyar::LogFormatter	access:public
+slyar	log.h	/^namespace slyar {$/;"	n
+slyar::LogAppender	log.h	/^class LogAppender {$/;"	c	namespace:slyar
+slyar::LogAppender::~LogAppender	log.h	/^    virtual ~LogAppender() {}$/;"	f	class:slyar::LogAppender	access:public	signature:()
+slyar::LogEvent	log.h	/^class LogEvent{$/;"	c	namespace:slyar
+slyar::LogEvent::LogEvent	log.h	/^    LogEvent();$/;"	p	class:slyar::LogEvent	access:public	signature:()
+slyar::LogEvent::m_logger	log.h	/^    std::shared_ptr<Logger> m_logger;$/;"	m	class:slyar::LogEvent	access:private
+slyar::LogEvent::m_ss	log.h	/^    std::stringstream m_ss;$/;"	m	class:slyar::LogEvent	access:private
+slyar::LogEvent::m_threadName	log.h	/^    std::string m_threadName;$/;"	m	class:slyar::LogEvent	access:private
+slyar::LogFormatter	log.h	/^class LogFormatter{$/;"	c	namespace:slyar
+slyar::LogFormatter::LogFormatter	log.h	/^    LogFormatter(const std::string& pattern);$/;"	p	class:slyar::LogFormatter	access:public	signature:(const std::string& pattern)
+slyar::LogFormatter::ptr	log.h	/^    typedef std::shared_ptr<LogFormatter> ptr;$/;"	t	class:slyar::LogFormatter	access:public
+slyar::Logger	log.h	/^class Logger {$/;"	c	namespace:slyar
+slyar::Logger::Logger	log.h	/^    Logger();$/;"	p	class:slyar::Logger	access:public	signature:()
+~LogAppender	log.h	/^    virtual ~LogAppender() {}$/;"	f	class:slyar::LogAppender	access:public	signature:()
