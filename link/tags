@@ -4,29 +4,94 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+DEBUG	log.h	/^        DEBUG = 1,$/;"	e	enum:slyar::LogLevel::Level
+ERROR	log.h	/^        ERROR = 4,$/;"	e	enum:slyar::LogLevel::Level
+FATAL	log.h	/^        FATAL = 5$/;"	e	enum:slyar::LogLevel::Level
+FromString	log.cc	/^LogLevel::Level LogLevel::FromString(const std::string& str) {$/;"	f	class:sylar::LogLevel	signature:(const std::string& str)
+FromString	log.h	/^    static LogLevel::Level FromString(const std::string& str);$/;"	p	class:slyar::LogLevel	access:public	signature:(const std::string& str)
+INFO	log.h	/^        INFO = 2,$/;"	e	enum:slyar::LogLevel::Level
 LOG_H	log.h	2;"	d
+Level	log.h	/^    enum Level {$/;"	g	class:slyar::LogLevel	access:public
 LogAppender	log.h	/^class LogAppender {$/;"	c	namespace:slyar
-LogEvent	log.h	/^    LogEvent();$/;"	p	class:slyar::LogEvent	access:public	signature:()
+LogEvent	log.h	/^    LogEvent(std::shared_ptr<LogEvent> logger, LogLevel::Level level$/;"	p	class:slyar::LogEvent	access:public	signature:(std::shared_ptr<LogEvent> logger, LogLevel::Level level , const char* file, int32_t line, uint32_t elapse , uint32_t thread_id, uint32_t fiber_id, uint64_t time , const std::string& thread_name)
 LogEvent	log.h	/^class LogEvent{$/;"	c	namespace:slyar
+LogEventWrap	log.h	/^    LogEventWrap(LogEvent::ptr e);$/;"	p	class:slyar::LogEventWrap	access:public	signature:(LogEvent::ptr e)
+LogEventWrap	log.h	/^class LogEventWrap {$/;"	c	namespace:slyar
 LogFormatter	log.h	/^    LogFormatter(const std::string& pattern);$/;"	p	class:slyar::LogFormatter	access:public	signature:(const std::string& pattern)
 LogFormatter	log.h	/^class LogFormatter{$/;"	c	namespace:slyar
+LogLevel	log.h	/^class LogLevel {$/;"	c	namespace:slyar
 Logger	log.h	/^    Logger();$/;"	p	class:slyar::Logger	access:public	signature:()
 Logger	log.h	/^class Logger {$/;"	c	namespace:slyar
+ToString	log.cc	/^const char * LogLevel::ToString(LogLevel::level level) {$/;"	f	class:sylar::LogLevel	signature:(LogLevel::level level)
+ToString	log.h	/^    static const char * ToString(LogLevel::Level level);$/;"	p	class:slyar::LogLevel	access:public	signature:(LogLevel::Level level)
+UNKNOW	log.h	/^        UNKNOW = 0,$/;"	e	enum:slyar::LogLevel::Level
+WARN	log.h	/^        WARN = 3,$/;"	e	enum:slyar::LogLevel::Level
+XX	log.cc	18;"	d	file:
+XX	log.cc	26;"	d	file:
+XX	log.cc	37;"	d	file:
+XX	log.cc	8;"	d	file:
+getContent	log.h	/^    std::string getContent() const { return m_ss.str(); }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+getElapse	log.h	/^    uint32_t getElapse() const { return m_elapse; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+getEvent	log.h	/^    LogEvent::ptr getEvent() const { return m_event; }$/;"	f	class:slyar::LogEventWrap	access:public	signature:() const
+getFiberId	log.h	/^    uint32_t getFiberId() const { return m_fiberId; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+getFile	log.h	/^    const char* getFile() const { return m_file; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+getLevel	log.h	/^    LogLevel::Level getLevel() const { return m_level; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+getLine	log.h	/^    int32_t getLine() const { return m_line; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+getSS	log.h	/^    std::stringstream& getSS() { return m_ss; }$/;"	f	class:slyar::LogEvent	access:public	signature:()
+getSS	log.h	/^    std::stringstream& getSS();$/;"	p	class:slyar::LogEventWrap	access:public	signature:()
+getThreadId	log.h	/^    uint32_t getThreadId() const { return m_threadId; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+getThreadName	log.h	/^    const std::string& getThreadName() const { return m_threadName; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+getTime	log.h	/^    uint64_t getTime() const { return m_time; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+m_event	log.h	/^    LogEvent::ptr m_event;$/;"	m	class:slyar::LogEventWrap	access:private
+m_level	log.h	/^    LogLevel::Level m_level;$/;"	m	class:slyar::LogEvent	access:private
 m_logger	log.h	/^    std::shared_ptr<Logger> m_logger;$/;"	m	class:slyar::LogEvent	access:private
 m_ss	log.h	/^    std::stringstream m_ss;$/;"	m	class:slyar::LogEvent	access:private
-m_threadName	log.h	/^    std::string m_threadName;$/;"	m	class:slyar::LogEvent	access:private
+m_threadName	log.h	/^    const std::string m_threadName;$/;"	m	class:slyar::LogEvent	access:private
+ptr	log.h	/^    typedef std::shared_ptr<LogEvent> ptr;$/;"	t	class:slyar::LogEvent	access:public
 ptr	log.h	/^    typedef std::shared_ptr<LogFormatter> ptr;$/;"	t	class:slyar::LogFormatter	access:public
 slyar	log.h	/^namespace slyar {$/;"	n
 slyar::LogAppender	log.h	/^class LogAppender {$/;"	c	namespace:slyar
 slyar::LogAppender::~LogAppender	log.h	/^    virtual ~LogAppender() {}$/;"	f	class:slyar::LogAppender	access:public	signature:()
 slyar::LogEvent	log.h	/^class LogEvent{$/;"	c	namespace:slyar
-slyar::LogEvent::LogEvent	log.h	/^    LogEvent();$/;"	p	class:slyar::LogEvent	access:public	signature:()
+slyar::LogEvent::LogEvent	log.h	/^    LogEvent(std::shared_ptr<LogEvent> logger, LogLevel::Level level$/;"	p	class:slyar::LogEvent	access:public	signature:(std::shared_ptr<LogEvent> logger, LogLevel::Level level , const char* file, int32_t line, uint32_t elapse , uint32_t thread_id, uint32_t fiber_id, uint64_t time , const std::string& thread_name)
+slyar::LogEvent::getContent	log.h	/^    std::string getContent() const { return m_ss.str(); }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+slyar::LogEvent::getElapse	log.h	/^    uint32_t getElapse() const { return m_elapse; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+slyar::LogEvent::getFiberId	log.h	/^    uint32_t getFiberId() const { return m_fiberId; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+slyar::LogEvent::getFile	log.h	/^    const char* getFile() const { return m_file; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+slyar::LogEvent::getLevel	log.h	/^    LogLevel::Level getLevel() const { return m_level; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+slyar::LogEvent::getLine	log.h	/^    int32_t getLine() const { return m_line; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+slyar::LogEvent::getSS	log.h	/^    std::stringstream& getSS() { return m_ss; }$/;"	f	class:slyar::LogEvent	access:public	signature:()
+slyar::LogEvent::getThreadId	log.h	/^    uint32_t getThreadId() const { return m_threadId; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+slyar::LogEvent::getThreadName	log.h	/^    const std::string& getThreadName() const { return m_threadName; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+slyar::LogEvent::getTime	log.h	/^    uint64_t getTime() const { return m_time; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+slyar::LogEvent::m_level	log.h	/^    LogLevel::Level m_level;$/;"	m	class:slyar::LogEvent	access:private
 slyar::LogEvent::m_logger	log.h	/^    std::shared_ptr<Logger> m_logger;$/;"	m	class:slyar::LogEvent	access:private
 slyar::LogEvent::m_ss	log.h	/^    std::stringstream m_ss;$/;"	m	class:slyar::LogEvent	access:private
-slyar::LogEvent::m_threadName	log.h	/^    std::string m_threadName;$/;"	m	class:slyar::LogEvent	access:private
+slyar::LogEvent::m_threadName	log.h	/^    const std::string m_threadName;$/;"	m	class:slyar::LogEvent	access:private
+slyar::LogEvent::ptr	log.h	/^    typedef std::shared_ptr<LogEvent> ptr;$/;"	t	class:slyar::LogEvent	access:public
+slyar::LogEventWrap	log.h	/^class LogEventWrap {$/;"	c	namespace:slyar
+slyar::LogEventWrap::LogEventWrap	log.h	/^    LogEventWrap(LogEvent::ptr e);$/;"	p	class:slyar::LogEventWrap	access:public	signature:(LogEvent::ptr e)
+slyar::LogEventWrap::getEvent	log.h	/^    LogEvent::ptr getEvent() const { return m_event; }$/;"	f	class:slyar::LogEventWrap	access:public	signature:() const
+slyar::LogEventWrap::getSS	log.h	/^    std::stringstream& getSS();$/;"	p	class:slyar::LogEventWrap	access:public	signature:()
+slyar::LogEventWrap::m_event	log.h	/^    LogEvent::ptr m_event;$/;"	m	class:slyar::LogEventWrap	access:private
+slyar::LogEventWrap::~LogEventWrap	log.h	/^    ~LogEventWrap();$/;"	p	class:slyar::LogEventWrap	access:public	signature:()
 slyar::LogFormatter	log.h	/^class LogFormatter{$/;"	c	namespace:slyar
 slyar::LogFormatter::LogFormatter	log.h	/^    LogFormatter(const std::string& pattern);$/;"	p	class:slyar::LogFormatter	access:public	signature:(const std::string& pattern)
 slyar::LogFormatter::ptr	log.h	/^    typedef std::shared_ptr<LogFormatter> ptr;$/;"	t	class:slyar::LogFormatter	access:public
+slyar::LogLevel	log.h	/^class LogLevel {$/;"	c	namespace:slyar
+slyar::LogLevel::DEBUG	log.h	/^        DEBUG = 1,$/;"	e	enum:slyar::LogLevel::Level
+slyar::LogLevel::ERROR	log.h	/^        ERROR = 4,$/;"	e	enum:slyar::LogLevel::Level
+slyar::LogLevel::FATAL	log.h	/^        FATAL = 5$/;"	e	enum:slyar::LogLevel::Level
+slyar::LogLevel::FromString	log.h	/^    static LogLevel::Level FromString(const std::string& str);$/;"	p	class:slyar::LogLevel	access:public	signature:(const std::string& str)
+slyar::LogLevel::INFO	log.h	/^        INFO = 2,$/;"	e	enum:slyar::LogLevel::Level
+slyar::LogLevel::Level	log.h	/^    enum Level {$/;"	g	class:slyar::LogLevel	access:public
+slyar::LogLevel::ToString	log.h	/^    static const char * ToString(LogLevel::Level level);$/;"	p	class:slyar::LogLevel	access:public	signature:(LogLevel::Level level)
+slyar::LogLevel::UNKNOW	log.h	/^        UNKNOW = 0,$/;"	e	enum:slyar::LogLevel::Level
+slyar::LogLevel::WARN	log.h	/^        WARN = 3,$/;"	e	enum:slyar::LogLevel::Level
 slyar::Logger	log.h	/^class Logger {$/;"	c	namespace:slyar
 slyar::Logger::Logger	log.h	/^    Logger();$/;"	p	class:slyar::Logger	access:public	signature:()
+sylar	log.cc	/^namespace sylar {$/;"	n	file:
+sylar::LogLevel::FromString	log.cc	/^LogLevel::Level LogLevel::FromString(const std::string& str) {$/;"	f	class:sylar::LogLevel	signature:(const std::string& str)
+sylar::LogLevel::ToString	log.cc	/^const char * LogLevel::ToString(LogLevel::level level) {$/;"	f	class:sylar::LogLevel	signature:(LogLevel::level level)
 ~LogAppender	log.h	/^    virtual ~LogAppender() {}$/;"	f	class:slyar::LogAppender	access:public	signature:()
+~LogEventWrap	log.h	/^    ~LogEventWrap();$/;"	p	class:slyar::LogEventWrap	access:public	signature:()
