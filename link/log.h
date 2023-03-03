@@ -74,7 +74,7 @@ public:
     std::stringstream& getSS();
 private:
     LogEvent::ptr m_event;
-}
+};
 
 
 class Logger {
@@ -95,7 +95,29 @@ class LogFormatter{
 public:
     typedef std::shared_ptr<LogFormatter> ptr;
     LogFormatter(const std::string& pattern);
+    
+    std::string format(std::shared_ptr<Logger> logger, LogLevel::Level level
+                        , LogEvent::ptr event);
+public:
+    class FormatItem {
+    public:
+        typedef std::shared_ptr<FormatItem> ptr;
+        virtual ~FormatItem() {}
+        virtual void format(std::ostream& os, std::shared_ptr<Logger> logger
+                            , LogLevel::Level level, LogEvent::ptr event) = 0;
+    };
+
+    void init();
+
+    bool isError() const { return m_error; }
+
+    const std::string getPattern() const { return m_pattern; }
 private:
+    //log format
+    std::string m_pattern;
+    //
+    std::vector<FormatItem::ptr> m_items;
+    bool m_error = false;
 };
 
 }
