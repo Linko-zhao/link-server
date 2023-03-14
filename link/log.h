@@ -96,15 +96,15 @@ public:
     typedef std::shared_ptr<LogFormatter> ptr;
     LogFormatter(const std::string& pattern);
     
-    std::string format(std::shared_ptr<Logger> logger, LogLevel::Level level
-                        , LogEvent::ptr event);
+    std::string format(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
+
+    std::ostream& format(std::ostream& ofs, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
 public:
     class FormatItem {
     public:
         typedef std::shared_ptr<FormatItem> ptr;
         virtual ~FormatItem() {}
-        virtual void format(std::ostream& os, std::shared_ptr<Logger> logger
-                            , LogLevel::Level level, LogEvent::ptr event) = 0;
+        virtual void format(std::ostream& os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0;
     };
 
     void init();
@@ -115,7 +115,7 @@ public:
 private:
     //log format
     std::string m_pattern;
-    //
+    //parsed log format
     std::vector<FormatItem::ptr> m_items;
     bool m_error = false;
 };
