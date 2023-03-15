@@ -83,19 +83,19 @@ public:
     }
 };
 
-class MessageFormatItem : public LogFormatter::FormatItem {
+class ElapseFormatItem : public LogFormatter::FormatItem {
 public:
-    MessageFormatItem(const std::string& str = "") {}
+    ElapseFormatItem(const std::string& str = "") {}
     void format(std::ostream& os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
-        os << event->getContent();
+        os << event->getElapse();
     }
 }
 
-class MessageFormatItem : public LogFormatter::FormatItem {
+class NameFormatItem : public LogFormatter::FormatItem {
 public:
-    MessageFormatItem(const std::string& str = "") {}
+    NameFormatItem(const std::string& str = "") {}
     void format(std::ostream& os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
-        os << event->getContent();
+        os << event->getLogger()->getName();
     }
 }
 

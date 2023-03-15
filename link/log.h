@@ -39,7 +39,7 @@ public:
     uint64_t getTime() const { return m_time; }
     const std::string& getThreadName() const { return m_threadName; }
     std::string getContent() const { return m_ss.str(); }
-    std::shared_ptr<Logger> const { return m_logger; }
+    std::shared_ptr<Logger> getLogger() const { return m_logger; }
     LogLevel::Level getLevel() const { return m_level; }
     std::stringstream& getSS() { return m_ss; }
 private:

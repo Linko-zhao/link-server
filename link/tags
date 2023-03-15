@@ -56,6 +56,7 @@ getFiberId	log.h	/^    uint32_t getFiberId() const { return m_fiberId; }$/;"	f	c
 getFile	log.h	/^    const char* getFile() const { return m_file; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
 getLevel	log.h	/^    LogLevel::Level getLevel() const { return m_level; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
 getLine	log.h	/^    int32_t getLine() const { return m_line; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+getLogger	log.h	/^    std::shared_ptr<Logger> getLogger() const { return m_logger; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
 getPattern	log.h	/^    const std::string getPattern() const { return m_pattern; }$/;"	f	class:slyar::LogFormatter	access:public	signature:() const
 getSS	log.h	/^    std::stringstream& getSS() { return m_ss; }$/;"	f	class:slyar::LogEvent	access:public	signature:()
 getSS	log.h	/^    std::stringstream& getSS();$/;"	p	class:slyar::LogEventWrap	access:public	signature:()
@@ -87,6 +88,7 @@ slyar::LogEvent::getFiberId	log.h	/^    uint32_t getFiberId() const { return m_f
 slyar::LogEvent::getFile	log.h	/^    const char* getFile() const { return m_file; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
 slyar::LogEvent::getLevel	log.h	/^    LogLevel::Level getLevel() const { return m_level; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
 slyar::LogEvent::getLine	log.h	/^    int32_t getLine() const { return m_line; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+slyar::LogEvent::getLogger	log.h	/^    std::shared_ptr<Logger> getLogger() const { return m_logger; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
 slyar::LogEvent::getSS	log.h	/^    std::stringstream& getSS() { return m_ss; }$/;"	f	class:slyar::LogEvent	access:public	signature:()
 slyar::LogEvent::getThreadId	log.h	/^    uint32_t getThreadId() const { return m_threadId; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
 slyar::LogEvent::getThreadName	log.h	/^    const std::string& getThreadName() const { return m_threadName; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
