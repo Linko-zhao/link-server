@@ -107,6 +107,23 @@ public:
     }
 }
 
+class ElapseFormatItem : public LogFormatter::FormatItem {
+public:
+    ElapseFormatItem(const std::string& str = "") {}
+    void format(std::ostream& os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
+        os << event->getElapse();
+    }
+}
+
+class ElapseFormatItem : public LogFormatter::FormatItem {
+public:
+    ElapseFormatItem(const std::string& str = "") {}
+    void format(std::ostream& os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {
+        os << event->getElapse();
+    }
+}
+
+
 LogFormatter::LogFormatter(const std::string& pattern)
     : m_pattern(pattern) {
     init();

@@ -79,7 +79,11 @@ private:
 
 class Logger {
 public:
-    Logger();
+    typedef std::shared_ptr<Logger> ptr;
+
+    Logger(const std::string& name = "root");
+
+    void 
 private:
 };
 
