@@ -114,13 +114,45 @@ private:
 
 
 class LogAppender {
+    friend class Logger;
 public:
-    virtual ~LogAppender() {}
-private:
+    typedef std::shared_ptr<LogAppender> ptr;
 
+    virtual ~LogAppender() {}
+
+    virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0;
+
+    void setFormatter(LogFormatter::ptr val);
+    LogFormatter::ptr getFormatter();
+    void setLevel(LogLevel::Level level) { m_level = level; }
+    LogLevel::Level getLevel() const { return m_level; }
+private:
+    LogLevel::Level m_level = LogLevel::DEBUG;
+    bool m_hasFormatter = false;
+    LogFormatter::ptr m_formatter;
 };
 
-class LogFormatter{
+
+class StdoutLogAppender : public LogAppender {
+public:
+    typedef std::shared_ptr<StdoutLogAppender> ptr;
+    void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
+
+}
+
+class FileLogAppender : public LogAppender {
+public:
+    typedef std::shared_ptr<FileLogAppender> ptr;    
+
+    FileLogAppender(const std::string& filename);
+    void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
+private:
+    std::string m_name;
+    std::ofstream m_filestream;
+}
+
+
+class LogFormatter {
 public:
     typedef std::shared_ptr<LogFormatter> ptr;
     LogFormatter(const std::string& pattern);
