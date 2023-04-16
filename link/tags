@@ -14,7 +14,7 @@ FATAL	log.h	/^        FATAL = 5$/;"	e	enum:slyar::LogLevel::Level
 FiberIdFormatItem	log.cc	/^    FiberIdFormatItem(const std::string& str = "") {}$/;"	f	class:sylar::FiberIdFormatItem	access:public	signature:(const std::string& str = Ó)
 FiberIdFormatItem	log.cc	/^class FiberIdFormatItem : public LogFormatter::FormatItem {$/;"	c	namespace:sylar	file:	inherits:LogFormatter::FormatItem,LogFormatter::FormatItem,LogFormatter::FormatItem,LogFormatter::FormatItem
 FileLogAppender	log.h	/^    FileLogAppender(const std::string& filename);$/;"	p	class:slyar::FileLogAppender	access:public	signature:(const std::string& filename)
-FileLogAppender	log.h	/^class FileLogAppender : public LogAppender {$/;"	c	namespace:slyar	inherits:LogAppender,LogAppender
+FileLogAppender	log.h	/^class FileLogAppender : public LogAppender {$/;"	c	namespace:slyar	inherits:LogAppender
 FilenameFormatItem	log.cc	/^    FilenameFormatItem(const std::string& str = "") {}$/;"	f	class:sylar::FilenameFormatItem	access:public	signature:(const std::string& str = Ó)
 FilenameFormatItem	log.cc	/^class FilenameFormatItem : public LogFormatter::FormatItem {$/;"	c	namespace:sylar	file:	inherits:LogFormatter::FormatItem,LogFormatter::FormatItem,LogFormatter::FormatItem,LogFormatter::FormatItem,LogFormatter::FormatItem,LogFormatter::FormatItem,LogFormatter::FormatItem
 FormatItem	log.h	/^    class FormatItem {$/;"	c	class:slyar::LogFormatter	access:public
@@ -36,8 +36,9 @@ LogEventWrap	log.h	/^    LogEventWrap(LogEvent::ptr e);$/;"	p	class:slyar::LogEv
 LogEventWrap	log.h	/^class LogEventWrap {$/;"	c	namespace:slyar
 LogFormatter	log.cc	/^LogFormatter::LogFormatter(const std::string& pattern)$/;"	f	class:sylar::LogFormatter	signature:(const std::string& pattern)
 LogFormatter	log.h	/^    LogFormatter(const std::string& pattern);$/;"	p	class:slyar::LogFormatter	access:public	signature:(const std::string& pattern)
-LogFormatter	log.h	/^class LogFormatter {$/;"	c	namespace:slyar	inherits:LogAppender,LogAppender
+LogFormatter	log.h	/^class LogFormatter {$/;"	c	namespace:slyar
 LogLevel	log.h	/^class LogLevel {$/;"	c	namespace:slyar
+Logger	log.cc	/^Logger(const std::string& name = "root")$/;"	f	namespace:sylar	signature:(const std::string& name = Ó)
 Logger	log.h	/^    Logger(const std::string& name = "root");$/;"	p	class:slyar::Logger	access:public	signature:(const std::string& name = Ó)
 Logger	log.h	/^class Logger {$/;"	c	namespace:slyar
 MessageFormatItem	log.cc	/^    MessageFormatItem(const std::string& str = "") {}$/;"	f	class:sylar::MessageFormatItem	access:public	signature:(const std::string& str = Ó)
@@ -61,15 +62,21 @@ UNKNOW	log.h	/^        UNKNOW = 0,$/;"	e	enum:slyar::LogLevel::Level
 WARN	log.h	/^        WARN = 3,$/;"	e	enum:slyar::LogLevel::Level
 XX	log.cc	12;"	d	file:
 XX	log.cc	22;"	d	file:
-XX	log.cc	277;"	d	file:
-XX	log.cc	292;"	d	file:
 XX	log.cc	31;"	d	file:
+XX	log.cc	328;"	d	file:
+XX	log.cc	343;"	d	file:
 XX	log.cc	42;"	d	file:
+addAppender	log.cc	/^void Logger::addAppender(LogAppender::ptr appender) {$/;"	f	class:sylar::Logger	signature:(LogAppender::ptr appender)
 addAppender	log.h	/^    void addAppender(LogAppender::ptr appender);$/;"	p	class:slyar::Logger	access:public	signature:(LogAppender::ptr appender)
+clearAppenders	log.cc	/^void Logger:clearAppenders() {$/;"	f	namespace:sylar	signature:()
 clearAppenders	log.h	/^    void clearAppenders();$/;"	p	class:slyar::Logger	access:public	signature:()
+debug	log.cc	/^void Logger::debug(LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogEvent::ptr event)
 debug	log.h	/^    void debug(LogEvent::ptr event);$/;"	p	class:slyar::Logger	access:public	signature:(LogEvent::ptr event)
+delAppender	log.cc	/^void Logger::delAppender(LogAppender::ptr appender) {$/;"	f	class:sylar::Logger	signature:(LogAppender::ptr appender)
 delAppender	log.h	/^    void delAppender(LogAppender::ptr appender);$/;"	p	class:slyar::Logger	access:public	signature:(LogAppender::ptr appender)
+error	log.cc	/^void Logger::error(LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogEvent::ptr event)
 error	log.h	/^    void error(LogEvent::ptr event);$/;"	p	class:slyar::Logger	access:public	signature:(LogEvent::ptr event)
+fatal	log.cc	/^void Logger::fatal(LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogEvent::ptr event)
 fatal	log.h	/^    void fatal(LogEvent::ptr event);$/;"	p	class:slyar::Logger	access:public	signature:(LogEvent::ptr event)
 format	log.cc	/^std::ostream LogFormatter::format(std::ostream& ofs, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {$/;"	f	class:sylar::LogFormatter	signature:(std::ostream& ofs, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event)
 format	log.cc	/^std::string LogFormatter::format(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) {$/;"	f	class:sylar::LogFormatter	signature:(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event)
@@ -95,10 +102,12 @@ getSS	log.h	/^    std::stringstream& getSS();$/;"	p	class:slyar::LogEventWrap	ac
 getThreadId	log.h	/^    uint32_t getThreadId() const { return m_threadId; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
 getThreadName	log.h	/^    const std::string& getThreadName() const { return m_threadName; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
 getTime	log.h	/^    uint64_t getTime() const { return m_time; }$/;"	f	class:slyar::LogEvent	access:public	signature:() const
+info	log.cc	/^void Logger::info(LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogEvent::ptr event)
 info	log.h	/^    void info(LogEvent::ptr event);$/;"	p	class:slyar::Logger	access:public	signature:(LogEvent::ptr event)
 init	log.cc	/^void LogFormatter::init() {$/;"	f	class:sylar::LogFormatter	signature:()
 init	log.h	/^    void init();$/;"	p	class:slyar::LogFormatter	access:public	signature:()
 isError	log.h	/^    bool isError() const { return m_error; }$/;"	f	class:slyar::LogFormatter	access:public	signature:() const
+log	log.cc	/^void Logger::log(LogLevel::Level level, LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogLevel::Level level, LogEvent::ptr event)
 log	log.h	/^    virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0;$/;"	p	class:slyar::LogAppender	access:public	implementation:pure virtual	signature:(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event)
 log	log.h	/^    void log(LogLevel::Level level, LogEvent::ptr event);$/;"	p	class:slyar::Logger	access:public	signature:(LogLevel::Level level, LogEvent::ptr event)
 m_appenders	log.h	/^    std::list<LogAppender::ptr> m_appenders;$/;"	m	class:slyar::Logger	access:private
@@ -136,7 +145,7 @@ setFormatter	log.h	/^    void setFormatter(const std::string& val);$/;"	p	class:
 setLevel	log.h	/^    void setLevel(LogLevel::Level level) { m_level = level; }$/;"	f	class:slyar::LogAppender	access:public	signature:(LogLevel::Level level)
 setLevel	log.h	/^    void setLevel(LogLevel::Level val) {m_level = val;}$/;"	f	class:slyar::Logger	access:public	signature:(LogLevel::Level val)
 slyar	log.h	/^namespace slyar {$/;"	n
-slyar::FileLogAppender	log.h	/^class FileLogAppender : public LogAppender {$/;"	c	namespace:slyar	inherits:LogAppender,LogAppender
+slyar::FileLogAppender	log.h	/^class FileLogAppender : public LogAppender {$/;"	c	namespace:slyar	inherits:LogAppender
 slyar::FileLogAppender::FileLogAppender	log.h	/^    FileLogAppender(const std::string& filename);$/;"	p	class:slyar::FileLogAppender	access:public	signature:(const std::string& filename)
 slyar::FileLogAppender::m_filestream	log.h	/^    std::ofstream m_filestream;$/;"	m	class:slyar::FileLogAppender	access:private
 slyar::FileLogAppender::m_name	log.h	/^    std::string m_name;$/;"	m	class:slyar::FileLogAppender	access:private
@@ -177,7 +186,7 @@ slyar::LogEventWrap::getEvent	log.h	/^    LogEvent::ptr getEvent() const { retur
 slyar::LogEventWrap::getSS	log.h	/^    std::stringstream& getSS();$/;"	p	class:slyar::LogEventWrap	access:public	signature:()
 slyar::LogEventWrap::m_event	log.h	/^    LogEvent::ptr m_event;$/;"	m	class:slyar::LogEventWrap	access:private
 slyar::LogEventWrap::~LogEventWrap	log.h	/^    ~LogEventWrap();$/;"	p	class:slyar::LogEventWrap	access:public	signature:()
-slyar::LogFormatter	log.h	/^class LogFormatter {$/;"	c	namespace:slyar	inherits:LogAppender,LogAppender
+slyar::LogFormatter	log.h	/^class LogFormatter {$/;"	c	namespace:slyar
 slyar::LogFormatter::FormatItem	log.h	/^    class FormatItem {$/;"	c	class:slyar::LogFormatter	access:public
 slyar::LogFormatter::FormatItem::format	log.h	/^        virtual void format(std::ostream& os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0;$/;"	p	class:slyar::LogFormatter::FormatItem	access:public	implementation:pure virtual	signature:(std::ostream& os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event)
 slyar::LogFormatter::FormatItem::ptr	log.h	/^        typedef std::shared_ptr<FormatItem> ptr;$/;"	t	class:slyar::LogFormatter::FormatItem	access:public
@@ -251,6 +260,15 @@ sylar::LogFormatter::format	log.cc	/^std::string LogFormatter::format(std::share
 sylar::LogFormatter::init	log.cc	/^void LogFormatter::init() {$/;"	f	class:sylar::LogFormatter	signature:()
 sylar::LogLevel::FromString	log.cc	/^LogLevel::Level LogLevel::FromString(const std::string& str) {$/;"	f	class:sylar::LogLevel	signature:(const std::string& str)
 sylar::LogLevel::ToString	log.cc	/^const char * LogLevel::ToString(LogLevel::level level) {$/;"	f	class:sylar::LogLevel	signature:(LogLevel::level level)
+sylar::Logger	log.cc	/^Logger(const std::string& name = "root")$/;"	f	namespace:sylar	signature:(const std::string& name = Ó)
+sylar::Logger::addAppender	log.cc	/^void Logger::addAppender(LogAppender::ptr appender) {$/;"	f	class:sylar::Logger	signature:(LogAppender::ptr appender)
+sylar::Logger::debug	log.cc	/^void Logger::debug(LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogEvent::ptr event)
+sylar::Logger::delAppender	log.cc	/^void Logger::delAppender(LogAppender::ptr appender) {$/;"	f	class:sylar::Logger	signature:(LogAppender::ptr appender)
+sylar::Logger::error	log.cc	/^void Logger::error(LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogEvent::ptr event)
+sylar::Logger::fatal	log.cc	/^void Logger::fatal(LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogEvent::ptr event)
+sylar::Logger::info	log.cc	/^void Logger::info(LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogEvent::ptr event)
+sylar::Logger::log	log.cc	/^void Logger::log(LogLevel::Level level, LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogLevel::Level level, LogEvent::ptr event)
+sylar::Logger::warn	log.cc	/^void Logger::warn(LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogEvent::ptr event)
 sylar::MessageFormatItem	log.cc	/^class MessageFormatItem : public LogFormatter::FormatItem {$/;"	c	namespace:sylar	file:	inherits:LogFormatter::FormatItem
 sylar::MessageFormatItem::MessageFormatItem	log.cc	/^    MessageFormatItem(const std::string& str = "") {}$/;"	f	class:sylar::MessageFormatItem	access:public	signature:(const std::string& str = Ó)
 sylar::NameFormatItem	log.cc	/^class NameFormatItem : public LogFormatter::FormatItem {$/;"	c	namespace:sylar	file:	inherits:LogFormatter::FormatItem,LogFormatter::FormatItem
@@ -266,6 +284,8 @@ sylar::ThreadIdFormatItem	log.cc	/^class ThreadIdFormatItem : public LogFormatte
 sylar::ThreadIdFormatItem::ThreadIdFormatItem	log.cc	/^    ThreadIdFormatItem(const std::string& str = "") {}$/;"	f	class:sylar::ThreadIdFormatItem	access:public	signature:(const std::string& str = Ó)
 sylar::ThreadNameFormatItem	log.cc	/^class ThreadNameFormatItem : public LogFormatter::FormatItem {$/;"	c	namespace:sylar	file:	inherits:LogFormatter::FormatItem,LogFormatter::FormatItem,LogFormatter::FormatItem,LogFormatter::FormatItem,LogFormatter::FormatItem
 sylar::ThreadNameFormatItem::ThreadNameFormatItem	log.cc	/^    ThreadNameFormatItem(const std::string& str = "") {}$/;"	f	class:sylar::ThreadNameFormatItem	access:public	signature:(const std::string& str = Ó)
+sylar::clearAppenders	log.cc	/^void Logger:clearAppenders() {$/;"	f	namespace:sylar	signature:()
+warn	log.cc	/^void Logger::warn(LogEvent::ptr event) {$/;"	f	class:sylar::Logger	signature:(LogEvent::ptr event)
 warn	log.h	/^    void warn(LogEvent::ptr event);$/;"	p	class:slyar::Logger	access:public	signature:(LogEvent::ptr event)
 ~FormatItem	log.h	/^        virtual ~FormatItem() {}$/;"	f	class:slyar::LogFormatter::FormatItem	access:public	implementation:virtual	signature:()
 ~LogAppender	log.h	/^    virtual ~LogAppender() {}$/;"	f	class:slyar::LogAppender	access:public	implementation:virtual	signature:()

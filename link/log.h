@@ -138,7 +138,7 @@ public:
     typedef std::shared_ptr<StdoutLogAppender> ptr;
     void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
 
-}
+};
 
 class FileLogAppender : public LogAppender {
 public:
@@ -149,7 +149,7 @@ public:
 private:
     std::string m_name;
     std::ofstream m_filestream;
-}
+};
 
 
 class LogFormatter {

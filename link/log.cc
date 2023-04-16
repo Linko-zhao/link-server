@@ -187,6 +187,57 @@ public:
     }
 }
 
+Logger(const std::string& name = "root")
+    : m_name(name)
+    , m_level(LogLevel::DEBUG) {
+    m_formatter.reset(new LogFormatter("%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n");
+}
+
+void Logger::log(LogLevel::Level level, LogEvent::ptr event) {
+    if (level >= m_level) {
+        for (auto& iter : m_appenders) {
+            iter->log(self, level, event);
+        }
+    }
+}
+
+void Logger::debug(LogEvent::ptr event) {
+    log(LogLevel::DEBUG, event);
+}
+
+void Logger::info(LogEvent::ptr event) {
+    log(LogLevel::INFO, event);
+}
+
+void Logger::warn(LogEvent::ptr event) {
+    log(LogLevel::WARN, event);
+}
+
+void Logger::error(LogEvent::ptr event) {
+    log(LogLevel::ERROR, event);
+}
+
+void Logger::fatal(LogEvent::ptr event) {
+    log(LogLevel::FATAL, event);
+}
+
+void Logger::addAppender(LogAppender::ptr appender) {
+    m_appenders.push_back(appender);
+}
+
+void Logger::delAppender(LogAppender::ptr appender) {
+    for (auto iter : m_appenders) {
+        if (*iter == appender) {
+            m_appenders.erase(iter);
+            break;
+        }
+    }
+}
+
+void Logger:clearAppenders() {
+    m_appenders.clear();
+}
+
 LogFormatter::LogFormatter(const std::string& pattern)
     : m_pattern(pattern) {
     init();
@@ -290,9 +341,20 @@ void LogFormatter::init() {
         XX(F, FiberIdFormatItem),
         XX(N, ThreadNameFormatItem),
 #undef XX
-    }
+    };
 
-    for (auto& i : vec) {
+    for (auto& iter : vec) {
+        if (std::get<2>(iter) == 0) {
+            m_items.push_back(FormatItem::ptr(new StringFormatItem(std::get<0>(iter))));
+        } else {
+            auto it = s_format_items.find(std::get<0>(iter));
+            if (it == s_format_items.end()) {
+                m_items.push_back(FormatItem::ptr(new StringFormatItem("<<error_format %" + std::get<0>(i) + ">>")));
+                m_error = true;
+            } else {
+                m_items.push_back(it->second(std::get<1>(i)));
+            }
+        }
         std::cout << "(" << std::get<0>(i) << ") - (" << std::get<1>(i) << ") - (" << std::get<2>(i) << ")";
     }
 }
