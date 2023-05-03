@@ -1,0 +1,4 @@
+/home/links/Code/link-server/CMakeFiles/link.dir
+/home/links/Code/link-server/CMakeFiles/test.dir
+/home/links/Code/link-server/CMakeFiles/edit_cache.dir
+/home/links/Code/link-server/CMakeFiles/rebuild_cache.dir

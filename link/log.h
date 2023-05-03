@@ -4,8 +4,13 @@
 #include <string>
 #include <memory>
 #include <list>
+#include <sstream>
+#include <vector>
+#include <fstream>
 
-namespace slyar {
+namespace links {
+
+class Logger;
 
 class LogLevel {
 public:
@@ -20,14 +25,14 @@ public:
 
     static const char * ToString(LogLevel::Level level);
     static LogLevel::Level FromString(const std::string& str);
-}
+};
 
 
 class LogEvent{
 public:
     typedef std::shared_ptr<LogEvent> ptr;
 
-    LogEvent(std::shared_ptr<LogEvent> logger, LogLevel::Level level
+    LogEvent(std::shared_ptr<Logger> logger, LogLevel::Level level
             , const char* file, int32_t line, uint32_t elapse
             , uint32_t thread_id, uint32_t fiber_id, uint64_t time
             , const std::string& thread_name);
@@ -78,6 +83,56 @@ private:
 };
 
 
+class LogFormatter {
+public:
+    typedef std::shared_ptr<LogFormatter> ptr;
+    LogFormatter(const std::string& pattern);
+
+    std::string format(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
+
+    std::ostream& format(std::ostream& ofs, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
+public:
+    class FormatItem {
+    public:
+        typedef std::shared_ptr<FormatItem> ptr;
+        virtual ~FormatItem() {}
+        virtual void format(std::ostream& os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0;
+    };
+
+    void init();
+
+    bool isError() const { return m_error; }
+
+    const std::string getPattern() const { return m_pattern; }
+private:
+    //log format
+    std::string m_pattern;
+    //parsed log format
+    std::vector<FormatItem::ptr> m_items;
+    bool m_error = false;
+};
+
+
+class LogAppender {
+    friend class Logger;
+public:
+    typedef std::shared_ptr<LogAppender> ptr;
+
+    virtual ~LogAppender() {}
+
+    virtual void log(LogLevel::Level level, LogEvent::ptr event) = 0;
+
+    void setFormatter(LogFormatter::ptr val);
+    LogFormatter::ptr getFormatter();
+    void setLevel(LogLevel::Level level) { m_level = level; }
+    LogLevel::Level getLevel() const { return m_level; }
+private:
+    LogLevel::Level m_level = LogLevel::DEBUG;
+    bool m_hasFormatter = false;
+    LogFormatter::ptr m_formatter;
+};
+
+
 class Logger {
 public:
     typedef std::shared_ptr<Logger> ptr;
@@ -113,30 +168,10 @@ private:
 };
 
 
-class LogAppender {
-    friend class Logger;
-public:
-    typedef std::shared_ptr<LogAppender> ptr;
-
-    virtual ~LogAppender() {}
-
-    virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0;
-
-    void setFormatter(LogFormatter::ptr val);
-    LogFormatter::ptr getFormatter();
-    void setLevel(LogLevel::Level level) { m_level = level; }
-    LogLevel::Level getLevel() const { return m_level; }
-private:
-    LogLevel::Level m_level = LogLevel::DEBUG;
-    bool m_hasFormatter = false;
-    LogFormatter::ptr m_formatter;
-};
-
-
 class StdoutLogAppender : public LogAppender {
 public:
     typedef std::shared_ptr<StdoutLogAppender> ptr;
-    void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
+    void log(LogLevel::Level level, LogEvent::ptr event) override;
 
 };
 
@@ -145,41 +180,13 @@ public:
     typedef std::shared_ptr<FileLogAppender> ptr;    
 
     FileLogAppender(const std::string& filename);
-    void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
+    void log(LogLevel::Level level, LogEvent::ptr event) override;
 private:
     std::string m_name;
     std::ofstream m_filestream;
 };
 
 
-class LogFormatter {
-public:
-    typedef std::shared_ptr<LogFormatter> ptr;
-    LogFormatter(const std::string& pattern);
-    
-    std::string format(std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
-
-    std::ostream& format(std::ostream& ofs, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event);
-public:
-    class FormatItem {
-    public:
-        typedef std::shared_ptr<FormatItem> ptr;
-        virtual ~FormatItem() {}
-        virtual void format(std::ostream& os, std::shared_ptr<Logger> logger, LogLevel::Level level, LogEvent::ptr event) = 0;
-    };
-
-    void init();
-
-    bool isError() const { return m_error; }
-
-    const std::string getPattern() const { return m_pattern; }
-private:
-    //log format
-    std::string m_pattern;
-    //parsed log format
-    std::vector<FormatItem::ptr> m_items;
-    bool m_error = false;
-};
 
 }
 
