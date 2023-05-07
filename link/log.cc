@@ -195,8 +195,9 @@ Logger::Logger(const std::string& name)
 
 void Logger::log(LogLevel::Level level, LogEvent::ptr event) {
     if (level >= m_level) {
+        auto self = shared_from_this();
         for (auto& iter : m_appenders) {
-            iter->log(level, event);
+            iter->log(self, level, event);
         }
     }
 }
@@ -237,6 +238,19 @@ void Logger::delAppender(LogAppender::ptr appender) {
 void Logger::clearAppenders() {
     m_appenders.clear();
 }
+
+
+FileLogAppender::FileLogAppender(const std::string& filename) 
+    : m_filename(filename){
+    reopen();
+}
+
+void FileLogAppender::log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) {
+    if (level > m_level) {
+        m_filestream << m_formatter->format(logger, level, event);
+    }
+}
+
 
 LogFormatter::LogFormatter(const std::string& pattern)
     : m_pattern(pattern) {
