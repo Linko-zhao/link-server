@@ -251,6 +251,11 @@ void FileLogAppender::log(Logger::ptr logger, LogLevel::Level level, LogEvent::p
     }
 }
 
+bool FileLogAppender::reopen() {
+    if (m_filestream) {
+        m_filestream.close();
+    }
+}
 
 LogFormatter::LogFormatter(const std::string& pattern)
     : m_pattern(pattern) {
