@@ -573,8 +573,25 @@ CMakeFiles/link.dir/link/log.cc.o: link/log.cc \
   /usr/include/boost/algorithm/string/finder.hpp \
   /usr/include/boost/algorithm/string/constants.hpp \
   /usr/include/boost/algorithm/string/detail/finder.hpp \
-  /usr/include/boost/algorithm/string/detail/predicate.hpp
+  /usr/include/boost/algorithm/string/detail/predicate.hpp \
+  /usr/include/c++/11/map \
+  /usr/include/c++/11/bits/stl_tree.h \
+  /usr/include/c++/11/bits/stl_map.h \
+  /usr/include/c++/11/bits/stl_multimap.h \
+  /usr/include/c++/11/bits/erase_if.h \
+  /usr/include/c++/11/functional \
+  /usr/include/c++/11/bits/std_function.h
 
+
+/usr/include/c++/11/bits/erase_if.h:
+
+/usr/include/c++/11/bits/stl_multimap.h:
+
+/usr/include/c++/11/bits/stl_map.h:
+
+/usr/include/c++/11/bits/stl_tree.h:
+
+/usr/include/c++/11/map:
 
 /usr/include/boost/algorithm/string/constants.hpp:
 
@@ -1414,6 +1431,8 @@ link/log.cc:
 
 /usr/include/boost/range/size_type.hpp:
 
+/usr/include/c++/11/bits/std_function.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
 
 /usr/include/boost/preprocessor/control/expr_iif.hpp:
@@ -1607,6 +1626,8 @@ link/log.cc:
 /usr/include/boost/mpl/aux_/preprocessed/gcc/apply_fwd.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
+
+/usr/include/c++/11/functional:
 
 /usr/include/boost/preprocessor/seq/fold_left.hpp:
 

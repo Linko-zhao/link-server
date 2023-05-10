@@ -126,7 +126,7 @@ public:
     LogFormatter::ptr getFormatter();
     void setLevel(LogLevel::Level level) { m_level = level; }
     LogLevel::Level getLevel() const { return m_level; }
-private:
+protected:
     LogLevel::Level m_level = LogLevel::DEBUG;
     bool m_hasFormatter = false;
     LogFormatter::ptr m_formatter;
@@ -162,7 +162,7 @@ public:
 
 private:
     std::string m_name;
-    LogLevel::Level m_level; 
+    LogLevel::Level m_level;
 
     std::list<LogAppender::ptr> m_appenders;
     LogFormatter::ptr m_formatter;
@@ -179,7 +179,7 @@ public:
 
 class FileLogAppender : public LogAppender {
 public:
-    typedef std::shared_ptr<FileLogAppender> ptr;    
+    typedef std::shared_ptr<FileLogAppender> ptr;
 
     FileLogAppender(const std::string& filename);
     void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;

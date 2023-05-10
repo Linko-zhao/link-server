@@ -246,7 +246,7 @@ FileLogAppender::FileLogAppender(const std::string& filename)
 }
 
 void FileLogAppender::log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) {
-    if (level > m_level) {
+    if (level >= m_level) {
         m_filestream << m_formatter->format(logger, level, event);
     }
 }
@@ -254,6 +254,14 @@ void FileLogAppender::log(Logger::ptr logger, LogLevel::Level level, LogEvent::p
 bool FileLogAppender::reopen() {
     if (m_filestream) {
         m_filestream.close();
+    }
+    m_filestream.open(m_filename);
+    return !!m_filestream;
+}
+
+void StdoutLogAppender::log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) {
+    if (level >= m_level) {
+        m_formatter->format(std::cout, logger, level, event);
     }
 }
 
