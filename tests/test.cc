@@ -6,6 +6,7 @@
 int main (int argc, char** argv) {
     links::Logger::ptr logger(new links::Logger);
     logger->addAppender(links::LogAppender::ptr(new links::StdoutLogAppender));
-    links::LogEvent::ptr event(new links::LogEvent(logger, links::LogLevel::DEBUG, __FILE__, __LINE__, 0, links::GetThreadId(), links::GetFiberId(), time(0), "test"));
+    links::LogEvent::ptr event(new links::LogEvent(logger, links::LogLevel::DEBUG, __FILE__, __LINE__, 0, links::GetThreadId(),links::GetFiberId(), time(0), "test"));
+    logger->log(links::LogLevel::DEBUG, event);
     return 0;
 }

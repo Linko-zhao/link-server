@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/links/Code/link-server/link/log.cc" "CMakeFiles/link.dir/link/log.cc.o" "gcc" "CMakeFiles/link.dir/link/log.cc.o.d"
+  "/home/links/Code/link-server/link/util.cc" "CMakeFiles/link.dir/link/util.cc.o" "gcc" "CMakeFiles/link.dir/link/util.cc.o.d"
   )
 
 # Targets to which this target links.

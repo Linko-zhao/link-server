@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/link.dir/link/log.cc.o"
   "CMakeFiles/link.dir/link/log.cc.o.d"
+  "CMakeFiles/link.dir/link/util.cc.o"
+  "CMakeFiles/link.dir/link/util.cc.o.d"
   "lib/liblink.pdb"
   "lib/liblink.so"
 )
