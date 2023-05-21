@@ -68,6 +68,16 @@ LogEvent::LogEvent(std::shared_ptr<Logger> logger, LogLevel::Level level
     , m_level(level) {
 }
 
+
+void LogAppender::setFormatter(LogFormatter::ptr val) {
+    m_formatter = val;
+    m_hasFormatter = m_formatter != NULL;
+}
+
+LogFormatter::ptr LogAppender::getFormatter() {
+    return m_formatter;
+}
+
 class MessageFormatItem : public LogFormatter::FormatItem {
 public:
     MessageFormatItem(const std::string& str = "") {}
@@ -223,6 +233,9 @@ void Logger::fatal(LogEvent::ptr event) {
 }
 
 void Logger::addAppender(LogAppender::ptr appender) {
+    if (!appender->getFormatter()) {
+        appender->setFormatter(m_formatter);
+    }
     m_appenders.push_back(appender);
 }
 
@@ -361,7 +374,7 @@ void LogFormatter::init() {
         XX(p, LevelFormatItem),
         XX(r, ElapseFormatItem),
         XX(c, NameFormatItem),
-        XX(t, ThreadNameFormatItem),
+        XX(t, ThreadIdFormatItem),
         XX(n, NewLineFormatItem),
         XX(d, DataTimeFormatItem),
         XX(f, FilenameFormatItem),
@@ -384,8 +397,9 @@ void LogFormatter::init() {
                 m_items.push_back(it->second(std::get<1>(iter)));
             }
         }
-        std::cout << "(" << std::get<0>(iter) << ") - (" << std::get<1>(iter) << ") - (" << std::get<2>(iter) << ")";
+        std::cout << "(" << std::get<0>(iter) << ") - (" << std::get<1>(iter) << ") - (" << std::get<2>(iter) << ")" << std::endl;
     }
+    std::cout << m_items.size() << std::endl;
 }
 
 }
