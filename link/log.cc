@@ -1,4 +1,6 @@
 #include "log.h"
+#include <boost/mpl/eval_if.hpp>
+#include <cstdio>
 #include <iostream>
 #include <boost/algorithm/string/predicate.hpp>
 #include <tuple>
@@ -49,7 +51,11 @@ LogEventWrap::LogEventWrap(LogEvent::ptr e)
 
 
 LogEventWrap::~LogEventWrap() {
-    
+    m_event->getLogger()->log(m_event->getLevel(), m_event);
+}
+
+std::stringstream& LogEventWrap::getSS() {
+    return m_event->getSS();
 }
 
 
@@ -68,6 +74,21 @@ LogEvent::LogEvent(std::shared_ptr<Logger> logger, LogLevel::Level level
     , m_level(level) {
 }
 
+void LogEvent::format(const char* fmt, ...) {
+    va_list al;
+    va_start(al, fmt);
+    format(fmt, al);
+    va_end(al);
+}
+
+void LogEvent::format(const char* fmt, va_list al) {
+    char* buf = nullptr;
+    int len = vasprintf(&buf, fmt, al);
+    if (len != -1) {
+        m_ss << std::string(buf, len);
+        free(buf);
+    }
+}
 
 void LogAppender::setFormatter(LogFormatter::ptr val) {
     m_formatter = val;
@@ -397,9 +418,9 @@ void LogFormatter::init() {
                 m_items.push_back(it->second(std::get<1>(iter)));
             }
         }
-        std::cout << "(" << std::get<0>(iter) << ") - (" << std::get<1>(iter) << ") - (" << std::get<2>(iter) << ")" << std::endl;
+        //std::cout << "(" << std::get<0>(iter) << ") - (" << std::get<1>(iter) << ") - (" << std::get<2>(iter) << ")" << std::endl;
     }
-    std::cout << m_items.size() << std::endl;
+    //std::cout << m_items.size() << std::endl;
 }
 
 }

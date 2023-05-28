@@ -1,12 +1,38 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <cstdarg>
 #include <string>
 #include <memory>
 #include <list>
 #include <sstream>
 #include <vector>
 #include <fstream>
+#include "util.h"
+
+#define LINK_LOG_LEVEL(logger, level) \
+    if (logger->getLevel() <= level) \
+        links::LogEventWrap(links::LogEvent::ptr(new links::LogEvent(logger, level, \
+                        __FILE__, __LINE__, 0, links::GetThreadId(), links::GetFiberId(), \
+                        time(0), "TestName"))).getSS()
+
+#define LINK_LOG_DEBUG(logger) LINK_LOG_LEVEL(logger, links::LogLevel::DEBUG)
+#define LINK_LOG_INFO(logger) LINK_LOG_LEVEL(logger, links::LogLevel::INFO)
+#define LINK_LOG_WARN(logger) LINK_LOG_LEVEL(logger, links::LogLevel::WARN)
+#define LINK_LOG_ERROR(logger) LINK_LOG_LEVEL(logger, links::LogLevel::ERROR)
+#define LINK_LOG_FATAL(logger) LINK_LOG_LEVEL(logger, links::LogLevel::FATAL)
+
+#define LINK_LOG_FMT_LEVEL(logger, level, fmt, ...) \
+    if (logger->getLevel() <= level) \
+        links::LogEventWrap(links::LogEvent::ptr(new links::LogEvent(logger, level, \
+                        __FILE__, __LINE__, 0, links::GetThreadId(), links::GetFiberId(), \
+                        time(0), "TestName"))).getEvent()->format(fmt, __VA_ARGS__)
+
+#define LINK_LOG_FMT_DEBUG(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::DEBUG, fmt, __VA_ARGS__)
+#define LINK_LOG_FMT_INFO(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::INFO, fmt, __VA_ARGS__)
+#define LINK_LOG_FMT_WARN(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::WARN, fmt, __VA_ARGS__)
+#define LINK_LOG_FMT_ERROR(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::ERROR, fmt, __VA_ARGS__)
+#define LINK_LOG_FMT_FATAL(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::FATAL, fmt, __VA_ARGS__)
 
 namespace links {
 
@@ -48,6 +74,9 @@ public:
     std::shared_ptr<Logger> getLogger() const { return m_logger; }
     LogLevel::Level getLevel() const { return m_level; }
     std::stringstream& getSS() { return m_ss; }
+
+    void format(const char* fmt, ...);
+    void format(const char* fmt, va_list al);
 private:
     //file name
     const char* m_file{nullptr};
