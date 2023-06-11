@@ -183,19 +183,25 @@ CMakeFiles/test.dir/tests/test.cc.o: tests/test.cc \
   /usr/include/c++/12/istream \
   /usr/include/c++/12/bits/istream.tcc \
   link/log.h \
+  /usr/include/c++/12/cstdarg \
+  /usr/include/c++/12/map \
+  /usr/include/c++/12/bits/stl_tree.h \
+  /usr/include/c++/12/ext/aligned_buffer.h \
+  /usr/include/c++/12/bits/stl_map.h \
+  /usr/include/c++/12/tuple \
+  /usr/include/c++/12/bits/uses_allocator.h \
+  /usr/include/c++/12/bits/stl_multimap.h \
+  /usr/include/c++/12/bits/erase_if.h \
   /usr/include/c++/12/memory \
   /usr/include/c++/12/bits/stl_uninitialized.h \
   /usr/include/c++/12/bits/stl_tempbuf.h \
   /usr/include/c++/12/bits/stl_raw_storage_iter.h \
   /usr/include/c++/12/bits/align.h \
   /usr/include/c++/12/bit \
-  /usr/include/c++/12/bits/uses_allocator.h \
   /usr/include/c++/12/bits/unique_ptr.h \
-  /usr/include/c++/12/tuple \
   /usr/include/c++/12/bits/shared_ptr.h \
   /usr/include/c++/12/bits/shared_ptr_base.h \
   /usr/include/c++/12/bits/allocated_ptr.h \
-  /usr/include/c++/12/ext/aligned_buffer.h \
   /usr/include/c++/12/ext/concurrence.h \
   /usr/include/c++/12/bits/shared_ptr_atomic.h \
   /usr/include/c++/12/bits/atomic_base.h \
@@ -224,14 +230,15 @@ CMakeFiles/test.dir/tests/test.cc.o: tests/test.cc \
   /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/linux/close_range.h \
+  link/singleton.h \
   link/util.h
 
+
+link/singleton.h:
 
 /usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
 
 /usr/include/x86_64-linux-gnu/bits/environments.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
 
 /usr/include/c++/12/bits/fstream.tcc:
 
@@ -255,8 +262,6 @@ CMakeFiles/test.dir/tests/test.cc.o: tests/test.cc \
 
 /usr/include/c++/12/bits/shared_ptr_atomic.h:
 
-/usr/include/c++/12/ext/aligned_buffer.h:
-
 /usr/include/c++/12/bits/allocated_ptr.h:
 
 /usr/include/c++/12/bits/shared_ptr_base.h:
@@ -274,6 +279,16 @@ CMakeFiles/test.dir/tests/test.cc.o: tests/test.cc \
 /usr/include/linux/close_range.h:
 
 /usr/include/c++/12/memory:
+
+/usr/include/c++/12/bits/erase_if.h:
+
+/usr/include/c++/12/bits/stl_multimap.h:
+
+/usr/include/c++/12/ext/aligned_buffer.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+
+/usr/include/c++/12/cstdarg:
 
 /usr/include/c++/12/vector:
 
@@ -387,7 +402,11 @@ link/log.h:
 
 /usr/include/c++/12/bits/stringfwd.h:
 
+/usr/include/c++/12/bits/stl_map.h:
+
 /usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/c++/12/bits/stl_tree.h:
 
 /usr/include/c++/12/ios:
 
@@ -610,6 +629,8 @@ tests/test.cc:
 /usr/include/c++/12/bits/shared_ptr.h:
 
 /usr/include/c++/12/initializer_list:
+
+/usr/include/c++/12/map:
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
 

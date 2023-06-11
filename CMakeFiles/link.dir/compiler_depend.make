@@ -4,7 +4,7 @@
 CMakeFiles/link.dir/link/log.cc.o: link/log.cc \
   /usr/include/stdc-predef.h \
   link/log.h \
-  /usr/include/c++/12/string \
+  /usr/include/c++/12/cstdarg \
   /usr/include/x86_64-linux-gnu/c++/12/bits/c++config.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/os_defines.h \
   /usr/include/features.h \
@@ -16,8 +16,49 @@ CMakeFiles/link.dir/link/log.cc.o: link/log.cc \
   /usr/include/x86_64-linux-gnu/gnu/stubs.h \
   /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/cpu_defines.h \
-  /usr/include/c++/12/bits/stringfwd.h \
+  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdarg.h \
+  /usr/include/c++/12/map \
+  /usr/include/c++/12/bits/stl_tree.h \
+  /usr/include/c++/12/bits/stl_algobase.h \
+  /usr/include/c++/12/bits/functexcept.h \
+  /usr/include/c++/12/bits/exception_defines.h \
+  /usr/include/c++/12/bits/cpp_type_traits.h \
+  /usr/include/c++/12/ext/type_traits.h \
+  /usr/include/c++/12/ext/numeric_traits.h \
+  /usr/include/c++/12/bits/stl_pair.h \
+  /usr/include/c++/12/type_traits \
+  /usr/include/c++/12/bits/move.h \
+  /usr/include/c++/12/bits/utility.h \
+  /usr/include/c++/12/bits/stl_iterator_base_types.h \
+  /usr/include/c++/12/bits/stl_iterator_base_funcs.h \
+  /usr/include/c++/12/bits/concept_check.h \
+  /usr/include/c++/12/debug/assertions.h \
+  /usr/include/c++/12/bits/stl_iterator.h \
+  /usr/include/c++/12/bits/ptr_traits.h \
+  /usr/include/c++/12/debug/debug.h \
+  /usr/include/c++/12/bits/predefined_ops.h \
+  /usr/include/c++/12/bits/allocator.h \
+  /usr/include/x86_64-linux-gnu/c++/12/bits/c++allocator.h \
+  /usr/include/c++/12/bits/new_allocator.h \
+  /usr/include/c++/12/new \
+  /usr/include/c++/12/bits/exception.h \
   /usr/include/c++/12/bits/memoryfwd.h \
+  /usr/include/c++/12/bits/stl_function.h \
+  /usr/include/c++/12/backward/binders.h \
+  /usr/include/c++/12/ext/alloc_traits.h \
+  /usr/include/c++/12/bits/alloc_traits.h \
+  /usr/include/c++/12/bits/stl_construct.h \
+  /usr/include/c++/12/ext/aligned_buffer.h \
+  /usr/include/c++/12/bits/stl_map.h \
+  /usr/include/c++/12/initializer_list \
+  /usr/include/c++/12/tuple \
+  /usr/include/c++/12/bits/uses_allocator.h \
+  /usr/include/c++/12/bits/invoke.h \
+  /usr/include/c++/12/bits/stl_multimap.h \
+  /usr/include/c++/12/bits/range_access.h \
+  /usr/include/c++/12/bits/erase_if.h \
+  /usr/include/c++/12/string \
+  /usr/include/c++/12/bits/stringfwd.h \
   /usr/include/c++/12/bits/char_traits.h \
   /usr/include/c++/12/bits/postypes.h \
   /usr/include/c++/12/cwchar \
@@ -26,7 +67,6 @@ CMakeFiles/link.dir/link/log.cc.o: link/log.cc \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
   /usr/lib/gcc/x86_64-linux-gnu/12/include/stddef.h \
-  /usr/lib/gcc/x86_64-linux-gnu/12/include/stdarg.h \
   /usr/include/x86_64-linux-gnu/bits/wchar.h \
   /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
@@ -35,7 +75,6 @@ CMakeFiles/link.dir/link/log.cc.o: link/log.cc \
   /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
   /usr/include/x86_64-linux-gnu/bits/types/locale_t.h \
   /usr/include/x86_64-linux-gnu/bits/types/__locale_t.h \
-  /usr/include/c++/12/type_traits \
   /usr/include/c++/12/cstdint \
   /usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h \
   /usr/include/stdint.h \
@@ -44,15 +83,6 @@ CMakeFiles/link.dir/link/log.cc.o: link/log.cc \
   /usr/include/x86_64-linux-gnu/bits/time64.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-intn.h \
   /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
-  /usr/include/c++/12/bits/allocator.h \
-  /usr/include/x86_64-linux-gnu/c++/12/bits/c++allocator.h \
-  /usr/include/c++/12/bits/new_allocator.h \
-  /usr/include/c++/12/new \
-  /usr/include/c++/12/bits/exception.h \
-  /usr/include/c++/12/bits/functexcept.h \
-  /usr/include/c++/12/bits/exception_defines.h \
-  /usr/include/c++/12/bits/move.h \
-  /usr/include/c++/12/bits/cpp_type_traits.h \
   /usr/include/c++/12/bits/localefwd.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/c++locale.h \
   /usr/include/c++/12/clocale \
@@ -65,29 +95,8 @@ CMakeFiles/link.dir/link/log.cc.o: link/log.cc \
   /usr/include/x86_64-linux-gnu/bits/endianness.h \
   /usr/include/c++/12/bits/ostream_insert.h \
   /usr/include/c++/12/bits/cxxabi_forced.h \
-  /usr/include/c++/12/bits/stl_iterator_base_types.h \
-  /usr/include/c++/12/bits/stl_iterator_base_funcs.h \
-  /usr/include/c++/12/bits/concept_check.h \
-  /usr/include/c++/12/debug/assertions.h \
-  /usr/include/c++/12/bits/stl_iterator.h \
-  /usr/include/c++/12/ext/type_traits.h \
-  /usr/include/c++/12/bits/ptr_traits.h \
-  /usr/include/c++/12/bits/stl_function.h \
-  /usr/include/c++/12/backward/binders.h \
-  /usr/include/c++/12/ext/numeric_traits.h \
-  /usr/include/c++/12/bits/stl_algobase.h \
-  /usr/include/c++/12/bits/stl_pair.h \
-  /usr/include/c++/12/bits/utility.h \
-  /usr/include/c++/12/debug/debug.h \
-  /usr/include/c++/12/bits/predefined_ops.h \
   /usr/include/c++/12/bits/refwrap.h \
-  /usr/include/c++/12/bits/invoke.h \
-  /usr/include/c++/12/bits/range_access.h \
-  /usr/include/c++/12/initializer_list \
   /usr/include/c++/12/bits/basic_string.h \
-  /usr/include/c++/12/ext/alloc_traits.h \
-  /usr/include/c++/12/bits/alloc_traits.h \
-  /usr/include/c++/12/bits/stl_construct.h \
   /usr/include/c++/12/ext/string_conversions.h \
   /usr/include/c++/12/cstdlib \
   /usr/include/stdlib.h \
@@ -141,14 +150,11 @@ CMakeFiles/link.dir/link/log.cc.o: link/log.cc \
   /usr/include/c++/12/bits/stl_raw_storage_iter.h \
   /usr/include/c++/12/bits/align.h \
   /usr/include/c++/12/bit \
-  /usr/include/c++/12/bits/uses_allocator.h \
   /usr/include/c++/12/bits/unique_ptr.h \
-  /usr/include/c++/12/tuple \
   /usr/include/c++/12/bits/shared_ptr.h \
   /usr/include/c++/12/bits/shared_ptr_base.h \
   /usr/include/c++/12/typeinfo \
   /usr/include/c++/12/bits/allocated_ptr.h \
-  /usr/include/c++/12/ext/aligned_buffer.h \
   /usr/include/c++/12/ext/atomicity.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/gthr.h \
   /usr/include/x86_64-linux-gnu/c++/12/bits/gthr-default.h \
@@ -222,6 +228,7 @@ CMakeFiles/link.dir/link/log.cc.o: link/log.cc \
   /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
   /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
   /usr/include/linux/close_range.h \
+  link/singleton.h \
   /usr/include/boost/mpl/eval_if.hpp \
   /usr/include/boost/mpl/if.hpp \
   /usr/include/boost/mpl/aux_/value_wknd.hpp \
@@ -566,11 +573,6 @@ CMakeFiles/link.dir/link/log.cc.o: link/log.cc \
   /usr/include/boost/algorithm/string/constants.hpp \
   /usr/include/boost/algorithm/string/detail/finder.hpp \
   /usr/include/boost/algorithm/string/detail/predicate.hpp \
-  /usr/include/c++/12/map \
-  /usr/include/c++/12/bits/stl_tree.h \
-  /usr/include/c++/12/bits/stl_map.h \
-  /usr/include/c++/12/bits/stl_multimap.h \
-  /usr/include/c++/12/bits/erase_if.h \
   /usr/include/c++/12/functional \
   /usr/include/c++/12/bits/std_function.h
 
@@ -635,19 +637,9 @@ link/util.cc:
 
 /usr/include/c++/12/functional:
 
-/usr/include/c++/12/bits/stl_map.h:
-
-/usr/include/c++/12/bits/stl_tree.h:
-
-/usr/include/c++/12/map:
-
 /usr/include/boost/algorithm/string/detail/finder.hpp:
 
 /usr/include/boost/algorithm/string/constants.hpp:
-
-/usr/include/c++/12/bits/erase_if.h:
-
-/usr/include/boost/algorithm/string/find.hpp:
 
 /usr/include/c++/12/bits/locale_conv.h:
 
@@ -671,7 +663,15 @@ link/util.cc:
 
 /usr/include/boost/type_traits/detail/has_binary_operator.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
+/usr/include/boost/range/detail/safe_bool.hpp:
+
+/usr/include/boost/range/algorithm/equal.hpp:
+
+/usr/include/boost/iterator/iterator_adaptor.hpp:
+
+/usr/include/boost/iterator/reverse_iterator.hpp:
+
+/usr/include/boost/range/reverse_iterator.hpp:
 
 /usr/include/boost/mpl/aux_/config/adl.hpp:
 
@@ -693,10 +693,6 @@ link/util.cc:
 
 /usr/include/boost/type_traits/is_void.hpp:
 
-/usr/include/boost/config/detail/select_stdlib_config.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/byteswap.h:
-
 /usr/include/boost/mpl/aux_/preprocessed/gcc/bind.hpp:
 
 /usr/include/c++/12/bits/invoke.h:
@@ -717,9 +713,9 @@ link/util.cc:
 
 /usr/include/c++/12/bits/allocated_ptr.h:
 
-/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
+link/singleton.h:
 
-/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+/usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
 
 /usr/include/c++/12/bits/fstream.tcc:
 
@@ -777,10 +773,6 @@ link/util.cc:
 
 /usr/include/c++/12/bits/ios_base.h:
 
-/usr/include/boost/preprocessor/empty.hpp:
-
-/usr/include/c++/12/bits/stream_iterator.h:
-
 /usr/include/boost/mpl/aux_/config/integral.hpp:
 
 /usr/include/boost/concept/detail/concept_undef.hpp:
@@ -802,6 +794,8 @@ link/util.cc:
 /usr/include/boost/mpl/aux_/template_arity.hpp:
 
 /usr/include/x86_64-linux-gnu/sys/single_threaded.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
 
 /usr/include/x86_64-linux-gnu/bits/timex.h:
 
@@ -837,18 +831,6 @@ link/util.cc:
 
 /usr/include/c++/12/bits/shared_ptr_base.h:
 
-/usr/include/boost/mpl/aux_/na_fwd.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/select.h:
-
-/usr/include/boost/preprocessor/detail/is_binary.hpp:
-
-/usr/include/c++/12/bits/locale_facets.h:
-
-/usr/include/c++/12/tuple:
-
-/usr/include/c++/12/bits/functional_hash.h:
-
 /usr/include/c++/12/bits/unique_ptr.h:
 
 /usr/include/c++/12/iterator:
@@ -883,7 +865,77 @@ link/util.cc:
 
 /usr/include/boost/config/helper_macros.hpp:
 
+/usr/include/c++/12/map:
+
 /usr/include/x86_64-linux-gnu/bits/types/error_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
+
+/usr/include/boost/mpl/aux_/preprocessed/gcc/quote.hpp:
+
+/usr/include/linux/errno.h:
+
+/usr/include/c++/12/bits/stl_list.h:
+
+/usr/include/c++/12/bits/new_allocator.h:
+
+/usr/include/x86_64-linux-gnu/bits/errno.h:
+
+/usr/include/errno.h:
+
+/usr/include/x86_64-linux-gnu/c++/12/bits/error_constants.h:
+
+/usr/include/boost/type_traits/has_plus.hpp:
+
+/usr/include/x86_64-linux-gnu/c++/12/bits/gthr-default.h:
+
+/usr/include/x86_64-linux-gnu/c++/12/bits/cpu_defines.h:
+
+/usr/include/stdint.h:
+
+/usr/include/endian.h:
+
+/usr/include/c++/12/bits/predefined_ops.h:
+
+/usr/include/c++/12/bits/shared_ptr.h:
+
+/usr/include/boost/mpl/eval_if.hpp:
+
+/usr/include/boost/range/empty.hpp:
+
+/usr/include/boost/type_traits/add_rvalue_reference.hpp:
+
+/usr/include/c++/12/bits/range_access.h:
+
+/usr/include/x86_64-linux-gnu/bits/select.h:
+
+/usr/include/boost/preprocessor/detail/is_binary.hpp:
+
+/usr/include/c++/12/bits/locale_facets.h:
+
+/usr/include/c++/12/tuple:
+
+/usr/include/c++/12/bits/functional_hash.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/c++/12/bits/stl_map.h:
+
+/usr/include/boost/mpl/aux_/preprocessor/default_params.hpp:
+
+/usr/include/c++/12/bits/stl_construct.h:
+
+/usr/include/c++/12/ext/alloc_traits.h:
+
+/usr/include/asm-generic/errno-base.h:
+
+link/log.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/12/include/stddef.h:
+
+/usr/include/features-time64.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
 
 /usr/include/c++/12/cstddef:
 
@@ -895,27 +947,13 @@ link/util.cc:
 
 /usr/include/boost/type_traits/is_unsigned.hpp:
 
+/usr/include/boost/preprocessor/empty.hpp:
+
+/usr/include/c++/12/bits/stream_iterator.h:
+
+/usr/include/c++/12/bits/stl_tree.h:
+
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
-
-/usr/include/c++/12/bits/atomic_lockfree_defines.h:
-
-/usr/include/boost/preprocessor/array/elem.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/time64.h:
-
-/usr/include/boost/mpl/aux_/config/gpu.hpp:
-
-/usr/include/c++/12/ext/type_traits.h:
-
-/usr/include/x86_64-linux-gnu/bits/typesizes.h:
-
-/usr/include/c++/12/bits/stl_pair.h:
-
-/usr/include/c++/12/bits/cxxabi_init_exception.h:
-
-/usr/include/c++/12/bits/memoryfwd.h:
-
-/usr/include/c++/12/cstdint:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_core.h:
 
@@ -927,71 +965,85 @@ link/util.cc:
 
 /usr/include/boost/mpl/apply_fwd.hpp:
 
-/usr/include/stdio.h:
+/usr/include/c++/12/bits/alloc_traits.h:
 
-/usr/include/boost/mpl/int_fwd.hpp:
+/usr/include/boost/core/noncopyable.hpp:
 
-/usr/include/boost/mpl/aux_/config/ctps.hpp:
+/usr/include/x86_64-linux-gnu/c++/12/bits/ctype_inline.h:
 
-/usr/include/boost/mpl/void.hpp:
+/usr/include/x86_64-linux-gnu/asm/errno.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
+/usr/include/boost/next_prior.hpp:
 
-/usr/include/c++/12/backward/binders.h:
+/usr/include/boost/type_traits/add_lvalue_reference.hpp:
 
-/usr/include/stdint.h:
+/usr/include/boost/config/detail/suffix.hpp:
 
-/usr/include/c++/12/bits/predefined_ops.h:
+/usr/include/boost/type_traits/is_integral.hpp:
 
-/usr/include/endian.h:
+/usr/include/c++/12/bits/cxxabi_init_exception.h:
 
-/usr/include/x86_64-linux-gnu/bits/timesize.h:
+/usr/include/c++/12/bits/memoryfwd.h:
 
-/usr/include/c++/12/iosfwd:
+/usr/include/c++/12/bits/stl_pair.h:
+
+/usr/include/x86_64-linux-gnu/bits/typesizes.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+
+/usr/include/c++/12/cstdarg:
+
+/usr/include/c++/12/bits/concept_check.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h:
+
+/usr/include/boost/type_traits/is_pointer.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
+/usr/include/c++/12/iosfwd:
 
-/usr/include/c++/12/stdexcept:
+/usr/include/boost/type_traits/has_minus.hpp:
 
-/usr/include/c++/12/bits/atomic_base.h:
+/usr/include/c++/12/bits/stl_iterator.h:
+
+/usr/include/boost/type_traits/is_rvalue_reference.hpp:
 
 /usr/include/x86_64-linux-gnu/c++/12/bits/ctype_base.h:
 
-/usr/include/c++/12/cctype:
+/usr/include/c++/12/bits/atomic_base.h:
 
-/usr/include/features-time64.h:
+/usr/include/boost/mpl/aux_/na_fwd.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/types/locale_t.h:
+/usr/include/c++/12/bits/ptr_traits.h:
 
-/usr/include/asm-generic/errno-base.h:
+/usr/include/c++/12/bits/uniform_int_dist.h:
 
-link/log.h:
+/usr/include/boost/preprocessor/logical/not.hpp:
 
-/usr/lib/gcc/x86_64-linux-gnu/12/include/stddef.h:
+/usr/include/x86_64-linux-gnu/bits/timesize.h:
 
-/usr/include/boost/mpl/aux_/config/gcc.hpp:
+/usr/include/boost/mpl/aux_/adl_barrier.hpp:
 
-/usr/include/boost/mpl/aux_/config/ttp.hpp:
+/usr/include/c++/12/bits/ostream.tcc:
 
-/usr/include/c++/12/ext/alloc_traits.h:
+/usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/12/include/limits.h:
+
+/usr/include/c++/12/bits/exception.h:
 
 /usr/include/x86_64-linux-gnu/bits/wordsize.h:
 
+/usr/include/x86_64-linux-gnu/c++/12/bits/c++config.h:
+
 /usr/include/features.h:
 
-/usr/include/c++/12/memory:
+/usr/include/boost/config/detail/select_compiler_config.hpp:
 
-/usr/include/c++/12/type_traits:
+/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
 
-/usr/include/boost/range/distance.hpp:
-
-/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
-
-/usr/include/x86_64-linux-gnu/bits/local_lim.h:
-
-/usr/include/boost/mpl/aux_/lambda_arity_param.hpp:
+/usr/include/boost/mpl/apply.hpp:
 
 /usr/include/c++/12/version:
 
@@ -1005,61 +1057,33 @@ link/log.h:
 
 /usr/include/x86_64-linux-gnu/bits/wchar.h:
 
-/usr/include/boost/mpl/aux_/template_arity_fwd.hpp:
+/usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
-/usr/include/x86_64-linux-gnu/c++/12/bits/c++locale.h:
+/usr/include/boost/config/detail/select_stdlib_config.hpp:
 
-/usr/include/c++/12/bits/localefwd.h:
+/usr/include/boost/algorithm/string/find.hpp:
 
-/usr/include/boost/concept/assert.hpp:
+/usr/include/c++/12/bits/erase_if.h:
 
-/usr/include/boost/type_traits/detail/config.hpp:
+/usr/include/c++/12/cstdint:
 
-/usr/include/c++/12/bits/shared_ptr.h:
+/usr/include/c++/12/bits/stl_algobase.h:
 
-/usr/include/boost/mpl/eval_if.hpp:
+/usr/include/boost/range/size.hpp:
 
-/usr/include/boost/range/empty.hpp:
+/usr/include/boost/mpl/aux_/static_cast.hpp:
 
-/usr/include/boost/type_traits/add_rvalue_reference.hpp:
+/usr/include/ctype.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
+/usr/include/boost/mpl/aux_/config/bcc.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/types.h:
+/usr/include/boost/mpl/aux_/preprocessed/gcc/template_arity.hpp:
 
-/usr/include/c++/12/bits/ptr_traits.h:
+/usr/include/c++/12/bits/stl_function.h:
 
-/usr/include/c++/12/bits/uniform_int_dist.h:
+/usr/include/boost/preprocessor/repetition/enum_params.hpp:
 
-/usr/include/boost/preprocessor/logical/not.hpp:
-
-/usr/include/boost/mpl/aux_/adl_barrier.hpp:
-
-/usr/include/boost/config/workaround.hpp:
-
-/usr/include/c++/12/bits/locale_classes.tcc:
-
-/usr/include/c++/12/bits/exception.h:
-
-/usr/include/c++/12/bits/ostream.tcc:
-
-/usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/12/include/limits.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
-
-/usr/include/boost/mpl/aux_/preprocessed/gcc/quote.hpp:
-
-/usr/include/linux/errno.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
-
-/usr/include/boost/preprocessor/tuple/detail/is_single_return.hpp:
-
-/usr/include/boost/type_traits/is_volatile.hpp:
-
-/usr/include/c++/12/bits/move.h:
+/usr/include/c++/12/bits/uses_allocator.h:
 
 /usr/include/c++/12/ext/string_conversions.h:
 
@@ -1067,71 +1091,57 @@ link/log.h:
 
 /usr/include/boost/preprocessor/facilities/identity.hpp:
 
-/usr/include/c++/12/clocale:
+/usr/include/c++/12/bits/stl_iterator_base_types.h:
 
-/usr/include/boost/mpl/aux_/yes_no.hpp:
+/usr/include/boost/mpl/protect.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
+/usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
-/usr/include/x86_64-linux-gnu/c++/12/bits/error_constants.h:
+/usr/include/boost/preprocessor/seq/for_each_i.hpp:
 
-/usr/include/boost/type_traits/has_plus.hpp:
+/usr/include/wchar.h:
 
-/usr/include/x86_64-linux-gnu/c++/12/bits/gthr-default.h:
+/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
 
-/usr/include/x86_64-linux-gnu/c++/12/bits/cpu_defines.h:
+/usr/include/boost/mpl/arg_fwd.hpp:
 
-/usr/include/boost/config/detail/select_compiler_config.hpp:
+/usr/include/c++/12/memory:
 
-/usr/include/boost/mpl/apply.hpp:
+/usr/include/c++/12/type_traits:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
+/usr/include/boost/mpl/aux_/lambda_arity_param.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/include/boost/range/distance.hpp:
+
+/usr/include/c++/12/backward/binders.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
 
 link/log.cc:
 
 /usr/include/boost/mpl/bind_fwd.hpp:
 
-/usr/include/errno.h:
+/usr/include/boost/detail/workaround.hpp:
+
+/usr/include/c++/12/bits/functexcept.h:
+
+/usr/include/boost/mpl/aux_/config/ctps.hpp:
+
+/usr/include/boost/mpl/void.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/types/clock_t.h:
+
+/usr/include/c++/12/bits/move.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/cpu-set.h:
 
 /usr/include/boost/mpl/not.hpp:
 
-/usr/include/c++/12/bits/stl_tempbuf.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h:
-
-/usr/include/c++/12/bits/postypes.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/struct_timespec.h:
-
-/usr/include/boost/preprocessor/arithmetic/inc.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
-
-/usr/include/boost/mpl/bool.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
-
-/usr/include/x86_64-linux-gnu/asm/errno.h:
-
-/usr/include/x86_64-linux-gnu/c++/12/bits/ctype_inline.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h:
-
-/usr/include/boost/type_traits/is_pointer.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/types/wint_t.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
-
-/usr/include/boost/type_traits/conditional.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
-
-/usr/include/boost/algorithm/string/finder.hpp:
-
-/usr/include/c++/12/bits/algorithmfwd.h:
 
 /usr/include/c++/12/cwchar:
 
@@ -1143,33 +1153,111 @@ link/log.cc:
 
 /usr/include/boost/assert.hpp:
 
-/usr/include/c++/12/bits/alloc_traits.h:
+/usr/include/c++/12/clocale:
 
-/usr/include/boost/core/noncopyable.hpp:
+/usr/include/boost/mpl/aux_/yes_no.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
+/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
-/usr/include/boost/mpl/aux_/static_cast.hpp:
+/usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
 
-/usr/include/ctype.h:
+/usr/include/boost/preprocessor/tuple/detail/is_single_return.hpp:
 
-/usr/include/boost/mpl/aux_/config/bcc.hpp:
+/usr/include/boost/type_traits/is_volatile.hpp:
 
-/usr/include/boost/mpl/aux_/preprocessed/gcc/template_arity.hpp:
+/usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
-/usr/include/c++/12/bits/stl_algobase.h:
+/usr/include/boost/algorithm/string/finder.hpp:
 
-/usr/include/boost/range/size.hpp:
+/usr/include/c++/12/bits/algorithmfwd.h:
 
-/usr/include/wchar.h:
+/usr/include/x86_64-linux-gnu/bits/types/wint_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+/usr/include/boost/type_traits/conditional.hpp:
 
-/usr/include/boost/mpl/arg_fwd.hpp:
+/usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
+/usr/include/stdio.h:
 
-/usr/include/boost/preprocessor/seq/for_each_i.hpp:
+/usr/include/boost/mpl/int_fwd.hpp:
+
+/usr/include/c++/12/bits/stl_tempbuf.h:
+
+/usr/include/c++/12/bits/postypes.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/12/include/stdint.h:
+
+/usr/include/c++/12/bits/atomic_lockfree_defines.h:
+
+/usr/include/boost/preprocessor/array/elem.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/time64.h:
+
+/usr/include/c++/12/bits/locale_classes.tcc:
+
+/usr/include/boost/config/workaround.hpp:
+
+/usr/include/boost/mpl/aux_/config/gpu.hpp:
+
+/usr/include/c++/12/ext/type_traits.h:
+
+/usr/include/x86_64-linux-gnu/bits/types.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdint-intn.h:
+
+/usr/include/c++/12/debug/assertions.h:
+
+/usr/include/c++/12/bits/char_traits.h:
+
+/usr/include/x86_64-linux-gnu/bits/floatn.h:
+
+/usr/include/c++/12/bits/std_abs.h:
+
+/usr/include/boost/mpl/aux_/config/pp_counter.hpp:
+
+/usr/include/boost/preprocessor/seq/transform.hpp:
+
+/usr/include/unistd.h:
+
+/usr/include/x86_64-linux-gnu/sys/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/time_t.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
+
+/usr/include/boost/mpl/aux_/template_arity_fwd.hpp:
+
+/usr/include/x86_64-linux-gnu/c++/12/bits/c++locale.h:
+
+/usr/include/c++/12/stdexcept:
+
+/usr/include/c++/12/cctype:
+
+/usr/include/x86_64-linux-gnu/bits/setjmp.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
+
+/usr/include/boost/range/iterator_range_io.hpp:
+
+/usr/include/locale.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdint-uintn.h:
+
+/usr/include/boost/preprocessor/arithmetic/inc.hpp:
+
+/usr/include/boost/type_traits/detail/config.hpp:
+
+/usr/include/c++/12/bits/localefwd.h:
+
+/usr/include/boost/concept/assert.hpp:
+
+/usr/include/c++/12/bits/refwrap.h:
+
+/usr/include/boost/mpl/has_xxx.hpp:
+
+/usr/include/boost/preprocessor/detail/auto_rec.hpp:
+
+/usr/include/boost/type_traits/is_complete.hpp:
 
 /usr/include/boost/mpl/bool_fwd.hpp:
 
@@ -1193,76 +1281,6 @@ link/util.h:
 
 /usr/include/c++/12/bits/ostream_insert.h:
 
-/usr/include/boost/mpl/protect.hpp:
-
-/usr/include/c++/12/bits/stl_iterator_base_types.h:
-
-/usr/include/c++/12/bits/uses_allocator.h:
-
-/usr/include/x86_64-linux-gnu/c++/12/bits/c++config.h:
-
-/usr/include/c++/12/bits/concept_check.h:
-
-/usr/include/boost/config/detail/suffix.hpp:
-
-/usr/include/boost/type_traits/is_integral.hpp:
-
-/usr/include/c++/12/bits/char_traits.h:
-
-/usr/include/x86_64-linux-gnu/bits/floatn.h:
-
-/usr/include/c++/12/bits/std_abs.h:
-
-/usr/include/boost/mpl/aux_/config/pp_counter.hpp:
-
-/usr/include/boost/preprocessor/seq/transform.hpp:
-
-/usr/include/c++/12/debug/assertions.h:
-
-/usr/include/boost/type_traits/has_minus.hpp:
-
-/usr/include/c++/12/bits/stl_iterator.h:
-
-/usr/include/boost/type_traits/is_rvalue_reference.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/types/FILE.h:
-
-/usr/include/x86_64-linux-gnu/bits/types/time_t.h:
-
-/usr/include/boost/range/iterator_range_io.hpp:
-
-/usr/include/locale.h:
-
-/usr/include/x86_64-linux-gnu/bits/setjmp.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
-
-/usr/include/c++/12/bits/stl_function.h:
-
-/usr/include/boost/preprocessor/repetition/enum_params.hpp:
-
-/usr/include/c++/12/bits/refwrap.h:
-
-/usr/include/boost/mpl/has_xxx.hpp:
-
-/usr/include/boost/preprocessor/detail/auto_rec.hpp:
-
-/usr/include/boost/type_traits/is_complete.hpp:
-
-/usr/include/c++/12/bits/stl_construct.h:
-
-/usr/include/boost/detail/workaround.hpp:
-
-/usr/include/c++/12/bits/functexcept.h:
-
-/usr/include/c++/12/bits/range_access.h:
-
-/usr/include/boost/mpl/aux_/na.hpp:
-
-/usr/include/unistd.h:
-
-/usr/include/x86_64-linux-gnu/sys/select.h:
-
 /usr/include/stdc-predef.h:
 
 /usr/include/c++/12/bits/basic_string.h:
@@ -1276,8 +1294,6 @@ link/util.h:
 /usr/include/x86_64-linux-gnu/bits/waitflags.h:
 
 /usr/include/x86_64-linux-gnu/sys/types.h:
-
-/usr/include/boost/mpl/aux_/preprocessor/default_params.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
 
@@ -1295,11 +1311,15 @@ link/util.h:
 
 /usr/include/alloca.h:
 
-/usr/include/c++/12/bits/stl_list.h:
+/usr/include/boost/mpl/aux_/config/gcc.hpp:
 
-/usr/include/c++/12/bits/new_allocator.h:
+/usr/include/boost/mpl/aux_/config/ttp.hpp:
 
-/usr/include/x86_64-linux-gnu/bits/errno.h:
+/usr/include/boost/mpl/aux_/na.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
+
+/usr/include/boost/mpl/bool.hpp:
 
 /usr/include/boost/mpl/int.hpp:
 
@@ -1369,6 +1389,10 @@ link/util.h:
 
 /usr/include/boost/range/detail/sfinae.hpp:
 
+/usr/include/boost/range/detail/extract_optional_type.hpp:
+
+/usr/include/boost/mpl/aux_/preprocessor/def_params_tail.hpp:
+
 /usr/include/boost/preprocessor/control/while.hpp:
 
 /usr/include/c++/12/bits/stl_heap.h:
@@ -1403,8 +1427,6 @@ link/util.h:
 
 /usr/include/boost/type_traits/is_const.hpp:
 
-/usr/include/boost/iterator/iterator_adaptor.hpp:
-
 /usr/include/boost/preprocessor/detail/check.hpp:
 
 /usr/include/boost/preprocessor/logical/compl.hpp:
@@ -1423,6 +1445,10 @@ link/util.h:
 
 /usr/include/boost/preprocessor/variadic/elem.hpp:
 
+/usr/include/boost/detail/select_type.hpp:
+
+/usr/include/boost/mpl/aux_/lambda_support.hpp:
+
 /usr/include/boost/algorithm/string/predicate.hpp:
 
 /usr/include/boost/range/begin.hpp:
@@ -1438,10 +1464,6 @@ link/util.h:
 /usr/include/boost/mpl/aux_/nested_type_wknd.hpp:
 
 /usr/lib/gcc/x86_64-linux-gnu/12/include/syslimits.h:
-
-/usr/include/boost/mpl/aux_/preprocessor/def_params_tail.hpp:
-
-/usr/include/boost/range/detail/extract_optional_type.hpp:
 
 /usr/include/boost/mpl/aux_/config/arrays.hpp:
 
@@ -1516,8 +1538,6 @@ link/util.h:
 /usr/include/boost/mpl/placeholders.hpp:
 
 /usr/include/boost/iterator/iterator_facade.hpp:
-
-/usr/include/boost/range/algorithm/equal.hpp:
 
 /usr/include/boost/config/compiler/gcc.hpp:
 
@@ -1615,10 +1635,6 @@ link/util.h:
 
 /usr/include/boost/type_traits/remove_pointer.hpp:
 
-/usr/include/boost/mpl/aux_/lambda_support.hpp:
-
-/usr/include/boost/detail/select_type.hpp:
-
 /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
 
 /usr/include/boost/iterator/detail/enable_if.hpp:
@@ -1637,9 +1653,9 @@ link/util.h:
 
 /usr/include/boost/mpl/aux_/has_apply.hpp:
 
-/usr/include/c++/12/new:
-
 /usr/include/limits.h:
+
+/usr/include/c++/12/new:
 
 /usr/include/boost/mpl/aux_/config/has_apply.hpp:
 
@@ -1694,8 +1710,6 @@ link/util.h:
 /usr/include/boost/mpl/aux_/config/dtp.hpp:
 
 /usr/include/boost/preprocessor/seq/size.hpp:
-
-/usr/include/boost/iterator/reverse_iterator.hpp:
 
 /usr/include/boost/preprocessor/seq/detail/is_empty.hpp:
 
@@ -1768,11 +1782,3 @@ link/util.h:
 /usr/include/c++/12/istream:
 
 /usr/include/boost/range/rbegin.hpp:
-
-/usr/include/boost/range/reverse_iterator.hpp:
-
-/usr/include/boost/range/detail/safe_bool.hpp:
-
-/usr/include/boost/type_traits/add_lvalue_reference.hpp:
-
-/usr/include/boost/next_prior.hpp:

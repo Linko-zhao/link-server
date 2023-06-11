@@ -1,7 +1,8 @@
-#ifndef LOG_H
-#define LOG_H
+#ifndef __LINK_LOG_H__
+#define __LINK_LOG_H__
 
 #include <cstdarg>
+#include <map>
 #include <string>
 #include <memory>
 #include <list>
@@ -9,6 +10,7 @@
 #include <vector>
 #include <fstream>
 #include "util.h"
+#include "singleton.h"
 
 #define LINK_LOG_LEVEL(logger, level) \
     if (logger->getLevel() <= level) \
@@ -165,6 +167,7 @@ protected:
 class Logger 
     : public std::enable_shared_from_this<Logger>
 {
+friend class LoggerManager;
 public:
     typedef std::shared_ptr<Logger> ptr;
 
@@ -219,6 +222,19 @@ private:
 };
 
 
+class LoggerManager {
+public:
+    LoggerManager();
+    Logger::ptr getLogger(const std::string& name);
+
+    void init();
+
+private:
+    std::map<std::string, Logger::ptr> m_loggers;
+    Logger::ptr m_root;
+};
+
+typedef links::Singleton<LoggerManager> LoggerMgr;
 
 }
 
