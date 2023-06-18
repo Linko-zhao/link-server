@@ -1,1 +1,2 @@
-2023-06-11 12:59:20	DEBUG	test format debug dddd
+2023-06-18 10:40:31	DEBUG	test macro
+2023-06-18 10:40:31	DEBUG	test format debug dddd

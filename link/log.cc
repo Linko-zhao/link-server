@@ -441,6 +441,7 @@ Logger::ptr LoggerManager::getLogger(const std::string& name) {
     logger->m_root = m_root;
     m_loggers[name] = logger;
     return logger;
+    //return iter == m_loggers.end() ? m_root : iter->second;
 }
 
 }
