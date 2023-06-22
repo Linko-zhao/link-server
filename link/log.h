@@ -1,5 +1,5 @@
-#ifndef __LINK_LOG_H__
-#define __LINK_LOG_H__
+#ifndef __LINKS_LOG_H__
+#define __LINKclearS_LOG_H__
 
 #include <cstdarg>
 #include <map>
@@ -35,6 +35,8 @@
 #define LINK_LOG_FMT_WARN(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::WARN, fmt, __VA_ARGS__)
 #define LINK_LOG_FMT_ERROR(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::ERROR, fmt, __VA_ARGS__)
 #define LINK_LOG_FMT_FATAL(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::FATAL, fmt, __VA_ARGS__)
+
+#define LINK_GET_ROOT() links::LoggerMgr::GetInstance()->getRoot()
 
 namespace links {
 
@@ -228,6 +230,8 @@ public:
     Logger::ptr getLogger(const std::string& name);
 
     void init();
+
+    Logger::ptr getRoot() const { return m_root; }
 
 private:
     std::map<std::string, Logger::ptr> m_loggers;

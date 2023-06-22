@@ -1,5 +1,5 @@
-#ifndef __LINK_UTIL_H__
-#define __LINK_UTIL_H__
+#ifndef __LINKS_UTIL_H__
+#define __LINKS_UTIL_H__
 
 #include <cstdint>
 #include <unistd.h>
