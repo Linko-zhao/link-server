@@ -8,13 +8,12 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/links/Code/link-server/link/config.cc" "CMakeFiles/link.dir/link/config.cc.o" "gcc" "CMakeFiles/link.dir/link/config.cc.o.d"
-  "/home/links/Code/link-server/link/log.cc" "CMakeFiles/link.dir/link/log.cc.o" "gcc" "CMakeFiles/link.dir/link/log.cc.o.d"
-  "/home/links/Code/link-server/link/util.cc" "CMakeFiles/link.dir/link/util.cc.o" "gcc" "CMakeFiles/link.dir/link/util.cc.o.d"
+  "/home/links/Code/link-server/tests/test_config.cc" "CMakeFiles/test_config.dir/tests/test_config.cc.o" "gcc" "CMakeFiles/test_config.dir/tests/test_config.cc.o.d"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
+  "/home/links/Code/link-server/CMakeFiles/link.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

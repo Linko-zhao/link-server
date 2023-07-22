@@ -1,1 +1,1 @@
-/usr/bin/c++ -fPIC  -rdynamic -O0 -ggdb -std=c++11 -Wall -Wno-deprecated -Werror -Wno-unused-function -shared -Wl,-soname,liblink.so -o lib/liblink.so CMakeFiles/link.dir/link/util.cc.o CMakeFiles/link.dir/link/log.cc.o 
+/usr/bin/c++ -fPIC  -rdynamic -O0 -ggdb -std=c++11 -Wall -Wno-deprecated -Werror -Wno-unused-function -shared -Wl,-soname,liblink.so -o lib/liblink.so CMakeFiles/link.dir/link/util.cc.o CMakeFiles/link.dir/link/log.cc.o CMakeFiles/link.dir/link/config.cc.o 

@@ -1,5 +1,5 @@
 #ifndef __LINKS_LOG_H__
-#define __LINKclearS_LOG_H__
+#define __LINKS_LOG_H__
 
 #include <cstdarg>
 #include <map>
