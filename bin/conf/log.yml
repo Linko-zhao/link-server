@@ -17,3 +17,6 @@ logs:
 system:
   port: 9900
   value: 14
+  int_vec:
+    - 10
+    - 15

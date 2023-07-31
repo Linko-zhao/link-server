@@ -32,18 +32,63 @@ private:
     std::string m_description;
 };
 
+/*
+ * class F : source type
+ * class T : target type
+ */
+template<class F, class T>
+class LexicalCast {
+public:
+    T operator()(const F& v) {
+        return boost::lexical_cast<T>(v);
+    }
+};
+
 template<class T>
+class LexicalCast<std::string, std::vector<T> > {
+public:
+    std::vector<T> operator ()(const std::string& v) {
+        YAML::Node node = YAML::Load(v);
+        typename std::vector<T> vec;
+        std::stringstream ss;
+        for (size_t i = 0; i < node.size(); ++i) {
+            ss.str("");
+            ss << node[i];
+            vec.push_back(LexicalCast<std::string, T>()(ss.str()));
+        }
+        return vec;
+    }
+};
+
+template<class T>
+class LexicalCast<std::vector<T>, std::string> {
+public:
+    std::string operator ()(const std::vector<T>& v) {
+        YAML::Node node(YAML::NodeType::Sequence);
+        for (auto& i : v) {
+            node.push_back(LexicalCast<T, std::string>()(i));
+        }
+        std::stringstream ss;
+        ss << node;
+        return ss.str();
+    }
+};
+
+template<class T, class FormStr = LexicalCast<std::string, T>
+                , class ToStr = LexicalCast<T, std::string> >
 class ConfigVar : public ConfigVarBase {
 public:
     typedef std::shared_ptr<ConfigVar> ptr;
-    ConfigVar(const std::string& name, const T& default_value, const std::string& description = "")
+    ConfigVar(const std::string& name, const T& default_value
+            , const std::string& description = "")
         : ConfigVarBase(name, description)
         , m_val(default_value) {
     }
 
     std::string toString() override {
         try {
-            return boost::lexical_cast<std::string>(m_val);
+            //return boost::lexical_cast<std::string>(m_val);
+            return ToStr()(m_val);
         } catch (std::exception& e) {
             LINK_LOG_ERROR(LINK_GET_ROOT()) << "ConfigVar::toString exception" 
                 << e.what() << " convert: " << typeid(m_val).name() << "to string";
@@ -53,7 +98,8 @@ public:
 
     bool fromString(const std::string& val) override {
         try {
-            m_val =  boost::lexical_cast<T>(val);
+            //m_val =  boost::lexical_cast<T>(val);
+            setValue(FormStr()(val));
         } catch (std::exception& e) {
             LINK_LOG_ERROR(LINK_GET_ROOT()) << "ConfigVar::toString exception" 
                 << e.what() << " convert: string to " << typeid(m_val).name();
