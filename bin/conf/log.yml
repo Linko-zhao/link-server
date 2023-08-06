@@ -20,3 +20,11 @@ system:
   int_vec:
     - 10
     - 15
+  int_list: [13,14]
+  int_set: [70,50]
+  int_uset: [80,90]
+  str_int_map: 
+    f: 30
+  str_int_umap: 
+    k: 60
+    v: 32
