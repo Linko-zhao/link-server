@@ -28,3 +28,14 @@ system:
   str_int_umap: 
     k: 60
     v: 32
+
+class:
+  person:
+    name: test1
+    age: 19
+    sex: false
+  map:
+    test11:
+      name: test11
+      age: 23
+      sex: true

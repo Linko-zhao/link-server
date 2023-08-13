@@ -5,6 +5,9 @@
 links::ConfigVar<int>::ptr g_int_value_config = 
     links::Config::Lookup("system.port", (int)8080, "system port");
 
+//links::ConfigVar<float>::ptr g_int_valuex_config = 
+//    links::Config::Lookup("system.port", (float)8080, "system port");
+
 links::ConfigVar<float>::ptr g_float_value_config = 
     links::Config::Lookup("system.value", (float)19.1, "system value");
 
@@ -58,23 +61,23 @@ void test_config() {
     LINK_LOG_INFO(LINK_GET_ROOT()) << "before:" << g_int_value_config->getValue();
     LINK_LOG_INFO(LINK_GET_ROOT()) << "before:" << g_float_value_config->toString();
 
-#define XX(g_var, name, perfix) \
+#define XX(g_var, name, prefix) \
     { \
         auto& v = g_var->getValue(); \
         for (auto& i : v) { \
-            LINK_LOG_INFO(LINK_GET_ROOT()) << #perfix " " #name " : " << i; \
+            LINK_LOG_INFO(LINK_GET_ROOT()) << #prefix " " #name " : " << i; \
         } \
-        LINK_LOG_INFO(LINK_GET_ROOT()) << #perfix " " #name " yaml : \n" << g_var->toString(); \
+        LINK_LOG_INFO(LINK_GET_ROOT()) << #prefix " " #name " yaml : \n" << g_var->toString(); \
     }
 
-#define XX_M(g_var, name, perfix) \
+#define XX_M(g_var, name, prefix) \
     { \
         auto& v = g_var->getValue(); \
         for (auto& i : v) { \
-            LINK_LOG_INFO(LINK_GET_ROOT()) << #perfix " " #name " : {" \
+            LINK_LOG_INFO(LINK_GET_ROOT()) << #prefix " " #name " : {" \
                 << i.first << " - " << i.second << "}"; \
         } \
-        LINK_LOG_INFO(LINK_GET_ROOT()) << #perfix " " #name " yaml : \n" << g_var->toString(); \
+        LINK_LOG_INFO(LINK_GET_ROOT()) << #prefix " " #name " yaml : \n" << g_var->toString(); \
     }
 
     XX(g_int_vec_value_config, int_vec, before);
@@ -98,8 +101,92 @@ void test_config() {
     XX_M(g_str_int_umap_value_config, std_int_umap, after);
 }
 
+class Person {
+public:
+    Person() {};
+    std::string m_name;
+    int m_age = 0;
+    bool m_sex = 0;
+
+    std::string toString() const {
+        std::stringstream ss;
+        ss << "[Person name=" << m_name
+           << " age=" << m_age
+           << " sex=" << m_sex
+           << "]";
+        return ss.str();
+    }
+
+    bool operator==(const Person& oth) const {
+        return m_name == oth.m_name
+            && m_age == oth.m_age
+            && m_sex == oth.m_sex;
+    }
+};
+
+namespace links {
+template<>
+class LexicalCast<std::string, Person> {
+public:
+    Person operator ()(const std::string& v) {
+        YAML::Node node = YAML::Load(v);
+        Person val;
+        val.m_name = node["name"].as<std::string>();
+        val.m_age = node["age"].as<int>();
+        val.m_sex = node["sex"].as<bool>();
+        return val;
+    }
+};
+
+template<>
+class LexicalCast<Person, std::string> {
+public:
+    std::string operator ()(const Person& v) {
+        YAML::Node node(YAML::NodeType::Sequence);
+        node["name"] = v.m_name;
+        node["age"] = v.m_age;
+        node["sex"] = v.m_sex;
+        std::stringstream ss;
+        ss << node;
+        return ss.str();
+    }
+};
+
+}
+
+links::ConfigVar<Person>::ptr g_person = 
+    links::Config::Lookup("class.person", Person(), "system person");
+links::ConfigVar<std::map<std::string, Person> >::ptr g_person_map = 
+    links::Config::Lookup("class.map", std::map<std::string, Person>(), "system map");
+
+void test_class() {
+    LINK_LOG_INFO(LINK_GET_ROOT()) << "before" << g_person->getValue().toString() << " - " << g_person->toString();
+
+#define XX_CM(g_var, prefix) \
+    { \
+        auto m = g_var->getValue(); \
+        for (auto& i : m) { \
+            LINK_LOG_INFO(LINK_GET_ROOT()) << prefix << ": " << i.first << " - " << i.second.toString(); \
+        } \
+        LINK_LOG_INFO(LINK_GET_ROOT()) << prefix << ": size = " << m.size(); \
+    }
+
+    g_person->addListener(40, [](const Person& old_value, const Person& new_value){
+        LINK_LOG_INFO(LINK_GET_ROOT()) << "old value : " << old_value.toString()
+            << " new value : " << new_value.toString();
+    });
+
+    XX_CM(g_person_map, "class.map before ");
+    YAML::Node root = YAML::LoadFile("/home/links/Code/link-server/bin/conf/log.yml");
+    links::Config::LoadFromYaml(root);
+
+    LINK_LOG_INFO(LINK_GET_ROOT()) << "after" << g_person->getValue().toString() << " - " << g_person->toString();
+    XX_CM(g_person_map, "class.map after ");
+}
+
 int main(int argc, char** argv) {
     //test_yaml();
-    test_config();
+    //test_config();
+    test_class();
     return 0;
 }
