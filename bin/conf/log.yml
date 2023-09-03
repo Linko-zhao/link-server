@@ -2,40 +2,16 @@ logs:
   - name: root
     level: info
     formatter: '%d%T%m%n'
-    appender:
+    appenders:
       - type: FileLogAppender
-        file: log.txt
+        file: root.txt
       - type: StdoutLogAppender
   - name: system
     level: debug
     formatter: '%d%T%m%n'
-    appender:
+    appenders:
       - type: FileLogAppender
-        file: log.txt
+        file: system.txt
+        formatter: '%d%T[%p]%T%m%n'
       - type: StdoutLogAppender
 
-system:
-  port: 9900
-  value: 14
-  int_vec:
-    - 10
-    - 15
-  int_list: [13,14]
-  int_set: [70,50]
-  int_uset: [80,90]
-  str_int_map: 
-    f: 30
-  str_int_umap: 
-    k: 60
-    v: 32
-
-class:
-  person:
-    name: test1
-    age: 19
-    sex: false
-  map:
-    test11:
-      name: test11
-      age: 23
-      sex: true

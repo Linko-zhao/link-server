@@ -37,10 +37,12 @@
 #define LINK_LOG_FMT_FATAL(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::FATAL, fmt, __VA_ARGS__)
 
 #define LINK_GET_ROOT() links::LoggerMgr::GetInstance()->getRoot()
+#define LINK_LOG_NAME(name) links::LoggerMgr::GetInstance()->getLogger(name)
 
 namespace links {
 
 class Logger;
+class LoggerManager;
 
 class LogLevel {
 public:
@@ -155,6 +157,8 @@ public:
 
     virtual void log(std::shared_ptr<Logger> logger,  LogLevel::Level level, LogEvent::ptr event) = 0;
 
+    virtual std::string toYamlString() = 0;
+
     void setFormatter(LogFormatter::ptr val);
     LogFormatter::ptr getFormatter();
     void setLevel(LogLevel::Level level) { m_level = level; }
@@ -194,6 +198,8 @@ public:
     
     LogFormatter::ptr getFormatter();
 
+    std::string toYamlString();
+
 private:
     std::string m_name;
     LogLevel::Level m_level;
@@ -208,7 +214,7 @@ class StdoutLogAppender : public LogAppender {
 public:
     typedef std::shared_ptr<StdoutLogAppender> ptr;
     void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
-
+    std::string toYamlString() override;
 };
 
 class FileLogAppender : public LogAppender {
@@ -218,6 +224,7 @@ public:
     FileLogAppender(const std::string& filename);
     void log(Logger::ptr logger, LogLevel::Level level, LogEvent::ptr event) override;
     bool reopen();
+    std::string toYamlString() override;
 private:
     std::string m_filename;
     std::ofstream m_filestream;
@@ -232,6 +239,8 @@ public:
     void init();
 
     Logger::ptr getRoot() const { return m_root; }
+
+    std::string toYamlString();
 
 private:
     std::map<std::string, Logger::ptr> m_loggers;

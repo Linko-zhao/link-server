@@ -874,8 +874,11 @@ CMakeFiles/test_config.dir/tests/test_config.cc.o: tests/test_config.cc \
   /usr/include/c++/12/bits/fstream.tcc \
   link/util.h \
   link/singleton.h \
-  link/log.h
+  link/log.h \
+  /usr/include/c++/12/iostream
 
+
+/usr/include/c++/12/iostream:
 
 link/singleton.h:
 

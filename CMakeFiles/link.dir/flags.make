@@ -6,5 +6,11 @@ CXX_DEFINES = -Dlink_EXPORTS
 
 CXX_INCLUDES = -I/home/links/Code/link-server/.
 
-CXX_FLAGS =  -rdynamic -O0 -ggdb -std=c++11 -Wall -Wno-deprecated -Werror -Wno-unused-function -fPIC
+CXX_FLAGS =  -rdynamic -O0 -ggdb -std=c++11 -Wall -Wno-deprecated -Werror -Wno-unused-function -Wno-builtin-macro-redefined -fPIC
+
+# Custom defines: CMakeFiles/link.dir/link/util.cc.o_DEFINES = __FILE__="link/util.cc"
+
+# Custom defines: CMakeFiles/link.dir/link/log.cc.o_DEFINES = __FILE__="link/log.cc"
+
+# Custom defines: CMakeFiles/link.dir/link/config.cc.o_DEFINES = __FILE__="link/config.cc"
 

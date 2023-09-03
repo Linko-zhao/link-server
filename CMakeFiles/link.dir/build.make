@@ -76,43 +76,43 @@ CMakeFiles/link.dir/link/util.cc.o: CMakeFiles/link.dir/flags.make
 CMakeFiles/link.dir/link/util.cc.o: link/util.cc
 CMakeFiles/link.dir/link/util.cc.o: CMakeFiles/link.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/links/Code/link-server/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/link.dir/link/util.cc.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/link.dir/link/util.cc.o -MF CMakeFiles/link.dir/link/util.cc.o.d -o CMakeFiles/link.dir/link/util.cc.o -c /home/links/Code/link-server/link/util.cc
+	/usr/bin/c++ $(CXX_DEFINES) -D__FILE__=\"link/util.cc\" $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/link.dir/link/util.cc.o -MF CMakeFiles/link.dir/link/util.cc.o.d -o CMakeFiles/link.dir/link/util.cc.o -c /home/links/Code/link-server/link/util.cc
 
 CMakeFiles/link.dir/link/util.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/link.dir/link/util.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/links/Code/link-server/link/util.cc > CMakeFiles/link.dir/link/util.cc.i
+	/usr/bin/c++ $(CXX_DEFINES) -D__FILE__=\"link/util.cc\" $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/links/Code/link-server/link/util.cc > CMakeFiles/link.dir/link/util.cc.i
 
 CMakeFiles/link.dir/link/util.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/link.dir/link/util.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/links/Code/link-server/link/util.cc -o CMakeFiles/link.dir/link/util.cc.s
+	/usr/bin/c++ $(CXX_DEFINES) -D__FILE__=\"link/util.cc\" $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/links/Code/link-server/link/util.cc -o CMakeFiles/link.dir/link/util.cc.s
 
 CMakeFiles/link.dir/link/log.cc.o: CMakeFiles/link.dir/flags.make
 CMakeFiles/link.dir/link/log.cc.o: link/log.cc
 CMakeFiles/link.dir/link/log.cc.o: CMakeFiles/link.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/links/Code/link-server/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/link.dir/link/log.cc.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/link.dir/link/log.cc.o -MF CMakeFiles/link.dir/link/log.cc.o.d -o CMakeFiles/link.dir/link/log.cc.o -c /home/links/Code/link-server/link/log.cc
+	/usr/bin/c++ $(CXX_DEFINES) -D__FILE__=\"link/log.cc\" $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/link.dir/link/log.cc.o -MF CMakeFiles/link.dir/link/log.cc.o.d -o CMakeFiles/link.dir/link/log.cc.o -c /home/links/Code/link-server/link/log.cc
 
 CMakeFiles/link.dir/link/log.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/link.dir/link/log.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/links/Code/link-server/link/log.cc > CMakeFiles/link.dir/link/log.cc.i
+	/usr/bin/c++ $(CXX_DEFINES) -D__FILE__=\"link/log.cc\" $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/links/Code/link-server/link/log.cc > CMakeFiles/link.dir/link/log.cc.i
 
 CMakeFiles/link.dir/link/log.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/link.dir/link/log.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/links/Code/link-server/link/log.cc -o CMakeFiles/link.dir/link/log.cc.s
+	/usr/bin/c++ $(CXX_DEFINES) -D__FILE__=\"link/log.cc\" $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/links/Code/link-server/link/log.cc -o CMakeFiles/link.dir/link/log.cc.s
 
 CMakeFiles/link.dir/link/config.cc.o: CMakeFiles/link.dir/flags.make
 CMakeFiles/link.dir/link/config.cc.o: link/config.cc
 CMakeFiles/link.dir/link/config.cc.o: CMakeFiles/link.dir/compiler_depend.ts
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/links/Code/link-server/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/link.dir/link/config.cc.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/link.dir/link/config.cc.o -MF CMakeFiles/link.dir/link/config.cc.o.d -o CMakeFiles/link.dir/link/config.cc.o -c /home/links/Code/link-server/link/config.cc
+	/usr/bin/c++ $(CXX_DEFINES) -D__FILE__=\"link/config.cc\" $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/link.dir/link/config.cc.o -MF CMakeFiles/link.dir/link/config.cc.o.d -o CMakeFiles/link.dir/link/config.cc.o -c /home/links/Code/link-server/link/config.cc
 
 CMakeFiles/link.dir/link/config.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/link.dir/link/config.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/links/Code/link-server/link/config.cc > CMakeFiles/link.dir/link/config.cc.i
+	/usr/bin/c++ $(CXX_DEFINES) -D__FILE__=\"link/config.cc\" $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/links/Code/link-server/link/config.cc > CMakeFiles/link.dir/link/config.cc.i
 
 CMakeFiles/link.dir/link/config.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/link.dir/link/config.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/links/Code/link-server/link/config.cc -o CMakeFiles/link.dir/link/config.cc.s
+	/usr/bin/c++ $(CXX_DEFINES) -D__FILE__=\"link/config.cc\" $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/links/Code/link-server/link/config.cc -o CMakeFiles/link.dir/link/config.cc.s
 
 # Object files for target link
 link_OBJECTS = \

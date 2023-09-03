@@ -2,6 +2,8 @@
 #include "../link/log.h"
 #include <yaml-cpp/yaml.h>
 
+#include <iostream>
+
 links::ConfigVar<int>::ptr g_int_value_config = 
     links::Config::Lookup("system.port", (int)8080, "system port");
 
@@ -52,7 +54,7 @@ void print_yaml (const YAML::Node& node, int level) {
 }
 
 void test_yaml() {
-    YAML::Node root = YAML::LoadFile("/home/links/Code/link-server/bin/conf/log.yml");
+    YAML::Node root = YAML::LoadFile("/home/links/Code/link-server/bin/conf/test.yml");
     //LINK_LOG_INFO(LINK_GET_ROOT()) << root;
     print_yaml(root, 0);
 }
@@ -87,7 +89,7 @@ void test_config() {
     XX_M(g_str_int_map_value_config, str_int_map, before);
     XX_M(g_str_int_umap_value_config, std_int_umap, before);
 
-    YAML::Node root = YAML::LoadFile("/home/links/Code/link-server/bin/conf/log.yml");
+    YAML::Node root = YAML::LoadFile("/home/links/Code/link-server/bin/conf/test.yml");
     links::Config::LoadFromYaml(root);
 
     LINK_LOG_INFO(LINK_GET_ROOT()) << "after:" << g_int_value_config->getValue();
@@ -177,16 +179,32 @@ void test_class() {
     });
 
     XX_CM(g_person_map, "class.map before ");
-    YAML::Node root = YAML::LoadFile("/home/links/Code/link-server/bin/conf/log.yml");
+    YAML::Node root = YAML::LoadFile("/home/links/Code/link-server/bin/conf/test.yml");
     links::Config::LoadFromYaml(root);
 
     LINK_LOG_INFO(LINK_GET_ROOT()) << "after" << g_person->getValue().toString() << " - " << g_person->toString();
     XX_CM(g_person_map, "class.map after ");
 }
 
+void test_log() {
+    static links::Logger::ptr system_log = LINK_LOG_NAME("system");
+    LINK_LOG_INFO(system_log) << "hello system" << std::endl;
+    std::cout << links::LoggerMgr::GetInstance()->toYamlString() << std::endl;
+    YAML::Node root = YAML::LoadFile("/home/links/Code/link-server/bin/conf/log.yml");
+    links::Config::LoadFromYaml(root);
+    std::cout << "============================" << std::endl;
+    std::cout << links::LoggerMgr::GetInstance()->toYamlString() << std::endl;
+    LINK_LOG_INFO(system_log) << "hello system" << std::endl;
+    system_log->setFormatter("%d - %m%n");
+    //std::cout << "============================" << std::endl;
+    //std::cout << links::LoggerMgr::GetInstance()->toYamlString() << std::endl;
+    LINK_LOG_INFO(system_log) << "hello system" << std::endl;
+}
+
 int main(int argc, char** argv) {
     //test_yaml();
     //test_config();
-    test_class();
+    //test_class();
+    test_log();
     return 0;
 }
