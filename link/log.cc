@@ -224,6 +224,7 @@ public:
     }
 };
 
+
 Logger::Logger(const std::string& name)
     : m_name(name)
     , m_level(LogLevel::DEBUG) {
@@ -266,7 +267,6 @@ void Logger::fatal(LogEvent::ptr event) {
 
 void Logger::addAppender(LogAppender::ptr appender) {
     if (!appender->getFormatter()) {
-        //appender->setFormatter(m_formatter);
         appender->m_formatter = m_formatter;
     }
     m_appenders.push_back(appender);
@@ -662,7 +662,7 @@ struct LogIniter {
     LogIniter() {
         g_log_defines->addListener(0xF1E231, [](const std::set<LogDefine>& old_value,
                     const std::set<LogDefine>& new_value){
-            LINK_LOG_INFO(LINK_GET_ROOT()) << "on_logger_conf_changed";
+            LINK_LOG_INFO(LINK_LOG_ROOT()) << "on_logger_conf_changed";
             for (auto& i : new_value) {
                 auto it = old_value.find(i);
                 links::Logger::ptr logger;
@@ -721,7 +721,6 @@ struct LogIniter {
 
 static LogIniter __log_init;
 
-void LoggerManager::init() {
+void LoggerManager::init() {}
 
-}
 }

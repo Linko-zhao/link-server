@@ -253,7 +253,7 @@ public:
             //return boost::lexical_cast<std::string>(m_val);
             return ToStr()(m_val);
         } catch (std::exception& e) {
-            LINK_LOG_ERROR(LINK_GET_ROOT()) << "ConfigVar::toString exception" 
+            LINK_LOG_ERROR(LINK_LOG_ROOT()) << "ConfigVar::toString exception" 
                 << e.what() << " convert: " << typeid(m_val).name() << "to string";
         }
         return "";
@@ -264,7 +264,7 @@ public:
             //m_val =  boost::lexical_cast<T>(val);
             setValue(FormStr()(val));
         } catch (std::exception& e) {
-            LINK_LOG_ERROR(LINK_GET_ROOT()) << "ConfigVar::toString exception" 
+            LINK_LOG_ERROR(LINK_LOG_ROOT()) << "ConfigVar::toString exception" 
                 << e.what() << " convert: string to " << typeid(m_val).name();
         }
         return false;
@@ -316,10 +316,10 @@ public:
         if (it != GetDatas().end()) {
             auto tmp = std::dynamic_pointer_cast<ConfigVar<T> >(it->second);
             if (tmp) {
-                LINK_LOG_INFO(LINK_GET_ROOT()) << "Lookup name=" << name << " exists";
+                LINK_LOG_INFO(LINK_LOG_ROOT()) << "Lookup name=" << name << " exists";
                 return tmp;
             } else {
-                LINK_LOG_ERROR(LINK_GET_ROOT()) << "Lookup name=" << name << " exists but type not"
+                LINK_LOG_ERROR(LINK_LOG_ROOT()) << "Lookup name=" << name << " exists but type not"
                     << typeid(T).name() << " real_type = " << it->second->getTypeName()
                     << " " << it->second->toString();
                 return nullptr;
@@ -328,7 +328,7 @@ public:
 
         if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyz._0123456789") 
                 != std::string::npos) {
-            LINK_LOG_ERROR(LINK_GET_ROOT()) << "Lookup name invalid:" << name;
+            LINK_LOG_ERROR(LINK_LOG_ROOT()) << "Lookup name invalid:" << name;
             throw std::invalid_argument(name);
         }
 

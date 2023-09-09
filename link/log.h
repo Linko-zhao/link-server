@@ -36,7 +36,7 @@
 #define LINK_LOG_FMT_ERROR(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::ERROR, fmt, __VA_ARGS__)
 #define LINK_LOG_FMT_FATAL(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::FATAL, fmt, __VA_ARGS__)
 
-#define LINK_GET_ROOT() links::LoggerMgr::GetInstance()->getRoot()
+#define LINK_LOG_ROOT() links::LoggerMgr::GetInstance()->getRoot()
 #define LINK_LOG_NAME(name) links::LoggerMgr::GetInstance()->getLogger(name)
 
 namespace links {
@@ -173,7 +173,7 @@ protected:
 class Logger 
     : public std::enable_shared_from_this<Logger>
 {
-friend class LoggerManager;
+    friend class LoggerManager;
 public:
     typedef std::shared_ptr<Logger> ptr;
 

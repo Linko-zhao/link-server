@@ -12,7 +12,7 @@ static void ListAllMember(const std::string& prefix,
                           std::list<std::pair<std::string, const YAML::Node> >& output) {
     if (prefix.find_first_not_of("abcdefghijklmnopqrstuvwxyz._0123456789")
             != std::string::npos) {
-        LINK_LOG_ERROR(LINK_GET_ROOT()) << "Config invalid name: " << prefix << " : " << node;
+        LINK_LOG_ERROR(LINK_LOG_ROOT()) << "Config invalid name: " << prefix << " : " << node;
         return;
     }
     output.push_back(std::make_pair(prefix, node));
