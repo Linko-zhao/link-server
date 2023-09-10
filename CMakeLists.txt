@@ -10,26 +10,39 @@ include_directories(.)
 include_directories(/usr/local/include)
 link_libraries(/usr/local/lib)
 
-find_library(YAMLCPP yaml-cpp)
-
 set(LIB_SRC
     link/util.cc
     link/log.cc
     link/config.cc
+    link/thread.cc
     )
 
 add_library(link SHARED ${LIB_SRC})
 force_redefine_file_macro_for_sources(link)
 
+find_library(YAMLCPP yaml-cpp)
+find_library(PTHREAD pthread)
+
+set(LIBS
+    link
+    pthread
+    yaml-cpp
+    )
+
 add_executable(test tests/test.cc)
 add_dependencies(test link)
 force_redefine_file_macro_for_sources(test)
-target_link_libraries(test link ${YAMLCPP})
+target_link_libraries(test ${LIBS})
 
 add_executable(test_config tests/test_config.cc)
 add_dependencies(test_config link)
 force_redefine_file_macro_for_sources(test_config)
-target_link_libraries(test_config link ${YAMLCPP})
+target_link_libraries(test_config ${LIBS})
+
+add_executable(test_thread tests/test_thread.cc)
+add_dependencies(test_thread link)
+force_redefine_file_macro_for_sources(test_thread)
+target_link_libraries(test_thread ${LIBS})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

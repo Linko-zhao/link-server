@@ -3,8 +3,7 @@
 namespace links {
 
 pid_t GetThreadId() {
-    //return syscall(1001);
-    return 1001;
+    return syscall(SYS_gettid);
 }
 
 uint32_t GetFiberId() {

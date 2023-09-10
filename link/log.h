@@ -11,12 +11,13 @@
 #include <fstream>
 #include "util.h"
 #include "singleton.h"
+#include "thread.h"
 
 #define LINK_LOG_LEVEL(logger, level) \
     if (logger->getLevel() <= level) \
         links::LogEventWrap(links::LogEvent::ptr(new links::LogEvent(logger, level, \
                         __FILE__, __LINE__, 0, links::GetThreadId(), links::GetFiberId(), \
-                        time(0), "TestName"))).getSS()
+                        time(0), links::Thread::GetName()))).getSS()
 
 #define LINK_LOG_DEBUG(logger) LINK_LOG_LEVEL(logger, links::LogLevel::DEBUG)
 #define LINK_LOG_INFO(logger) LINK_LOG_LEVEL(logger, links::LogLevel::INFO)
@@ -28,7 +29,7 @@
     if (logger->getLevel() <= level) \
         links::LogEventWrap(links::LogEvent::ptr(new links::LogEvent(logger, level, \
                         __FILE__, __LINE__, 0, links::GetThreadId(), links::GetFiberId(), \
-                        time(0), "TestName"))).getEvent()->format(fmt, __VA_ARGS__)
+                        time(0), links::Thread::GetName()))).getEvent()->format(fmt, __VA_ARGS__)
 
 #define LINK_LOG_FMT_DEBUG(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::DEBUG, fmt, __VA_ARGS__)
 #define LINK_LOG_FMT_INFO(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::INFO, fmt, __VA_ARGS__)
