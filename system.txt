@@ -1,4 +1,0 @@
-2023-09-09 11:01:47	[INFO]	hello system
-
-2023-09-09 11:01:47	[INFO]	hello system
-

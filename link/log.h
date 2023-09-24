@@ -167,14 +167,13 @@ public:
 protected:
     LogLevel::Level m_level = LogLevel::DEBUG;
     bool m_hasFormatter = false;
+    Mutex m_mutex;
     LogFormatter::ptr m_formatter;
 };
 
 
-class Logger 
-    : public std::enable_shared_from_this<Logger>
-{
-    friend class LoggerManager;
+class Logger : public std::enable_shared_from_this<Logger> {
+friend class LoggerManager;
 public:
     typedef std::shared_ptr<Logger> ptr;
 
@@ -204,7 +203,7 @@ public:
 private:
     std::string m_name;
     LogLevel::Level m_level;
-
+    Mutex m_mutex;
     std::list<LogAppender::ptr> m_appenders;
     LogFormatter::ptr m_formatter;
     Logger::ptr m_root;
@@ -246,6 +245,7 @@ public:
 private:
     std::map<std::string, Logger::ptr> m_loggers;
     Logger::ptr m_root;
+    Mutex m_mutex;
 };
 
 typedef links::Singleton<LoggerManager> LoggerMgr;
