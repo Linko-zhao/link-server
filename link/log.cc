@@ -675,7 +675,7 @@ links::ConfigVar<std::set<LogDefine> >::ptr g_log_defines =
 
 struct LogIniter {
     LogIniter() {
-        g_log_defines->addListener(0xF1E231, [](const std::set<LogDefine>& old_value,
+        g_log_defines->addListener([](const std::set<LogDefine>& old_value,
                     const std::set<LogDefine>& new_value){
             LINK_LOG_INFO(LINK_LOG_ROOT()) << "on_logger_conf_changed";
             for (auto& i : new_value) {
