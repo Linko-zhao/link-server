@@ -8,13 +8,14 @@ set(CMAKE_CXX_FLAGS "$ENV{CXXFLAGS} -rdynamic -O0 -ggdb -std=c++11 -Wall -Wno-de
 
 include_directories(.)
 include_directories(/usr/local/include)
-link_libraries(/usr/local/lib)
+link_directories(/usr/local/lib)
 
 set(LIB_SRC
-    link/util.cc
-    link/log.cc
     link/config.cc
+    link/fiber.cc
+    link/log.cc
     link/thread.cc
+    link/util.cc
     )
 
 add_library(link SHARED ${LIB_SRC})
@@ -43,6 +44,16 @@ add_executable(test_thread tests/test_thread.cc)
 add_dependencies(test_thread link)
 force_redefine_file_macro_for_sources(test_thread)
 target_link_libraries(test_thread ${LIBS})
+
+add_executable(test_util tests/test_util.cc)
+add_dependencies(test_util link)
+force_redefine_file_macro_for_sources(test_util)
+target_link_libraries(test_util ${LIBS})
+
+add_executable(test_fiber tests/test_fiber.cc)
+add_dependencies(test_fiber link)
+force_redefine_file_macro_for_sources(test_fiber)
+target_link_libraries(test_fiber ${LIBS})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
