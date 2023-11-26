@@ -166,6 +166,7 @@ void Fiber::MainFunc() {
         LINK_LOG_ERROR(g_logger) << "Fiber Except";
     }
 
+    //cur->swapOut();
     auto raw_ptr = cur.get();
     cur.reset();
     raw_ptr->swapOut();

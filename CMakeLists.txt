@@ -14,6 +14,7 @@ set(LIB_SRC
     link/config.cc
     link/fiber.cc
     link/log.cc
+    link/mutex.cc
     link/thread.cc
     link/util.cc
     )

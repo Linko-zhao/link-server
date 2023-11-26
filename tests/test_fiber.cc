@@ -27,15 +27,16 @@ void test_fiber() {
 int main(int argc, char** argv) {
     links::Thread::SetName("main");
 
-    std::vector<links::Thread::ptr> thrs;
-    for (int i = 0; i < 3; ++i) {
-        thrs.push_back(links::Thread::ptr(
-                    new links::Thread(&test_fiber, "name_" + std::to_string(i))
-                    )); 
-    }
+    test_fiber();
+    //std::vector<links::Thread::ptr> thrs;
+    //for (int i = 0; i < 3; ++i) {
+    //    thrs.push_back(links::Thread::ptr(
+    //                new links::Thread(&test_fiber, "name_" + std::to_string(i))
+    //                )); 
+    //}
 
-    for (auto i : thrs) {
-        i->join();
-    }
+    //for (auto i : thrs) {
+    //    i->join();
+    //}
     return 0;
 }
