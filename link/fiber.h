@@ -8,7 +8,10 @@
 
 namespace links {
 
+class Scheduler;
+
 class Fiber : public std::enable_shared_from_this<Fiber> {
+friend class Scheduler;
 public:
     typedef std::shared_ptr<Fiber> ptr;
 
@@ -28,6 +31,8 @@ public:
     ~Fiber();
 
     void reset(std::function<void()> cb);
+    void call();
+    void back();
     //swap to current fiber implement
     void swapIn();
     //swap to background implement

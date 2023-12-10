@@ -2,6 +2,7 @@
 #include "config.h"
 #include "macro.h"
 #include "log.h"
+#include "scheduler.h"
 #include <atomic>
 
 namespace links {
@@ -73,7 +74,8 @@ Fiber::Fiber(std::function<void()> cb, size_t stacksize)
 Fiber::~Fiber() {
     --s_fiber_count;
     if (m_stack) {
-        LINK_ASSERT(m_state == TERM || m_state == INIT);
+        LINK_LOG_INFO(g_logger) << "Fiber id:" << m_id << " m_state:" << m_state;
+        LINK_ASSERT(m_state == TERM || m_state == EXCEPT || m_state == INIT);
         StackAllocator::Dealloc(m_stack, m_stacksize);
     } else {
         LINK_ASSERT(!m_cb);
@@ -103,7 +105,8 @@ void Fiber::reset(std::function<void()> cb) {
     makecontext(&m_ctx, &Fiber::MainFunc, 0);
     m_state = INIT;
 }
-void Fiber::swapIn() {
+
+void Fiber::call() {
     SetThis(this);
     LINK_ASSERT(m_state != EXEC);
     m_state = EXEC;
@@ -113,11 +116,37 @@ void Fiber::swapIn() {
     }
 }
 
-void Fiber::swapOut() {
+void Fiber::back() {
     SetThis(t_threadFiber.get());
 
     if (swapcontext(&m_ctx, &t_threadFiber->m_ctx)) {
         LINK_ASSERT2(false, "swapcontext");
+    }
+}
+
+void Fiber::swapIn() {
+    SetThis(this);
+    LINK_ASSERT(m_state != EXEC);
+    m_state = EXEC;
+    
+    if (swapcontext(&Scheduler::GetMainFiber()->m_ctx, &m_ctx)) {
+        LINK_ASSERT2(false, "swapcontext");
+    }
+}
+
+void Fiber::swapOut() {
+    if (t_fiber != Scheduler::GetMainFiber()) {
+        SetThis(Scheduler::GetMainFiber());
+
+        if (swapcontext(&m_ctx, &Scheduler::GetMainFiber()->m_ctx)) {
+            LINK_ASSERT2(false, "swapcontext");
+        }
+    } else {
+        SetThis(t_threadFiber.get());
+
+        if (swapcontext(&m_ctx, &t_threadFiber->m_ctx)) {
+            LINK_ASSERT2(false, "swapcontext");
+        }   
     }
 }
 
@@ -160,16 +189,24 @@ void Fiber::MainFunc() {
         cur->m_state = TERM;
     } catch (std::exception& ex) {
         cur->m_state = EXCEPT;
-        LINK_LOG_ERROR(g_logger) << "Fiber Except: " << ex.what();
+        LINK_LOG_ERROR(g_logger) << "Fiber Except: " << ex.what() 
+            << " fiber_id:" << cur->getId()
+            << std::endl 
+            << links::BacktraceToString();
     } catch (...) {
         cur->m_state = EXCEPT;
-        LINK_LOG_ERROR(g_logger) << "Fiber Except";
+        LINK_LOG_ERROR(g_logger) << "Fiber Except"
+            << " fiber_id:" << cur->getId()
+            << std::endl 
+            << links::BacktraceToString();
     }
 
     //cur->swapOut();
     auto raw_ptr = cur.get();
     cur.reset();
     raw_ptr->swapOut();
+
+    LINK_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->getId()));
 }
 
 }

@@ -15,6 +15,7 @@ set(LIB_SRC
     link/fiber.cc
     link/log.cc
     link/mutex.cc
+    link/scheduler.cc
     link/thread.cc
     link/util.cc
     )
@@ -55,6 +56,11 @@ add_executable(test_fiber tests/test_fiber.cc)
 add_dependencies(test_fiber link)
 force_redefine_file_macro_for_sources(test_fiber)
 target_link_libraries(test_fiber ${LIBS})
+
+add_executable(test_scheduler tests/test_scheduler.cc)
+add_dependencies(test_scheduler link)
+force_redefine_file_macro_for_sources(test_scheduler)
+target_link_libraries(test_scheduler ${LIBS})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
