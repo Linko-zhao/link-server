@@ -47,6 +47,7 @@ Fiber* Scheduler::GetMainFiber() {
 }
 
 void Scheduler::start() {
+    LINK_LOG_DEBUG(g_logger) << "start";
     MutexType::Lock lock(m_mutex);
     if (!m_stopping) {
         return;
@@ -135,7 +136,7 @@ void Scheduler::setThis() {
 }
 
 void Scheduler::run() {
-    LINK_LOG_INFO(g_logger) << "run";
+    LINK_LOG_DEBUG(g_logger) << "run";
     setThis();
     if (links::GetThreadId() != m_rootThread) {
         t_fiber = Fiber::GetThis().get();

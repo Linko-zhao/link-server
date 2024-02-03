@@ -13,7 +13,7 @@ void test_fiber() {
 }
 
 int main(int argc, char** argv) {
-    links::Scheduler sc(3, false, "test");
+    links::Scheduler sc(1, false, "test");
     sc.start();
     LINK_LOG_INFO(g_logger) << "schedule";
     sc.schedule(&test_fiber);
