@@ -15,11 +15,14 @@ void test_fiber() {
         links::Fiber::GetThis();
         LINK_LOG_INFO(g_logger) << "main begin";
         links::Fiber::ptr fiber(new links::Fiber(run_in_fiber));
-        fiber->swapIn();
+        //fiber->swapIn();
+        fiber->call();
         LINK_LOG_INFO(g_logger) << "main after swapIn";
-        fiber->swapIn();
+        //fiber->swapIn();
+        fiber->call();
         LINK_LOG_INFO(g_logger) << "main after end";
-        fiber->swapIn();
+        //fiber->swapIn();
+        fiber->call();
     }
     LINK_LOG_INFO(g_logger) << "main after end2";
 }
