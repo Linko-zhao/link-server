@@ -25,6 +25,10 @@ private:
             std::function<void()> cb;       //事件的回调函数
         };
 
+        EventContext& getContext(Event event);
+        void resetContext(EventContext& ctx);
+        void triggeredEvent(Event event);
+
         EventContext read;
         EventContext write;
         int fd = 0;             //事件关联的句柄
@@ -36,7 +40,8 @@ public:
     IOManager(size_t threads = 1, bool use_caller = true, const std::string& name = "");
     ~IOManager();
 
-    int addEvent(int fd, Event event);
+    //0 success, -1 error
+    int addEvent(int fd, Event event, std::function<void()> cb = nullptr);
     bool delEvent(int fd, Event event);
     bool cancelEvent(int fd, Event event);
 
