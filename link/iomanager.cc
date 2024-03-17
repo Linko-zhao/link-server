@@ -49,7 +49,7 @@ IOManager::IOManager(size_t threads, bool use_caller, const std::string& name)
     LINK_ASSERT(m_epfd > 0);
 
     int rt = pipe(m_tickleFds);
-    LINK_ASSERT(rt);
+    LINK_ASSERT(!rt);
 
     epoll_event event;
     memset(&event, 0, sizeof(epoll_event));
@@ -57,7 +57,7 @@ IOManager::IOManager(size_t threads, bool use_caller, const std::string& name)
     event.data.fd = m_tickleFds[0];
 
     rt = fcntl(m_tickleFds[0], F_SETFL, O_NONBLOCK);
-    LINK_ASSERT(rt);
+    LINK_ASSERT(!rt);
 
     contextResize(32);
 
@@ -94,7 +94,7 @@ void IOManager::contextResize(size_t size) {
 int IOManager::addEvent(int fd, Event event, std::function<void()> cb) {
     FdContext* fd_ctx = nullptr;
     RWMutexType::ReadLock lock(m_mutex);
-    if (m_fdContexts.size() > fd) {
+    if (m_fdContexts.size() > (size_t)fd) {
         fd_ctx = m_fdContexts[fd];
         lock.unlock();
     } else {
@@ -145,7 +145,7 @@ int IOManager::addEvent(int fd, Event event, std::function<void()> cb) {
 
 bool IOManager::delEvent(int fd, Event event) {
     RWMutexType::ReadLock lock(m_mutex);
-    if (m_fdContexts.size() <= fd) {
+    if (m_fdContexts.size() <= (size_t)fd) {
         return false;
     }
     FdContext* fd_ctx = m_fdContexts[fd];
@@ -180,7 +180,7 @@ bool IOManager::delEvent(int fd, Event event) {
 
 bool IOManager::cancelEvent(int fd, Event event) {
     RWMutexType::ReadLock lock(m_mutex);
-    if (m_fdContexts.size() <= fd) {
+    if (m_fdContexts.size() <= (size_t)fd) {
         return false;
     }
     FdContext* fd_ctx = m_fdContexts[fd];
@@ -213,7 +213,7 @@ bool IOManager::cancelEvent(int fd, Event event) {
 
 bool IOManager::cancelAll(int fd) {
     RWMutexType::ReadLock lock(m_mutex);
-    if (m_fdContexts.size() <= fd) {
+    if (m_fdContexts.size() <= (size_t)fd) {
         return false;
     }
     FdContext* fd_ctx = m_fdContexts[fd];
@@ -255,6 +255,101 @@ bool IOManager::cancelAll(int fd) {
 
 IOManager* IOManager::GetThis() {
     return dynamic_cast<IOManager*>(Scheduler::GetThis());
+}
+
+
+void IOManager::tickle() {
+    if (!hasIdleThreads()) {
+        return;
+    }
+    int rt = write(m_tickleFds[1], "T", 1);
+    LINK_ASSERT(rt == 1);
+} 
+
+
+bool IOManager::stopping() {
+    return Scheduler::stopping() && m_pendingEventCount == 0;
+}
+
+
+void IOManager::idle() {
+    epoll_event* events = new epoll_event[64]();
+    std::shared_ptr<epoll_event> shared_events(events, [](epoll_event* ptr){
+        delete [] ptr;
+    });
+
+    while (true) {
+        if (stopping()) {
+            LINK_LOG_INFO(g_logger) << "name=" << getName() << " idle stopping exit";
+            break;
+        }
+
+        int rt = 0;
+        do {
+            static const int MAX_TIMEOUT = 5000;
+            rt = epoll_wait(m_epfd, events, 64, MAX_TIMEOUT);
+
+            if (rt < 0 && errno == EINTR) {
+                
+            } else {
+                break;
+            }
+        } while (true);
+
+        for (int i = 0; i < rt; ++i) {
+            epoll_event& event = events[i];
+            if (event.data.fd == m_tickleFds[0]) {
+                uint8_t dummy;
+                while (read(m_tickleFds[0], &dummy, 1) == 1) ;
+                continue;
+            }
+
+            FdContext* fd_ctx = (FdContext*)event.data.ptr;
+            FdContext::MutexType::Lock lock(fd_ctx->mutex);
+            if (event.events & (EPOLLERR | EPOLLHUP)) {
+                event.events |= EPOLLIN | EPOLLOUT;
+            }
+            int real_events = NONE;
+            if (event.events & EPOLLIN) {
+                real_events |= READ;
+            }
+            if (event.events & EPOLLOUT) {
+                real_events |= WRITE;
+            }
+
+            if ((fd_ctx->events & real_events) == NONE) {
+                continue;
+            }
+
+            int left_events = (fd_ctx->events & ~real_events);
+            int op = left_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
+            event.events = EPOLLET | left_events;
+
+            int rt2 = epoll_ctl(m_epfd, op, fd_ctx->fd, &event);
+            if (rt2) {
+                LINK_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
+                    << op << "," << fd_ctx->fd << "," << event.events << "):"
+                    << rt << " (" << errno << ") (" << strerror(errno) << ")";
+                continue;
+            }
+
+            if (real_events & READ) {
+                fd_ctx->triggeredEvent(READ);
+                --m_pendingEventCount;
+            }
+
+            if (real_events & WRITE) {
+                fd_ctx->triggeredEvent(WRITE);
+                --m_pendingEventCount;
+            }
+        }
+
+        Fiber::ptr cur = Fiber::GetThis();
+        auto raw_ptr = cur.get();
+        cur.reset();
+
+        raw_ptr->swapOut();
+    }    
 }
 
 }
