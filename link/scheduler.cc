@@ -216,6 +216,7 @@ void Scheduler::run() {
             }
             if (idle_fiber->getState() == Fiber::TERM) {
                 LINK_LOG_INFO(g_logger) << "idle fiber terminate";
+                tickle();
                 break;
             }
 
