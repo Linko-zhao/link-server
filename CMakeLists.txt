@@ -19,6 +19,7 @@ set(LIB_SRC
     link/thread.cc
     link/util.cc
     link/iomanager.cc
+    link/timer.cc
     )
 
 add_library(link SHARED ${LIB_SRC})
@@ -67,6 +68,11 @@ add_executable(test_iomanager tests/test_iomanager.cc)
 add_dependencies(test_iomanager link)
 force_redefine_file_macro_for_sources(test_iomanager)
 target_link_libraries(test_iomanager ${LIBS})
+
+#add_executable(test_iomanager tests/test_iomanager.cc)
+#add_dependencies(test_iomanager link)
+#force_redefine_file_macro_for_sources(test_iomanager)
+#target_link_libraries(test_iomanager ${LIBS})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
