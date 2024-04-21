@@ -238,8 +238,10 @@ void Scheduler::tickle() {
 
 bool Scheduler::stopping() {
     MutexType::Lock lock(m_mutex);
-    return m_autoStop && m_stopping
-        && m_fibers.empty() && m_activeThreadCount == 0;
+    return m_autoStop 
+        && m_stopping
+        && m_fibers.empty() 
+        && m_activeThreadCount == 0;
 }
 
 void Scheduler::idle() {
