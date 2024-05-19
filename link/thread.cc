@@ -37,6 +37,7 @@ Thread::Thread(std::function<void()> cb, const std::string& name)
         throw std::logic_error("pthread_create error");
     }
 
+    //在构造函数结束前，新创建的线程能够先运行，保证线程初始化线程id
     m_semaphore.wait();
 }
 

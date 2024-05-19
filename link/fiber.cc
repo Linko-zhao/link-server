@@ -9,12 +9,17 @@ namespace links {
 
 static Logger::ptr g_logger = LINK_LOG_NAME("system");
 
+//用于生成协程id
 static std::atomic<uint64_t> s_fiber_id {0};
+//协程数
 static std::atomic<uint64_t> s_fiber_count {0};
 
+//当前协程
 static thread_local Fiber* t_fiber = nullptr;
+//主协程
 static thread_local Fiber::ptr t_threadFiber = nullptr;
 
+//协程栈大小约定为1MB
 static ConfigVar<uint32_t>::ptr g_fiber_stack_size = 
     Config::Lookup<uint32_t>("fiber.stack_size", 1024 * 1024, "fiber stack size");
 
@@ -200,6 +205,7 @@ void Fiber::MainFunc() {
     //cur->swapOut();
     auto raw_ptr = cur.get();
     cur.reset();
+    
     raw_ptr->swapOut();
 
     LINK_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->getId()));
@@ -229,6 +235,7 @@ void Fiber::CallerMainFunc() {
     //cur->swapOut();
     auto raw_ptr = cur.get();
     cur.reset();
+
     raw_ptr->back();
 
     LINK_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->getId()));
