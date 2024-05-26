@@ -31,11 +31,17 @@ public:
     ~Fiber();
 
     void reset(std::function<void()> cb);
+
+    //从主协程切换到当前协程
     void call();
+
+    //当前线程切换到主协程
     void back();
-    //swap to current fiber implement
+
+    //从调度器主协程切换到当前协程
     void swapIn();
-    //swap to background implement
+
+    //从当前协程切换到调度器主协程
     void swapOut();
 
     uint64_t getId() const { return m_id; }

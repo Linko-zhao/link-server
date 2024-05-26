@@ -9,6 +9,7 @@
 #include "thread.h"
 
 namespace links {
+
 class Scheduler {
 public:
     typedef std::shared_ptr<Scheduler> ptr;
@@ -83,19 +84,23 @@ private:
         std::function<void()> cb;
         int thread;
 
+        //指定协程在哪个线程上运行
         FiberAndThread(Fiber::ptr f, int thr)
             : fiber(f), thread(thr) {
         }
         
+        //通过swap将传入Fiber指针置空，使其计数器-1
         FiberAndThread(Fiber::ptr* f, int thr)
             : thread(thr) {
             fiber.swap(*f);
         }
 
+        //指定回调函数在哪个线程上运行
         FiberAndThread(std::function<void()> f, int thr)
             : cb(f), thread(thr) {
         }
 
+        //通过swap将传入回调函数置空，使其计数器-1
         FiberAndThread(std::function<void()> *f, int thr)
             : thread(thr) {
             cb.swap(*f);
@@ -118,6 +123,7 @@ private:
     std::vector<Thread::ptr> m_threads;
     //待执行的协程队列
     std::list<FiberAndThread> m_fibers;
+    //use_caller为true时有效，调度协程
     Fiber::ptr m_rootFiber;
     std::string m_name;
 
@@ -137,6 +143,7 @@ protected:
     //主线程id(use_caller)
     int m_rootThread = 0;
 };
+
 }
 
 #endif

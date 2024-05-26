@@ -119,7 +119,7 @@ void Fiber::call() {
     SetThis(this);
     LINK_ASSERT(m_state != EXEC);
     m_state = EXEC;
-    
+
     if (swapcontext(&t_threadFiber->m_ctx, &m_ctx)) {
         LINK_ASSERT2(false, "swapcontext");
     }
@@ -156,9 +156,11 @@ void Fiber::SetThis(Fiber* f) {
 }
 
 Fiber::ptr Fiber::GetThis() {
+    //返回当前协程
     if (t_fiber) {
         return t_fiber->shared_from_this();
     }
+    //创建主协程
     Fiber::ptr main_fiber(new Fiber);
     LINK_ASSERT(t_fiber == main_fiber.get());
     t_threadFiber = main_fiber;
