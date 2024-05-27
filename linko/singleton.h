@@ -1,9 +1,9 @@
-#ifndef __LINK_SINGLETON_H__
-#define __LINK_SINGLETON_H__
+#ifndef __LINKO_SINGLETON_H__
+#define __LINKO_SINGLETON_H__
 
 #include <memory>
 
-namespace links {
+namespace linko {
 
 //T: type, X: Tags of different singletons. N: indexs of same Tags
 template<class T, class X = void, int N = 0>

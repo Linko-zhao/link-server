@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-namespace links {
+namespace linko {
 
 Semaphore::Semaphore(uint32_t count) {
     if (sem_init(&m_semaphore, 0, count)) {

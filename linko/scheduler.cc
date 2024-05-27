@@ -2,28 +2,28 @@
 #include "log.h"
 #include "macro.h"
 
-namespace links {
-static links::Logger::ptr g_logger = LINK_LOG_NAME("system");
+namespace linko {
+static linko::Logger::ptr g_logger = LINKO_LOG_NAME("system");
 
 static thread_local Scheduler* t_scheduler = nullptr;
 static thread_local Fiber* t_fiber = nullptr;
 
 Scheduler::Scheduler(size_t threads, bool use_caller, const std::string& name) 
     : m_name(name) {
-    LINK_ASSERT(threads > 0);
+    LINKO_ASSERT(threads > 0);
 
     if (use_caller) {
-        links::Fiber::GetThis();
+        linko::Fiber::GetThis();
         --threads;
 
-        LINK_ASSERT(GetThis() == nullptr);
+        LINKO_ASSERT(GetThis() == nullptr);
         t_scheduler = this;
 
         m_rootFiber.reset(new Fiber(std::bind(&Scheduler::run, this), 0, true));
-        links::Thread::SetName(m_name);
+        linko::Thread::SetName(m_name);
 
         t_fiber = m_rootFiber.get();
-        m_rootThread = links::GetThreadId();
+        m_rootThread = linko::GetThreadId();
         m_threadIds.push_back(m_rootThread);
     } else {
         m_rootThread = -1;
@@ -32,7 +32,7 @@ Scheduler::Scheduler(size_t threads, bool use_caller, const std::string& name)
 }
 
 Scheduler::~Scheduler() {
-    LINK_ASSERT(m_stopping);
+    LINKO_ASSERT(m_stopping);
     if (GetThis() == this) {
         t_scheduler = nullptr;
     }
@@ -47,13 +47,13 @@ Fiber* Scheduler::GetMainFiber() {
 }
 
 void Scheduler::start() {
-    LINK_LOG_DEBUG(g_logger) << "start";
+    LINKO_LOG_DEBUG(g_logger) << "start";
     MutexType::Lock lock(m_mutex);
     if (!m_stopping) {
         return;
     }
     m_stopping = false;
-    LINK_ASSERT(m_threads.empty());
+    LINKO_ASSERT(m_threads.empty());
 
     m_threads.resize(m_threadCount);
     for (size_t i = 0; i < m_threadCount; ++i) {
@@ -67,7 +67,7 @@ void Scheduler::start() {
     //if (m_rootFiber) {
     //    m_rootFiber->call();
     //    //m_rootFiber->swapIn();
-    //    LINK_LOG_INFO(g_logger) << "call out " << m_rootFiber->getState();
+    //    LINKO_LOG_INFO(g_logger) << "call out " << m_rootFiber->getState();
     //}
 }
 
@@ -77,7 +77,7 @@ void Scheduler::stop() {
             && m_threadCount == 0
             && (m_rootFiber->getState() == Fiber::TERM
                 || m_rootFiber->getState() == Fiber::INIT)) {
-        LINK_LOG_INFO(g_logger) << this << " stopped";
+        LINKO_LOG_INFO(g_logger) << this << " stopped";
         m_stopping = true;
         
         if (stopping()) {
@@ -87,9 +87,9 @@ void Scheduler::stop() {
     
     //bool exit_on_this_fiber = false;
     if (m_rootThread != -1) {
-        LINK_ASSERT(GetThis() == this);
+        LINKO_ASSERT(GetThis() == this);
     } else {
-        LINK_ASSERT(GetThis() != this);
+        LINKO_ASSERT(GetThis() != this);
     }
 
     m_stopping = true;
@@ -110,7 +110,7 @@ void Scheduler::stop() {
         //    if (m_rootFiber->getState() == Fiber::TERM
         //            || m_rootFiber->getState() == Fiber::EXCEPT) {
         //        m_rootFiber.reset(new Fiber(std::bind(&Scheduler::run, this), 0, true));
-        //        LINK_LOG_INFO(g_logger) << " root fiber is term, reset";
+        //        LINKO_LOG_INFO(g_logger) << " root fiber is term, reset";
         //        t_fiber = m_rootFiber.get();
         //    }
         //    m_rootFiber->call();
@@ -136,9 +136,9 @@ void Scheduler::setThis() {
 }
 
 void Scheduler::run() {
-    LINK_LOG_DEBUG(g_logger) << "run";
+    LINKO_LOG_DEBUG(g_logger) << "run";
     setThis();
-    if (links::GetThreadId() != m_rootThread) {
+    if (linko::GetThreadId() != m_rootThread) {
         t_fiber = Fiber::GetThis().get();
     }
 
@@ -154,13 +154,13 @@ void Scheduler::run() {
             MutexType::Lock lock(m_mutex);
             auto it = m_fibers.begin();
             while (it != m_fibers.end()) {
-                if (it->thread != -1 && it->thread != links::GetThreadId()) {
+                if (it->thread != -1 && it->thread != linko::GetThreadId()) {
                     ++it;
                     tickle_me = true;
                     continue;
                 }
 
-                LINK_ASSERT(it->fiber || it->cb);
+                LINKO_ASSERT(it->fiber || it->cb);
                 if (it->fiber && it->fiber->getState() == Fiber::EXEC) {
                     ++it;
                     continue;
@@ -215,7 +215,7 @@ void Scheduler::run() {
                 continue;
             }
             if (idle_fiber->getState() == Fiber::TERM) {
-                LINK_LOG_INFO(g_logger) << "idle fiber terminate";
+                LINKO_LOG_INFO(g_logger) << "idle fiber terminate";
                 tickle();
                 break;
             }
@@ -233,7 +233,7 @@ void Scheduler::run() {
 
 
 void Scheduler::tickle() {
-    LINK_LOG_INFO(g_logger) << "tickle";
+    LINKO_LOG_INFO(g_logger) << "tickle";
 }
 
 bool Scheduler::stopping() {
@@ -245,9 +245,9 @@ bool Scheduler::stopping() {
 }
 
 void Scheduler::idle() {
-    LINK_LOG_INFO(g_logger) << "idle";
+    LINKO_LOG_INFO(g_logger) << "idle";
     while (!stopping()) {
-        links::Fiber::YieldToHold();
+        linko::Fiber::YieldToHold();
     }
 }
 

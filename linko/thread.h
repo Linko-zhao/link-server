@@ -1,9 +1,9 @@
-#ifndef __LINKS_THREAD_H__
-#define __LINKS_THREAD_H__
+#ifndef __LINKO_THREAD_H__
+#define __LINKO_THREAD_H__
 
 #include "mutex.h"
 
-namespace links {
+namespace linko {
 
 class Thread {
 public:

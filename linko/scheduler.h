@@ -1,5 +1,5 @@
-#ifndef __LINKS_SCHEDULER_H__
-#define __LINKS_SCHEDULER_H__
+#ifndef __LINKO_SCHEDULER_H__
+#define __LINKO_SCHEDULER_H__
 
 #include <memory>
 #include <vector>
@@ -8,7 +8,7 @@
 #include "fiber.h"
 #include "thread.h"
 
-namespace links {
+namespace linko {
 class Scheduler {
 public:
     typedef std::shared_ptr<Scheduler> ptr;

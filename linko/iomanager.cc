@@ -7,9 +7,9 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-namespace links {
+namespace linko {
 
-static links::Logger::ptr g_logger = LINK_LOG_NAME("system");
+static linko::Logger::ptr g_logger = LINKO_LOG_NAME("system");
 
 IOManager::FdContext::EventContext& IOManager::FdContext::getContext(IOManager::Event event) {
     switch (event) {
@@ -18,7 +18,7 @@ IOManager::FdContext::EventContext& IOManager::FdContext::getContext(IOManager::
         case IOManager::WRITE:
             return write;
         default:
-            LINK_ASSERT2(false, "getContext");
+            LINKO_ASSERT2(false, "getContext");
     }
 }
 
@@ -31,7 +31,7 @@ void IOManager::FdContext::resetContext(IOManager::FdContext::EventContext& ctx)
 
 
 void IOManager::FdContext::triggeredEvent(Event event) {
-    LINK_ASSERT(events & event);
+    LINKO_ASSERT(events & event);
     events = (Event)(events & ~event);
     EventContext& ctx = getContext(event);
     if (ctx.cb) {
@@ -46,10 +46,10 @@ void IOManager::FdContext::triggeredEvent(Event event) {
 IOManager::IOManager(size_t threads, bool use_caller, const std::string& name)
     :Scheduler(threads, use_caller, name){
     m_epfd = epoll_create(5000);
-    LINK_ASSERT(m_epfd > 0);
+    LINKO_ASSERT(m_epfd > 0);
 
     int rt = pipe(m_tickleFds);
-    LINK_ASSERT(!rt);
+    LINKO_ASSERT(!rt);
 
     epoll_event event;
     memset(&event, 0, sizeof(epoll_event));
@@ -57,7 +57,7 @@ IOManager::IOManager(size_t threads, bool use_caller, const std::string& name)
     event.data.fd = m_tickleFds[0];
 
     rt = fcntl(m_tickleFds[0], F_SETFL, O_NONBLOCK);
-    LINK_ASSERT(!rt);
+    LINKO_ASSERT(!rt);
 
     contextResize(32);
 
@@ -106,10 +106,10 @@ int IOManager::addEvent(int fd, Event event, std::function<void()> cb) {
 
     FdContext::MutexType::Lock lock2(fd_ctx->mutex);
     if (fd_ctx->events & event) {
-        LINK_LOG_ERROR(g_logger) << "addEvent assert fd=" << fd
+        LINKO_LOG_ERROR(g_logger) << "addEvent assert fd=" << fd
             << " event=" << event
             << " fd_ctx.event=" << fd_ctx->events;
-        LINK_ASSERT(!(fd_ctx->events & event));
+        LINKO_ASSERT(!(fd_ctx->events & event));
     }
 
     int op = fd_ctx->events ? EPOLL_CTL_MOD : EPOLL_CTL_ADD;
@@ -119,7 +119,7 @@ int IOManager::addEvent(int fd, Event event, std::function<void()> cb) {
 
     int rt = epoll_ctl(m_epfd, op, fd, &epevent);
     if (rt) {
-        LINK_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
+        LINKO_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
             << op << "," << fd << "," << ") (" << strerror(errno) << ")";
         return -1;
     }
@@ -127,7 +127,7 @@ int IOManager::addEvent(int fd, Event event, std::function<void()> cb) {
     ++m_pendingEventCount;
     fd_ctx->events = (Event)(fd_ctx->events | event);
     FdContext::EventContext& event_ctx = fd_ctx->getContext(event);
-    LINK_ASSERT(!event_ctx.scheduler
+    LINKO_ASSERT(!event_ctx.scheduler
                 && !event_ctx.fiber
                 && !event_ctx.cb);
 
@@ -136,7 +136,7 @@ int IOManager::addEvent(int fd, Event event, std::function<void()> cb) {
         event_ctx.cb.swap(cb);
     } else {
         event_ctx.fiber = Fiber::GetThis();
-        LINK_ASSERT(event_ctx.fiber->getState() == Fiber::EXEC);
+        LINKO_ASSERT(event_ctx.fiber->getState() == Fiber::EXEC);
     }
 
     return 0;
@@ -164,7 +164,7 @@ bool IOManager::delEvent(int fd, Event event) {
 
     int rt = epoll_ctl(m_epfd, op, fd, &epevent);
     if (rt) {
-        LINK_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
+        LINKO_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
             << op << "," << fd << "," << epevent.events << "):"
             << rt << " (" << errno << ") (" << strerror(errno) << ")";
         return false;
@@ -199,7 +199,7 @@ bool IOManager::cancelEvent(int fd, Event event) {
 
     int rt = epoll_ctl(m_epfd, op, fd, &epevent);
     if (rt) {
-        LINK_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
+        LINKO_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
             << op << "," << fd << "," << epevent.events << "):"
             << rt << " (" << errno << ") (" << strerror(errno) << ")";
         return false;
@@ -231,7 +231,7 @@ bool IOManager::cancelAll(int fd) {
 
     int rt = epoll_ctl(m_epfd, op, fd, &epevent);
     if (rt) {
-        LINK_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
+        LINKO_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
             << op << "," << fd << "," << epevent.events << "):"
             << rt << " (" << errno << ") (" << strerror(errno) << ")";
         return false;
@@ -247,7 +247,7 @@ bool IOManager::cancelAll(int fd) {
         --m_pendingEventCount;
     }
 
-    LINK_ASSERT(fd_ctx->events == 0);
+    LINKO_ASSERT(fd_ctx->events == 0);
     return true;
 
 }
@@ -263,7 +263,7 @@ void IOManager::tickle() {
         return;
     }
     int rt = write(m_tickleFds[1], "T", 1);
-    LINK_ASSERT(rt == 1);
+    LINKO_ASSERT(rt == 1);
 } 
 
 bool IOManager::stopping(uint64_t& timeout) {
@@ -290,7 +290,7 @@ void IOManager::idle() {
         if (stopping()) {
             next_timeout = getNextTimer();
             if (next_timeout == ~0ull) {
-                LINK_LOG_INFO(g_logger) << "name=" << getName() 
+                LINKO_LOG_INFO(g_logger) << "name=" << getName() 
                                         << " idle stopping exit";
                 break;
             }
@@ -352,7 +352,7 @@ void IOManager::idle() {
 
             int rt2 = epoll_ctl(m_epfd, op, fd_ctx->fd, &event);
             if (rt2) {
-                LINK_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
+                LINKO_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
                     << op << "," << fd_ctx->fd << "," << event.events << "):"
                     << rt << " (" << errno << ") (" << strerror(errno) << ")";
                 continue;

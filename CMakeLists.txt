@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(link)
+project(linko)
 
 include (cmake/utils.cmake)
 
@@ -11,68 +11,63 @@ include_directories(/usr/local/include)
 link_directories(/usr/local/lib)
 
 set(LIB_SRC
-    link/config.cc
-    link/fiber.cc
-    link/log.cc
-    link/mutex.cc
-    link/scheduler.cc
-    link/thread.cc
-    link/util.cc
-    link/iomanager.cc
-    link/timer.cc
+    linko/config.cc
+    linko/fiber.cc
+    linko/log.cc
+    linko/mutex.cc
+    linko/scheduler.cc
+    linko/thread.cc
+    linko/util.cc
+    linko/iomanager.cc
+    linko/timer.cc
     )
 
-add_library(link SHARED ${LIB_SRC})
-force_redefine_file_macro_for_sources(link)
+add_library(linko SHARED ${LIB_SRC})
+force_redefine_file_macro_for_sources(linko)
 
 find_library(YAMLCPP yaml-cpp)
 find_library(PTHREAD pthread)
 
 set(LIBS
-    link
+    linko
     pthread
     yaml-cpp
     )
 
 add_executable(test tests/test.cc)
-add_dependencies(test link)
+add_dependencies(test linko)
 force_redefine_file_macro_for_sources(test)
 target_link_libraries(test ${LIBS})
 
 add_executable(test_config tests/test_config.cc)
-add_dependencies(test_config link)
+add_dependencies(test_config linko)
 force_redefine_file_macro_for_sources(test_config)
 target_link_libraries(test_config ${LIBS})
 
 add_executable(test_thread tests/test_thread.cc)
-add_dependencies(test_thread link)
+add_dependencies(test_thread linko)
 force_redefine_file_macro_for_sources(test_thread)
 target_link_libraries(test_thread ${LIBS})
 
 add_executable(test_util tests/test_util.cc)
-add_dependencies(test_util link)
+add_dependencies(test_util linko)
 force_redefine_file_macro_for_sources(test_util)
 target_link_libraries(test_util ${LIBS})
 
 add_executable(test_fiber tests/test_fiber.cc)
-add_dependencies(test_fiber link)
+add_dependencies(test_fiber linko)
 force_redefine_file_macro_for_sources(test_fiber)
 target_link_libraries(test_fiber ${LIBS})
 
 add_executable(test_scheduler tests/test_scheduler.cc)
-add_dependencies(test_scheduler link)
+add_dependencies(test_scheduler linko)
 force_redefine_file_macro_for_sources(test_scheduler)
 target_link_libraries(test_scheduler ${LIBS})
 
 add_executable(test_iomanager tests/test_iomanager.cc)
-add_dependencies(test_iomanager link)
+add_dependencies(test_iomanager linko)
 force_redefine_file_macro_for_sources(test_iomanager)
 target_link_libraries(test_iomanager ${LIBS})
-
-#add_executable(test_iomanager tests/test_iomanager.cc)
-#add_dependencies(test_iomanager link)
-#force_redefine_file_macro_for_sources(test_iomanager)
-#target_link_libraries(test_iomanager ${LIBS})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

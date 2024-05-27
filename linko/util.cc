@@ -5,16 +5,16 @@
 #include "log.h"
 #include "fiber.h"
 
-namespace links {
+namespace linko {
 
-links::Logger::ptr g_logger = LINK_LOG_NAME("system");
+linko::Logger::ptr g_logger = LINKO_LOG_NAME("system");
 
 pid_t GetThreadId() {
     return syscall(SYS_gettid);
 }
 
 uint32_t GetFiberId() {
-    return links::Fiber::GetFiberId();
+    return linko::Fiber::GetFiberId();
 }
 
 void Backtrace(std::vector<std::string>& bt, int size, int skip) {
@@ -23,7 +23,7 @@ void Backtrace(std::vector<std::string>& bt, int size, int skip) {
 
     char** strings = backtrace_symbols(array, s);
     if (strings == NULL) {
-        LINK_LOG_ERROR(g_logger) << "backtrace_symbols error";
+        LINKO_LOG_ERROR(g_logger) << "backtrace_symbols error";
         free(array);
         return;
     }

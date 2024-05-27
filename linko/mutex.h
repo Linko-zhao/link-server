@@ -1,5 +1,5 @@
-#ifndef __LINKS_MUTEX_H__
-#define __LINKS_MUTEX_H__
+#ifndef __LINKO_MUTEX_H__
+#define __LINKO_MUTEX_H__
 
 #include <thread>
 #include <memory>
@@ -11,7 +11,7 @@
 #include <atomic>
 #include <list>
 
-namespace links {
+namespace linko {
 
 class Semaphore {
 public:

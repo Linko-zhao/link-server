@@ -1,5 +1,5 @@
-#ifndef __LINKS_LOG_H__
-#define __LINKS_LOG_H__
+#ifndef __LINKO_LOG_H__
+#define __LINKO_LOG_H__
 
 #include <cstdarg>
 #include <map>
@@ -13,34 +13,34 @@
 #include "singleton.h"
 #include "thread.h"
 
-#define LINK_LOG_LEVEL(logger, level) \
+#define LINKO_LOG_LEVEL(logger, level) \
     if (logger->getLevel() <= level) \
-        links::LogEventWrap(links::LogEvent::ptr(new links::LogEvent(logger, level, \
-                        __FILE__, __LINE__, 0, links::GetThreadId(), links::GetFiberId(), \
-                        time(0), links::Thread::GetName()))).getSS()
+        linko::LogEventWrap(linko::LogEvent::ptr(new linko::LogEvent(logger, level, \
+                        __FILE__, __LINE__, 0, linko::GetThreadId(), linko::GetFiberId(), \
+                        time(0), linko::Thread::GetName()))).getSS()
 
-#define LINK_LOG_DEBUG(logger) LINK_LOG_LEVEL(logger, links::LogLevel::DEBUG)
-#define LINK_LOG_INFO(logger) LINK_LOG_LEVEL(logger, links::LogLevel::INFO)
-#define LINK_LOG_WARN(logger) LINK_LOG_LEVEL(logger, links::LogLevel::WARN)
-#define LINK_LOG_ERROR(logger) LINK_LOG_LEVEL(logger, links::LogLevel::ERROR)
-#define LINK_LOG_FATAL(logger) LINK_LOG_LEVEL(logger, links::LogLevel::FATAL)
+#define LINKO_LOG_DEBUG(logger) LINKO_LOG_LEVEL(logger, linko::LogLevel::DEBUG)
+#define LINKO_LOG_INFO(logger) LINKO_LOG_LEVEL(logger, linko::LogLevel::INFO)
+#define LINKO_LOG_WARN(logger) LINKO_LOG_LEVEL(logger, linko::LogLevel::WARN)
+#define LINKO_LOG_ERROR(logger) LINKO_LOG_LEVEL(logger, linko::LogLevel::ERROR)
+#define LINKO_LOG_FATAL(logger) LINKO_LOG_LEVEL(logger, linko::LogLevel::FATAL)
 
-#define LINK_LOG_FMT_LEVEL(logger, level, fmt, ...) \
+#define LINKO_LOG_FMT_LEVEL(logger, level, fmt, ...) \
     if (logger->getLevel() <= level) \
-        links::LogEventWrap(links::LogEvent::ptr(new links::LogEvent(logger, level, \
-                        __FILE__, __LINE__, 0, links::GetThreadId(), links::GetFiberId(), \
-                        time(0), links::Thread::GetName()))).getEvent()->format(fmt, __VA_ARGS__)
+        linko::LogEventWrap(linko::LogEvent::ptr(new linko::LogEvent(logger, level, \
+                        __FILE__, __LINE__, 0, linko::GetThreadId(), linko::GetFiberId(), \
+                        time(0), linko::Thread::GetName()))).getEvent()->format(fmt, __VA_ARGS__)
 
-#define LINK_LOG_FMT_DEBUG(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::DEBUG, fmt, __VA_ARGS__)
-#define LINK_LOG_FMT_INFO(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::INFO, fmt, __VA_ARGS__)
-#define LINK_LOG_FMT_WARN(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::WARN, fmt, __VA_ARGS__)
-#define LINK_LOG_FMT_ERROR(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::ERROR, fmt, __VA_ARGS__)
-#define LINK_LOG_FMT_FATAL(logger, fmt, ...) LINK_LOG_FMT_LEVEL(logger, links::LogLevel::FATAL, fmt, __VA_ARGS__)
+#define LINKO_LOG_FMT_DEBUG(logger, fmt, ...) LINKO_LOG_FMT_LEVEL(logger, linko::LogLevel::DEBUG, fmt, __VA_ARGS__)
+#define LINKO_LOG_FMT_INFO(logger, fmt, ...) LINKO_LOG_FMT_LEVEL(logger, linko::LogLevel::INFO, fmt, __VA_ARGS__)
+#define LINKO_LOG_FMT_WARN(logger, fmt, ...) LINKO_LOG_FMT_LEVEL(logger, linko::LogLevel::WARN, fmt, __VA_ARGS__)
+#define LINKO_LOG_FMT_ERROR(logger, fmt, ...) LINKO_LOG_FMT_LEVEL(logger, linko::LogLevel::ERROR, fmt, __VA_ARGS__)
+#define LINKO_LOG_FMT_FATAL(logger, fmt, ...) LINKO_LOG_FMT_LEVEL(logger, linko::LogLevel::FATAL, fmt, __VA_ARGS__)
 
-#define LINK_LOG_ROOT() links::LoggerMgr::GetInstance()->getRoot()
-#define LINK_LOG_NAME(name) links::LoggerMgr::GetInstance()->getLogger(name)
+#define LINKO_LOG_ROOT() linko::LoggerMgr::GetInstance()->getRoot()
+#define LINKO_LOG_NAME(name) linko::LoggerMgr::GetInstance()->getLogger(name)
 
-namespace links {
+namespace linko {
 
 class Logger;
 class LoggerManager;
@@ -252,7 +252,7 @@ private:
     MutexType m_mutex;
 };
 
-typedef links::Singleton<LoggerManager> LoggerMgr;
+typedef linko::Singleton<LoggerManager> LoggerMgr;
 
 }
 

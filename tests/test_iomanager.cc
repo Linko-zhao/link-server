@@ -1,17 +1,17 @@
-#include "../link/links.h"
-#include "../link/iomanager.h"
+#include "../linko/links.h"
+#include "../linko/iomanager.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
 
-links::Logger::ptr g_logger = LINK_LOG_ROOT();
+linko::Logger::ptr g_logger = LINKO_LOG_ROOT();
 
 int sock = 0;
 
 void test_fiber() {
-    LINK_LOG_INFO(g_logger) << "test_fiber";
+    LINKO_LOG_INFO(g_logger) << "test_fiber";
     sock = socket(AF_INET, SOCK_STREAM, 0);
     fcntl(sock, F_SETFL, O_NONBLOCK);
 
@@ -24,32 +24,32 @@ void test_fiber() {
     if (!connect(sock, (const sockaddr*)&addr, sizeof(addr))) {
 
     } else if (errno == EINPROGRESS) {
-        LINK_LOG_INFO(g_logger) << "add event errno=" << errno << " " << strerror(errno);
-        links::IOManager::GetThis()->addEvent(sock, links::IOManager::READ, [](){
-            LINK_LOG_INFO(g_logger) << "read callback";
+        LINKO_LOG_INFO(g_logger) << "add event errno=" << errno << " " << strerror(errno);
+        linko::IOManager::GetThis()->addEvent(sock, linko::IOManager::READ, [](){
+            LINKO_LOG_INFO(g_logger) << "read callback";
         });
-        links::IOManager::GetThis()->addEvent(sock, links::IOManager::WRITE, [](){
-            LINK_LOG_INFO(g_logger) << "write callback";
-            links::IOManager::GetThis()->cancelEvent(sock, links::IOManager::READ);
+        linko::IOManager::GetThis()->addEvent(sock, linko::IOManager::WRITE, [](){
+            LINKO_LOG_INFO(g_logger) << "write callback";
+            linko::IOManager::GetThis()->cancelEvent(sock, linko::IOManager::READ);
             close(sock);
         });
     }else {
-        LINK_LOG_INFO(g_logger) << "else " << errno << " " <<strerror(errno);
+        LINKO_LOG_INFO(g_logger) << "else " << errno << " " <<strerror(errno);
     }
 
 }
 
 void test1() {
-    links::IOManager iom(2, false);
+    linko::IOManager iom(2, false);
     iom.schedule(&test_fiber);
 }
 
-links::Timer::ptr s_timer;
+linko::Timer::ptr s_timer;
 void test_timer() {
-    links::IOManager iom(2);
+    linko::IOManager iom(2);
     s_timer = iom.addTimer(1000, [](){
         static int i = 0;
-        LINK_LOG_INFO(g_logger) << "hello timer i=" << i;
+        LINKO_LOG_INFO(g_logger) << "hello timer i=" << i;
         if (++i == 3) {
             //s_timer->reset(2000, true);
             s_timer->cancel();

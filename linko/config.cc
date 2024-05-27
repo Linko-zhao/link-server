@@ -1,7 +1,7 @@
 #include "config.h"
 #include <iostream>
 
-namespace links {
+namespace linko {
 ConfigVarBase::ptr Config::LookupBase(const std::string& name) {
     RWMutexType::ReadLock lock(GetMutex());
     auto it = GetDatas().find(name);
@@ -13,7 +13,7 @@ static void ListAllMember(const std::string& prefix,
                           std::list<std::pair<std::string, const YAML::Node> >& output) {
     if (prefix.find_first_not_of("abcdefghijklmnopqrstuvwxyz._0123456789")
             != std::string::npos) {
-        LINK_LOG_ERROR(LINK_LOG_ROOT()) << "Config invalid name: " << prefix << " : " << node;
+        LINKO_LOG_ERROR(LINKO_LOG_ROOT()) << "Config invalid name: " << prefix << " : " << node;
         return;
     }
     output.push_back(std::make_pair(prefix, node));

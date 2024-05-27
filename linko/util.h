@@ -1,5 +1,5 @@
-#ifndef __LINKS_UTIL_H__
-#define __LINKS_UTIL_H__
+#ifndef __LINKO_UTIL_H__
+#define __LINKO_UTIL_H__
 
 #include <pthread.h>
 #include <unistd.h>
@@ -10,7 +10,7 @@
 #include <vector>
 #include <string>
 
-namespace links {
+namespace linko {
 
 pid_t GetThreadId();
 

@@ -10,7 +10,7 @@
 
 #include "config.h"
 
-namespace links {
+namespace linko {
 
 const char * LogLevel::ToString(LogLevel::Level level) {
     switch (level) {
@@ -305,7 +305,7 @@ void Logger::setFormatter(LogFormatter::ptr val) {
 
 void Logger::setFormatter(const std::string& val) {
     //std::cout << "---" << val << std::endl;
-    links::LogFormatter::ptr new_val(new links::LogFormatter(val));
+    linko::LogFormatter::ptr new_val(new linko::LogFormatter(val));
     if (new_val->isError()) {
         std::cout << "Logger setFormatter name=" << m_name
                   << " value=" << val << " invalid formatter"
@@ -670,23 +670,23 @@ public:
 
 
 
-links::ConfigVar<std::set<LogDefine> >::ptr g_log_defines = 
-    links::Config::Lookup("logs", std::set<LogDefine>(), "logs config");
+linko::ConfigVar<std::set<LogDefine> >::ptr g_log_defines = 
+    linko::Config::Lookup("logs", std::set<LogDefine>(), "logs config");
 
 struct LogIniter {
     LogIniter() {
         g_log_defines->addListener([](const std::set<LogDefine>& old_value,
                     const std::set<LogDefine>& new_value){
-            LINK_LOG_INFO(LINK_LOG_ROOT()) << "on_logger_conf_changed";
+            LINKO_LOG_INFO(LINKO_LOG_ROOT()) << "on_logger_conf_changed";
             for (auto& i : new_value) {
                 auto it = old_value.find(i);
-                links::Logger::ptr logger;
+                linko::Logger::ptr logger;
                 if (it == old_value.end()) {
                     //new logger
-                    logger = LINK_LOG_NAME(i.name);
+                    logger = LINKO_LOG_NAME(i.name);
                 } else {
                     if (!(i == *it)) {
-                        logger = LINK_LOG_NAME(i.name);
+                        logger = LINKO_LOG_NAME(i.name);
                     } else {
                         continue;
                     }
@@ -699,7 +699,7 @@ struct LogIniter {
 
                 logger->clearAppenders();
                 for (auto& a : i.appenderDefines) {
-                    links::LogAppender::ptr ap;
+                    linko::LogAppender::ptr ap;
                     if (a.type == 1) {
                         ap.reset(new FileLogAppender(a.file));
                     } else if (a.type == 2) {
@@ -725,7 +725,7 @@ struct LogIniter {
                 auto it = new_value.find(i);
                 if (it == new_value.end()) {
                     //delete logger
-                    auto logger = LINK_LOG_NAME(i.name);
+                    auto logger = LINKO_LOG_NAME(i.name);
                     logger->setLevel((LogLevel::Level)0);
                     logger->clearAppenders();
                 }

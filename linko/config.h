@@ -1,5 +1,5 @@
-#ifndef __LINKS_CONFIG_H__
-#define __LINKS_CONFIG_H__
+#ifndef __LINKO_CONFIG_H__
+#define __LINKO_CONFIG_H__
 
 #include <exception>
 #include <memory>
@@ -17,7 +17,7 @@
 #include "thread.h"
 #include "log.h"
 
-namespace links {
+namespace linko {
 
 class ConfigVarBase {
 public:
@@ -256,7 +256,7 @@ public:
             RWMutexType::ReadLock lock(m_mutex);
             return ToStr()(m_val);
         } catch (std::exception& e) {
-            LINK_LOG_ERROR(LINK_LOG_ROOT()) << "ConfigVar::toString exception" 
+            LINKO_LOG_ERROR(LINKO_LOG_ROOT()) << "ConfigVar::toString exception" 
                 << e.what() << " convert: " << typeid(m_val).name() << "to string";
         }
         return "";
@@ -267,7 +267,7 @@ public:
             //m_val =  boost::lexical_cast<T>(val);
             setValue(FormStr()(val));
         } catch (std::exception& e) {
-            LINK_LOG_ERROR(LINK_LOG_ROOT()) << "ConfigVar::toString exception" 
+            LINKO_LOG_ERROR(LINKO_LOG_ROOT()) << "ConfigVar::toString exception" 
                 << e.what() << " convert: string to " << typeid(m_val).name();
         }
         return false;
@@ -336,10 +336,10 @@ public:
         if (it != GetDatas().end()) {
             auto tmp = std::dynamic_pointer_cast<ConfigVar<T> >(it->second);
             if (tmp) {
-                LINK_LOG_INFO(LINK_LOG_ROOT()) << "Lookup name=" << name << " exists";
+                LINKO_LOG_INFO(LINKO_LOG_ROOT()) << "Lookup name=" << name << " exists";
                 return tmp;
             } else {
-                LINK_LOG_ERROR(LINK_LOG_ROOT()) << "Lookup name=" << name << " exists but type not"
+                LINKO_LOG_ERROR(LINKO_LOG_ROOT()) << "Lookup name=" << name << " exists but type not"
                     << typeid(T).name() << " real_type = " << it->second->getTypeName()
                     << " " << it->second->toString();
                 return nullptr;
@@ -348,7 +348,7 @@ public:
 
         if (name.find_first_not_of("abcdefghijklmnopqrstuvwxyz._0123456789") 
                 != std::string::npos) {
-            LINK_LOG_ERROR(LINK_LOG_ROOT()) << "Lookup name invalid:" << name;
+            LINKO_LOG_ERROR(LINKO_LOG_ROOT()) << "Lookup name invalid:" << name;
             throw std::invalid_argument(name);
         }
 
