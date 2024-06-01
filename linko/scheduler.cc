@@ -92,7 +92,7 @@ void Scheduler::start() {
 }
 
 void Scheduler::stop() {
-    LINK_LOG_INFO(g_logger) << "stop";
+    LINKO_LOG_INFO(g_logger) << "stop";
     m_autoStop = true;
 
     //1.主协程存在，即使用了use_caller
