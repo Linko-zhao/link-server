@@ -1,12 +1,12 @@
-#ifndef __LINK_TIMER_H__
-#define __LINK_TIMER_H__
+#ifndef __LINKO_TIMER_H__
+#define __LINKO_TIMER_H__
 
 #include <memory>
 #include <set>
 #include <vector>
 #include "thread.h"
 
-namespace links {
+namespace linko {
 
 class TimerManager;
 class Timer : public std::enable_shared_from_this<Timer> {

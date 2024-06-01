@@ -1,10 +1,10 @@
-#ifndef __LINK_IOMANAGER_H__
-#define __LINK_IOMANAGER_H__
+#ifndef __LINKO_IOMANAGER_H__
+#define __LINKO_IOMANAGER_H__
 
 #include "scheduler.h"
 #include "timer.h"
 
-namespace links {
+namespace linko {
 
 class IOManager : public Scheduler, public TimerManager {
 public:

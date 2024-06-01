@@ -1,7 +1,7 @@
 #include "timer.h"
 #include "util.h"
 
-namespace links {
+namespace linko {
 
 bool Timer::Comparator::operator()(const Timer::ptr &lhs, 
                                     const Timer::ptr &rhs) const {
@@ -62,7 +62,7 @@ bool Timer::refresh() {
         return false;
     }
     m_manager->m_timers.erase(it);
-    m_next = links::GetCurrentMS() + m_ms;
+    m_next = linko::GetCurrentMS() + m_ms;
     m_manager->m_timers.insert(shared_from_this());
     return true;
 }
@@ -82,7 +82,7 @@ bool Timer::reset(uint64_t ms, bool from_now) {
     m_manager->m_timers.erase(it);
     uint64_t start = 0;
     if (from_now) {
-        start = links::GetCurrentMS();
+        start = linko::GetCurrentMS();
     } else {
         start = m_next - m_ms;
     }
@@ -93,7 +93,7 @@ bool Timer::reset(uint64_t ms, bool from_now) {
 }
 
 TimerManager::TimerManager() {
-    m_previousTime = links::GetCurrentMS();
+    m_previousTime = linko::GetCurrentMS();
 }
 
 TimerManager::~TimerManager() {
@@ -127,7 +127,7 @@ uint64_t TimerManager::getNextTimer() {
     }
 
     const Timer::ptr& next = *m_timers.begin();
-    uint64_t now_ms = links::GetCurrentMS();
+    uint64_t now_ms = linko::GetCurrentMS();
     if (now_ms >= next->m_next) {
         return 0;
     } else {
@@ -136,7 +136,7 @@ uint64_t TimerManager::getNextTimer() {
 }
 
 void TimerManager::listExpiredCb(std::vector<std::function<void()> >& cbs) {
-    uint64_t now_ms = links::GetCurrentMS();
+    uint64_t now_ms = linko::GetCurrentMS();
     std::vector<Timer::ptr> expired;
     {
         RWMutexType::ReadLock lock(m_mutex);

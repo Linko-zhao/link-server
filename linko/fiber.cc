@@ -5,9 +5,9 @@
 #include "scheduler.h"
 #include <atomic>
 
-namespace links {
+namespace linko {
 
-static Logger::ptr g_logger = LINK_LOG_NAME("system");
+static Logger::ptr g_logger = LINKO_LOG_NAME("system");
 
 //用于生成协程id
 static std::atomic<uint64_t> s_fiber_id {0};
@@ -48,12 +48,12 @@ Fiber::Fiber() {
     SetThis(this);
 
     if (getcontext(&m_ctx)) {
-        LINK_ASSERT2(false, "getcontext");
+        LINKO_ASSERT2(false, "getcontext");
     }
 
     ++s_fiber_count;
 
-    LINK_LOG_DEBUG(g_logger) << "Fiber::Fiber";
+    LINKO_LOG_DEBUG(g_logger) << "Fiber::Fiber";
 }
 
 Fiber::Fiber(std::function<void()> cb, size_t stacksize, bool use_caller) 
@@ -64,7 +64,7 @@ Fiber::Fiber(std::function<void()> cb, size_t stacksize, bool use_caller)
 
     m_stack = StackAllocator::Alloc(m_stacksize);
     if (getcontext(&m_ctx)) {
-        LINK_ASSERT2(false, "getcontext");
+        LINKO_ASSERT2(false, "getcontext");
     }
 
     m_ctx.uc_link = nullptr;
@@ -77,18 +77,18 @@ Fiber::Fiber(std::function<void()> cb, size_t stacksize, bool use_caller)
         makecontext(&m_ctx, &Fiber::CallerMainFunc, 0);
     }
 
-    LINK_LOG_DEBUG(g_logger) << "Fiber::Fiber id:" << m_id;
+    LINKO_LOG_DEBUG(g_logger) << "Fiber::Fiber id:" << m_id;
 }
 
 Fiber::~Fiber() {
     --s_fiber_count;
     if (m_stack) {
-        LINK_LOG_INFO(g_logger) << "Fiber id:" << m_id << " m_state:" << m_state;
-        LINK_ASSERT(m_state == TERM || m_state == EXCEPT || m_state == INIT);
+        LINKO_LOG_INFO(g_logger) << "Fiber id:" << m_id << " m_state:" << m_state;
+        LINKO_ASSERT(m_state == TERM || m_state == EXCEPT || m_state == INIT);
         StackAllocator::Dealloc(m_stack, m_stacksize);
     } else {
-        LINK_ASSERT(!m_cb);
-        LINK_ASSERT(m_state == EXEC);
+        LINKO_ASSERT(!m_cb);
+        LINKO_ASSERT(m_state == EXEC);
 
         Fiber* cur = t_fiber;
         if (cur == this) {
@@ -96,15 +96,15 @@ Fiber::~Fiber() {
         }
     }
 
-    LINK_LOG_DEBUG(g_logger) << "Fiber::~Fiber id:" << m_id;
+    LINKO_LOG_DEBUG(g_logger) << "Fiber::~Fiber id:" << m_id;
 }
 
 void Fiber::reset(std::function<void()> cb) {
-    LINK_ASSERT(m_stack);
-    LINK_ASSERT(m_state == TERM || m_state == EXCEPT || m_state == INIT);
+    LINKO_ASSERT(m_stack);
+    LINKO_ASSERT(m_state == TERM || m_state == EXCEPT || m_state == INIT);
     m_cb = cb;
     if (getcontext(&m_ctx)) {
-        LINK_ASSERT2(false, "getcontext");
+        LINKO_ASSERT2(false, "getcontext");
     }
 
     m_ctx.uc_link = nullptr;
@@ -117,11 +117,11 @@ void Fiber::reset(std::function<void()> cb) {
 
 void Fiber::call() {
     SetThis(this);
-    LINK_ASSERT(m_state != EXEC);
+    LINKO_ASSERT(m_state != EXEC);
     m_state = EXEC;
 
     if (swapcontext(&t_threadFiber->m_ctx, &m_ctx)) {
-        LINK_ASSERT2(false, "swapcontext");
+        LINKO_ASSERT2(false, "swapcontext");
     }
 }
 
@@ -129,17 +129,17 @@ void Fiber::back() {
     SetThis(t_threadFiber.get());
 
     if (swapcontext(&m_ctx, &t_threadFiber->m_ctx)) {
-        LINK_ASSERT2(false, "swapcontext");
+        LINKO_ASSERT2(false, "swapcontext");
     }
 }
 
 void Fiber::swapIn() {
     SetThis(this);
-    LINK_ASSERT(m_state != EXEC);
+    LINKO_ASSERT(m_state != EXEC);
     m_state = EXEC;
     
     if (swapcontext(&Scheduler::GetMainFiber()->m_ctx, &m_ctx)) {
-        LINK_ASSERT2(false, "swapcontext");
+        LINKO_ASSERT2(false, "swapcontext");
     }
 }
 
@@ -147,7 +147,7 @@ void Fiber::swapOut() {
     SetThis(Scheduler::GetMainFiber());
 
     if (swapcontext(&m_ctx, &Scheduler::GetMainFiber()->m_ctx)) {
-        LINK_ASSERT2(false, "swapcontext");
+        LINKO_ASSERT2(false, "swapcontext");
     }
 }
 
@@ -162,7 +162,7 @@ Fiber::ptr Fiber::GetThis() {
     }
     //创建主协程
     Fiber::ptr main_fiber(new Fiber);
-    LINK_ASSERT(t_fiber == main_fiber.get());
+    LINKO_ASSERT(t_fiber == main_fiber.get());
     t_threadFiber = main_fiber;
     return t_fiber->shared_from_this();
 }
@@ -185,23 +185,23 @@ uint64_t Fiber::TotalFibers() {
 
 void Fiber::MainFunc() {
     Fiber::ptr cur = GetThis();
-    LINK_ASSERT(cur);
+    LINKO_ASSERT(cur);
     try {
         cur->m_cb();
         cur->m_cb = nullptr;
         cur->m_state = TERM;
     } catch (std::exception& ex) {
         cur->m_state = EXCEPT;
-        LINK_LOG_ERROR(g_logger) << "Fiber Except: " << ex.what() 
+        LINKO_LOG_ERROR(g_logger) << "Fiber Except: " << ex.what() 
             << " fiber_id:" << cur->getId()
             << std::endl 
-            << links::BacktraceToString();
+            << linko::BacktraceToString();
     } catch (...) {
         cur->m_state = EXCEPT;
-        LINK_LOG_ERROR(g_logger) << "Fiber Except"
+        LINKO_LOG_ERROR(g_logger) << "Fiber Except"
             << " fiber_id:" << cur->getId()
             << std::endl 
-            << links::BacktraceToString();
+            << linko::BacktraceToString();
     }
 
     //cur->swapOut();
@@ -210,28 +210,28 @@ void Fiber::MainFunc() {
     
     raw_ptr->swapOut();
 
-    LINK_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->getId()));
+    LINKO_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->getId()));
 }
 
 void Fiber::CallerMainFunc() {
     Fiber::ptr cur = GetThis();
-    LINK_ASSERT(cur);
+    LINKO_ASSERT(cur);
     try {
         cur->m_cb();
         cur->m_cb = nullptr;
         cur->m_state = TERM;
     } catch (std::exception& ex) {
         cur->m_state = EXCEPT;
-        LINK_LOG_ERROR(g_logger) << "Fiber Except: " << ex.what() 
+        LINKO_LOG_ERROR(g_logger) << "Fiber Except: " << ex.what() 
             << " fiber_id:" << cur->getId()
             << std::endl 
-            << links::BacktraceToString();
+            << linko::BacktraceToString();
     } catch (...) {
         cur->m_state = EXCEPT;
-        LINK_LOG_ERROR(g_logger) << "Fiber Except"
+        LINKO_LOG_ERROR(g_logger) << "Fiber Except"
             << " fiber_id:" << cur->getId()
             << std::endl 
-            << links::BacktraceToString();
+            << linko::BacktraceToString();
     }
 
     //cur->swapOut();
@@ -240,7 +240,7 @@ void Fiber::CallerMainFunc() {
 
     raw_ptr->back();
 
-    LINK_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->getId()));
+    LINKO_ASSERT2(false, "never reach fiber_id=" + std::to_string(raw_ptr->getId()));
 }
 
 }

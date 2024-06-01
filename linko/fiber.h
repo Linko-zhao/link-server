@@ -1,12 +1,12 @@
-#ifndef __LINKS_FIBER_H__
-#define __LINKS_FIBER_H__
+#ifndef __LINKO_FIBER_H__
+#define __LINKO_FIBER_H__
 
 #include <memory>
 #include <functional>
 #include <ucontext.h>
 #include "thread.h"
 
-namespace links {
+namespace linko {
 
 class Scheduler;
 
