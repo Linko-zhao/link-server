@@ -95,9 +95,10 @@ void Scheduler::stop() {
     LINKO_LOG_INFO(g_logger) << "stop";
     m_autoStop = true;
 
-    //1.主协程存在，即使用了use_caller
-    //2.只剩当前线程
-    //3.主协程状态为终止或初始化
+    //判断条件
+    // 1.主协程存在，即使用了use_caller
+    // 2.只剩当前线程
+    // 3.主协程状态为终止或初始化
     if (m_rootFiber
             && m_threadCount == 0
             && (m_rootFiber->getState() == Fiber::TERM
@@ -110,26 +111,26 @@ void Scheduler::stop() {
         }
     }
     
-    //bool exit_on_this_fiber = false;
     if (m_rootThread != -1) {
+        //使用use_caller，当前调度器和t_scheduler相同
         LINKO_ASSERT(GetThis() == this);
     } else {
+        //未使用use_caller时，t_scheduler应该为nullptr
         LINKO_ASSERT(GetThis() != this);
     }
 
     m_stopping = true;
+    //每个线程都需要tickle一下
     for (size_t i = 0; i < m_threadCount; ++i) {
         tickle();
     }
 
+    //使用use_caller需要多tickle一下
     if (m_rootFiber) {
         tickle();
     }
 
-    //if (stopping()) {
-    
-    //}
-
+    //使用use_caller需要判断是否达到停止条件，否则主协程需要让出执行权
     if (m_rootFiber) {
         //while (!stopping()) {
         //    if (m_rootFiber->getState() == Fiber::TERM
@@ -151,6 +152,7 @@ void Scheduler::stop() {
         thrs.swap(m_threads);
     }
 
+    //等待线程执行完成
     for (auto& i : thrs) {
         i->join();
     }
@@ -163,10 +165,12 @@ void Scheduler::setThis() {
 void Scheduler::run() {
     LINKO_LOG_DEBUG(g_logger) << "run";
     setThis();
+    //非caller线程，设置主协程为当前线程主协程
     if (linko::GetThreadId() != m_rootThread) {
         t_fiber = Fiber::GetThis().get();
     }
 
+    //任务队列无任务时，执行idle协程
     Fiber::ptr idle_fiber(new Fiber(std::bind(&Scheduler::idle, this)));
     Fiber::ptr cb_fiber;
 
@@ -176,9 +180,11 @@ void Scheduler::run() {
         bool tickle_me = false;
         bool is_active = false;
         {
+            //获取任务
             MutexType::Lock lock(m_mutex);
             auto it = m_fibers.begin();
             while (it != m_fibers.end()) {
+                //任务指定的线程非当前线程则跳过
                 if (it->thread != -1 && it->thread != linko::GetThreadId()) {
                     ++it;
                     tickle_me = true;
@@ -186,11 +192,13 @@ void Scheduler::run() {
                 }
 
                 LINKO_ASSERT(it->fiber || it->cb);
+                //如果任务正在执行则跳过
                 if (it->fiber && it->fiber->getState() == Fiber::EXEC) {
                     ++it;
                     continue;
                 }
 
+                //取出任务并从任务队列中删除，将当前线程标记为正在执行任务
                 ft = *it;
                 m_fibers.erase(it);
                 ++m_activeThreadCount;
