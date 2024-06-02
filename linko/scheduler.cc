@@ -211,48 +211,66 @@ void Scheduler::run() {
             tickle();
         }
 
+        //如果取出的任务是协程，且协程状态不是终止或出错
         if (ft.fiber && ft.fiber->getState() != Fiber::TERM 
                         && ft.fiber->getState() != Fiber::EXCEPT) {
+            //执行任务
             ft.fiber->swapIn();
             --m_activeThreadCount;
 
+            //如果协程状态被设置为READY，则需要重新加入任务队列中等待处理
             if (ft.fiber->getState() == Fiber::READY) {
                 schedule(ft.fiber);
+            //如果是初始化或暂停状态，设置状态为HOLD
             } else if (ft.fiber->getState() != Fiber::TERM
                     && ft.fiber->getState() != Fiber::EXCEPT) {
                 ft.fiber->m_state = Fiber::HOLD;
             }
+            //任务完成需要重置
             ft.reset();
+        
+        //如果任务是回调函数
         } else if (ft.cb) {
+            // 如果cb_fiber存在则直接重置
             if (cb_fiber) {
                 cb_fiber->reset(ft.cb);
             } else {
                 cb_fiber.reset(new Fiber(ft.cb));
             }
             ft.reset();
+            //执行任务
             cb_fiber->swapIn();
             --m_activeThreadCount;
+
             if (cb_fiber->getState() == Fiber::READY) {
                 schedule(cb_fiber);
                 cb_fiber.reset();
+            //状态为异常或终止，则重置
             } else if (cb_fiber->getState() == Fiber::EXCEPT
                     || cb_fiber->getState() == Fiber::TERM) {
                 cb_fiber->reset(nullptr);
             } else {
+                //设置状态为HOLD，后面会通过ft.fiber被拉起
                 cb_fiber->m_state = Fiber::HOLD;
                 cb_fiber.reset();
             }
+
+        //无任务执行
         } else {
+            //处理从任务队列中取出的任务为空（即fiber和cb均为空）的异常情况
             if (is_active) {
                 --m_activeThreadCount;
                 continue;
             }
+
+            //如果idle_fiber状态为终止，即结束循环
             if (idle_fiber->getState() == Fiber::TERM) {
                 LINKO_LOG_INFO(g_logger) << "idle fiber terminate";
                 tickle();
                 break;
             }
 
+            //执行idle
             ++m_idleThreadCount;
             idle_fiber->swapIn();
             --m_idleThreadCount;
