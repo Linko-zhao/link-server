@@ -32,6 +32,7 @@ void IOManager::FdContext::resetContext(IOManager::FdContext::EventContext& ctx)
 
 void IOManager::FdContext::triggeredEvent(Event event) {
     LINKO_ASSERT(events & event);
+    //触发该事件就将该事件从注册事件中删除
     events = (Event)(events & ~event);
     EventContext& ctx = getContext(event);
     if (ctx.cb) {
@@ -44,7 +45,7 @@ void IOManager::FdContext::triggeredEvent(Event event) {
 
 
 IOManager::IOManager(size_t threads, bool use_caller, const std::string& name)
-    :Scheduler(threads, use_caller, name){
+    : Scheduler(threads, use_caller, name) {
     m_epfd = epoll_create(5000);
     LINKO_ASSERT(m_epfd > 0);
 
@@ -53,10 +54,16 @@ IOManager::IOManager(size_t threads, bool use_caller, const std::string& name)
 
     epoll_event event;
     memset(&event, 0, sizeof(epoll_event));
+    //注册读事件，设置边缘触发模式
     event.events = EPOLLIN | EPOLLET;
     event.data.fd = m_tickleFds[0];
 
+    //对打开的文件描述符执行操作
+    //F_SETFL：设置文件状态标志，O_NONBLOCK：非阻塞模式I/O
     rt = fcntl(m_tickleFds[0], F_SETFL, O_NONBLOCK);
+    LINKO_ASSERT(!rt);
+
+    rt = epoll_ctl(m_epfd, EPOLL_CTL_ADD, m_tickleFds[0], &event);
     LINKO_ASSERT(!rt);
 
     contextResize(32);

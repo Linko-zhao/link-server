@@ -24,9 +24,12 @@ public:
         EXCEPT
     };
 private:
+    //构造主协程
     Fiber();
 
 public:
+            
+    //构造子协程
     Fiber(std::function<void()> cb, size_t stacksize = 0, bool use_caller = false);
     ~Fiber();
 
@@ -65,6 +68,7 @@ private:
     State m_state = INIT;
 
     ucontext_t m_ctx;
+    //协程运行栈指针
     void* m_stack = nullptr;
 
     std::function<void()> m_cb;

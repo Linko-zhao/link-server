@@ -23,6 +23,7 @@ static thread_local Fiber::ptr t_threadFiber = nullptr;
 static ConfigVar<uint32_t>::ptr g_fiber_stack_size = 
     Config::Lookup<uint32_t>("fiber.stack_size", 1024 * 1024, "fiber stack size");
 
+//创建和释放运行栈
 class MallocStackAllocator {
 public:
     static void* Alloc(size_t size) {
@@ -63,10 +64,12 @@ Fiber::Fiber(std::function<void()> cb, size_t stacksize, bool use_caller)
     m_stacksize = stacksize ? stacksize : g_fiber_stack_size->getValue();
 
     m_stack = StackAllocator::Alloc(m_stacksize);
+    //将当前协程上下文存入m_ctx中
     if (getcontext(&m_ctx)) {
         LINKO_ASSERT2(false, "getcontext");
     }
 
+    //执行完当前context之后退出程序
     m_ctx.uc_link = nullptr;
     m_ctx.uc_stack.ss_sp = m_stack;
     m_ctx.uc_stack.ss_size = m_stacksize;
@@ -82,14 +85,17 @@ Fiber::Fiber(std::function<void()> cb, size_t stacksize, bool use_caller)
 
 Fiber::~Fiber() {
     --s_fiber_count;
+    //子协程是否存在
     if (m_stack) {
         LINKO_LOG_INFO(g_logger) << "Fiber id:" << m_id << " m_state:" << m_state;
         LINKO_ASSERT(m_state == TERM || m_state == EXCEPT || m_state == INIT);
         StackAllocator::Dealloc(m_stack, m_stacksize);
     } else {
+        //主协程释放要保证没有任务且正在运行
         LINKO_ASSERT(!m_cb);
         LINKO_ASSERT(m_state == EXEC);
 
+        //如果当前协程为主协程，则置空
         Fiber* cur = t_fiber;
         if (cur == this) {
             SetThis(nullptr);
@@ -101,6 +107,7 @@ Fiber::~Fiber() {
 
 void Fiber::reset(std::function<void()> cb) {
     LINKO_ASSERT(m_stack);
+    //当前协程不在准备和运行态
     LINKO_ASSERT(m_state == TERM || m_state == EXCEPT || m_state == INIT);
     m_cb = cb;
     if (getcontext(&m_ctx)) {
@@ -204,8 +211,9 @@ void Fiber::MainFunc() {
             << linko::BacktraceToString();
     }
 
-    //cur->swapOut();
+    //获得裸指针
     auto raw_ptr = cur.get();
+    //引用-1，防止fiber释放不掉
     cur.reset();
     
     raw_ptr->swapOut();
@@ -234,7 +242,6 @@ void Fiber::CallerMainFunc() {
             << linko::BacktraceToString();
     }
 
-    //cur->swapOut();
     auto raw_ptr = cur.get();
     cur.reset();
 
