@@ -63,9 +63,11 @@ IOManager::IOManager(size_t threads, bool use_caller, const std::string& name)
     rt = fcntl(m_tickleFds[0], F_SETFL, O_NONBLOCK);
     LINKO_ASSERT(!rt);
 
+    //将pipe的读端注册到epoll
     rt = epoll_ctl(m_epfd, EPOLL_CTL_ADD, m_tickleFds[0], &event);
     LINKO_ASSERT(!rt);
 
+    //初始化socket事件上下文数组
     contextResize(32);
 
     start();
@@ -101,17 +103,21 @@ void IOManager::contextResize(size_t size) {
 int IOManager::addEvent(int fd, Event event, std::function<void()> cb) {
     FdContext* fd_ctx = nullptr;
     RWMutexType::ReadLock lock(m_mutex);
+
+    //从m_fdContexts中获取对应的FdContext
     if (m_fdContexts.size() > (size_t)fd) {
         fd_ctx = m_fdContexts[fd];
         lock.unlock();
     } else {
         lock.unlock();
         RWMutexType::WriteLock lock2(m_mutex);
+        //扩充容器
         contextResize(m_fdContexts.size() * 1.5);
         fd_ctx = m_fdContexts[fd];
     }
 
     FdContext::MutexType::Lock lock2(fd_ctx->mutex);
+    //一般同一个句柄添加事件相同，可能为两个线程在操纵同一个句柄
     if (fd_ctx->events & event) {
         LINKO_LOG_ERROR(g_logger) << "addEvent assert fd=" << fd
             << " event=" << event
@@ -119,11 +125,14 @@ int IOManager::addEvent(int fd, Event event, std::function<void()> cb) {
         LINKO_ASSERT(!(fd_ctx->events & event));
     }
 
+    //已有注册事件则为修改事件，否则为添加
     int op = fd_ctx->events ? EPOLL_CTL_MOD : EPOLL_CTL_ADD;
     epoll_event epevent;
+    //设置边缘触发，添加原有事件以及要注册事件
     epevent.events = EPOLLET | fd_ctx->events | event;
     epevent.data.ptr = fd_ctx;
 
+    //注册事件
     int rt = epoll_ctl(m_epfd, op, fd, &epevent);
     if (rt) {
         LINKO_LOG_ERROR(g_logger) << "epoll_ctl(" << m_epfd << ", "
@@ -132,6 +141,8 @@ int IOManager::addEvent(int fd, Event event, std::function<void()> cb) {
     }
 
     ++m_pendingEventCount;
+
+    //更新上下文事件
     fd_ctx->events = (Event)(fd_ctx->events | event);
     FdContext::EventContext& event_ctx = fd_ctx->getContext(event);
     LINKO_ASSERT(!event_ctx.scheduler
@@ -163,7 +174,9 @@ bool IOManager::delEvent(int fd, Event event) {
         return false;
     }
 
+    //将事件从注册事件中删除
     Event new_events = (Event)(fd_ctx->events & ~event);
+    //仍有事件则修改，否则删除
     int op = new_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
     epoll_event epevent;
     epevent.events = EPOLLET | new_events;
@@ -178,6 +191,8 @@ bool IOManager::delEvent(int fd, Event event) {
     }
 
     --m_pendingEventCount;
+
+    //修改注册事件，重置上下文
     fd_ctx->events = new_events;
     FdContext::EventContext& event_ctx = fd_ctx->getContext(event);
     fd_ctx->resetContext(event_ctx);
@@ -212,6 +227,7 @@ bool IOManager::cancelEvent(int fd, Event event) {
         return false;
     }
 
+    //删除之前触发一次事件
     fd_ctx->triggeredEvent(event);
     --m_pendingEventCount;
     return true;
@@ -244,6 +260,7 @@ bool IOManager::cancelAll(int fd) {
         return false;
     }
 
+    //触发所有事件
     if (fd_ctx->events & READ) {
         fd_ctx->triggeredEvent(READ);
         --m_pendingEventCount;
@@ -266,15 +283,18 @@ IOManager* IOManager::GetThis() {
 
 
 void IOManager::tickle() {
+    //没有在执行的idle线程
     if (!hasIdleThreads()) {
         return;
     }
+    //边缘触发，有任务时，往pipe里写入一个字节数据，就会唤醒epoll_wait
     int rt = write(m_tickleFds[1], "T", 1);
     LINKO_ASSERT(rt == 1);
 } 
 
 bool IOManager::stopping(uint64_t& timeout) {
     timeout = getNextTimer();
+    //定时器为空，等待执行事件数量为0，scheduler可以停止
     return timeout == ~0ull
         && m_pendingEventCount == 0
         && Scheduler::stopping();
@@ -292,36 +312,47 @@ void IOManager::idle() {
         delete [] ptr;
     });
 
+    /*
+     * 对于IO协程调度来说，应阻塞在等待IO事件上，idle退出的时机是epoll_wait返回，
+     * 对应的操作是tickle或注册的IO事件就绪。
+     */
     while (true) {
+        //下一个任务要执行的时间
         uint64_t next_timeout = 0;
-        if (stopping()) {
-            next_timeout = getNextTimer();
-            if (next_timeout == ~0ull) {
-                LINKO_LOG_INFO(g_logger) << "name=" << getName() 
-                                        << " idle stopping exit";
-                break;
-            }
+        //获取下一个任务时间，并判断是否停止
+        if (stopping(next_timeout)) {
+            LINKO_LOG_INFO(g_logger) << "name=" << getName() 
+                << " idle stopping exit";
+            break;
         }
 
         int rt = 0;
         do {
             static const int MAX_TIMEOUT = 3000;
+            //如果有定时器任务，最多休眠MAX_TIMEOUT
             if (next_timeout != ~0ull) {
                 next_timeout = (int)next_timeout > MAX_TIMEOUT
-                                ? MAX_TIMEOUT : next_timeout;
+                                    ? MAX_TIMEOUT : next_timeout;
             } else {
                 next_timeout = MAX_TIMEOUT;
             }
-            rt = epoll_wait(m_epfd, events, 64, (int)next_timeout);
 
+            /*
+             * 在此阻塞，以下3种情况会唤醒：
+             *  1. 超时时间到
+             *  2. 关注的socket有数据到达
+             *  3. 通过tickle唤醒
+             */
+            rt = epoll_wait(m_epfd, events, 64, (int)next_timeout);
             if (rt < 0 && errno == EINTR) {
-                
+                //发生系统中断EINTR，需要重新尝试epoll_wait
             } else {
                 break;
             }
         } while (true);
 
         std::vector<std::function<void()> > cbs;
+        //获取超时任务，并放入任务队列
         listExpiredCb(cbs);
         if (!cbs.empty()) {
             schedule(cbs.begin(), cbs.end());
@@ -330,16 +361,24 @@ void IOManager::idle() {
 
         for (int i = 0; i < rt; ++i) {
             epoll_event& event = events[i];
+            //获得的信息来自pipe
             if (event.data.fd == m_tickleFds[0]) {
                 uint8_t dummy;
+                //将第一个字节无效数据取出
                 while (read(m_tickleFds[0], &dummy, 1) == 1) ;
                 continue;
             }
 
             FdContext* fd_ctx = (FdContext*)event.data.ptr;
             FdContext::MutexType::Lock lock(fd_ctx->mutex);
+            /*
+             * EPOLLERR：出错，比如读写端已关闭的pipe
+             * EPOLLHUP：socket套接字对端关闭
+             * 出现这两种事件，应该同时触发fd的读和写事件，
+             * 否则有可能出现注册的事件永远不执行的情况。
+             */
             if (event.events & (EPOLLERR | EPOLLHUP)) {
-                event.events |= EPOLLIN | EPOLLOUT;
+                event.events |= (EPOLLIN | EPOLLOUT) & fd_ctx->events;
             }
             int real_events = NONE;
             if (event.events & EPOLLIN) {
@@ -353,6 +392,8 @@ void IOManager::idle() {
                 continue;
             }
 
+            //剔除已发生的事件，将剩下的事件重新加入Epoll
+            //如剩下的事件为NONE，则删除
             int left_events = (fd_ctx->events & ~real_events);
             int op = left_events ? EPOLL_CTL_MOD : EPOLL_CTL_DEL;
             event.events = EPOLLET | left_events;
@@ -376,6 +417,9 @@ void IOManager::idle() {
             }
         }
 
+        
+        //一旦处理完所有的事，idle协程让出，可以让调度协程重新检查是否有新任务要调度
+        //triggeredEvent仅将对应的任务加入的调度队列，需要等idle协程退出才会执行
         Fiber::ptr cur = Fiber::GetThis();
         auto raw_ptr = cur.get();
         cur.reset();

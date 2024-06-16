@@ -43,10 +43,13 @@ public:
 
     //0 success, -1 error
     int addEvent(int fd, Event event, std::function<void()> cb = nullptr);
+    //删除事件，不会触发事件
     bool delEvent(int fd, Event event);
-    bool cancelEvent(int fd, Event event);
 
+    //取消事件，如果该事件被注册过回调，则触发一次事件
+    bool cancelEvent(int fd, Event event);
     bool cancelAll(int fd);
+
     static IOManager* GetThis();
 
 protected:
@@ -57,15 +60,16 @@ protected:
 
     void contextResize(size_t size);
     bool stopping(uint64_t& timeout);
+
 private:
     //epoll文件句柄
     int m_epfd = 0;
     //pipe文件句柄，[0]表示读端，[1]表示写端
     int m_tickleFds[2];
-
     //等待执行的事件数量
     std::atomic<size_t> m_pendingEventCount = {0};
     RWMutexType m_mutex;
+    //socket事件上下文容器
     std::vector<FdContext*> m_fdContexts;
 };
 
