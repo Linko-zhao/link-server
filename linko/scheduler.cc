@@ -132,16 +132,7 @@ void Scheduler::stop() {
 
     //使用use_caller需要判断是否达到停止条件，否则主协程需要让出执行权
     if (m_rootFiber) {
-        //while (!stopping()) {
-        //    if (m_rootFiber->getState() == Fiber::TERM
-        //            || m_rootFiber->getState() == Fiber::EXCEPT) {
-        //        m_rootFiber.reset(new Fiber(std::bind(&Scheduler::run, this), 0, true));
-        //        LINKO_LOG_INFO(g_logger) << " root fiber is term, reset";
-        //        t_fiber = m_rootFiber.get();
-        //    }
-        //    m_rootFiber->call();
-        //}
-        if (!stopping()) {
+       if (!stopping()) {
             m_rootFiber->call();
         }
     }

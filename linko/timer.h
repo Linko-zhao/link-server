@@ -49,7 +49,9 @@ public:
             uint64_t ms, std::function<void()> cb, 
             std::weak_ptr<void> weak_cond, bool recurring = false);
 
+    //到最近一个定时器执行的时间间隔(毫秒)
     uint64_t getNextTimer();
+    //获取需要执行的定时器的回调函数列表
     void listExpiredCb(std::vector<std::function<void()> >& cbs);
     bool hasTimer();
 protected:

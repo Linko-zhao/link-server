@@ -305,7 +305,9 @@ bool IOManager::stopping() {
     return stopping(timeout);
 }
 
-
+/*
+ * idel协程应该关注两件事，一是有没有新的调度任务，二是当前注册的所有IO事件有没有触发
+ */
 void IOManager::idle() {
     epoll_event* events = new epoll_event[64]();
     std::shared_ptr<epoll_event> shared_events(events, [](epoll_event* ptr){
