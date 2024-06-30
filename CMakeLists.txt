@@ -13,6 +13,7 @@ link_directories(/usr/local/lib)
 set(LIB_SRC
     linko/config.cc
     linko/fiber.cc
+    linko/hook.cc
     linko/log.cc
     linko/mutex.cc
     linko/scheduler.cc
@@ -29,9 +30,10 @@ find_library(YAMLCPP yaml-cpp)
 find_library(PTHREAD pthread)
 
 set(LIBS
-    linko
-    pthread
-    yaml-cpp
+        linko
+        dl
+        pthread
+        yaml-cpp
     )
 
 add_executable(test tests/test.cc)
@@ -68,6 +70,11 @@ add_executable(test_iomanager tests/test_iomanager.cc)
 add_dependencies(test_iomanager linko)
 force_redefine_file_macro_for_sources(test_iomanager)
 target_link_libraries(test_iomanager ${LIBS})
+
+add_executable(test_hook tests/test_hook.cc)
+add_dependencies(test_hook linko)
+force_redefine_file_macro_for_sources(test_hook)
+target_link_libraries(test_hook ${LIBS})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

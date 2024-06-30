@@ -1,6 +1,7 @@
 #include "scheduler.h"
 #include "log.h"
 #include "macro.h"
+#include "hook.h"
 
 namespace linko {
 static linko::Logger::ptr g_logger = LINKO_LOG_NAME("system");
@@ -155,6 +156,7 @@ void Scheduler::setThis() {
 
 void Scheduler::run() {
     LINKO_LOG_DEBUG(g_logger) << "run";
+    set_hook_enable(true);
     setThis();
     //非caller线程，设置主协程为当前线程主协程
     if (linko::GetThreadId() != m_rootThread) {
