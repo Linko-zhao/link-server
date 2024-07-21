@@ -30,7 +30,7 @@ void IOManager::FdContext::resetContext(IOManager::FdContext::EventContext& ctx)
 }
 
 
-void IOManager::FdContext::triggeredEvent(Event event) {
+void IOManager::FdContext::triggerEvent(Event event) {
     LINKO_ASSERT(events & event);
     //触发该事件就将该事件从注册事件中删除
     events = (Event)(events & ~event);
@@ -228,7 +228,7 @@ bool IOManager::cancelEvent(int fd, Event event) {
     }
 
     //删除之前触发一次事件
-    fd_ctx->triggeredEvent(event);
+    fd_ctx->triggerEvent(event);
     --m_pendingEventCount;
     return true;
 }
@@ -262,12 +262,12 @@ bool IOManager::cancelAll(int fd) {
 
     //触发所有事件
     if (fd_ctx->events & READ) {
-        fd_ctx->triggeredEvent(READ);
+        fd_ctx->triggerEvent(READ);
         --m_pendingEventCount;
     }
 
     if (fd_ctx->events & WRITE) {
-        fd_ctx->triggeredEvent(WRITE);
+        fd_ctx->triggerEvent(WRITE);
         --m_pendingEventCount;
     }
 
@@ -409,19 +409,19 @@ void IOManager::idle() {
             }
 
             if (real_events & READ) {
-                fd_ctx->triggeredEvent(READ);
+                fd_ctx->triggerEvent(READ);
                 --m_pendingEventCount;
             }
 
             if (real_events & WRITE) {
-                fd_ctx->triggeredEvent(WRITE);
+                fd_ctx->triggerEvent(WRITE);
                 --m_pendingEventCount;
             }
         }
 
         
         //一旦处理完所有的事，idle协程让出，可以让调度协程重新检查是否有新任务要调度
-        //triggeredEvent仅将对应的任务加入的调度队列，需要等idle协程退出才会执行
+        //triggerEvent仅将对应的任务加入的调度队列，需要等idle协程退出才会执行
         Fiber::ptr cur = Fiber::GetThis();
         auto raw_ptr = cur.get();
         cur.reset();
