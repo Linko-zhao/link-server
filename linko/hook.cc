@@ -310,19 +310,123 @@ int close(int fd) {
 }
 
 int fcntl(int fd, int cmd, ... /* arg */ ) {
-
+    va_list va;
+    va_start(va, cmd);
+    switch (cmd) {
+    case F_SETFL:
+        {
+            int arg = va_arg(va, int);
+            va_end(va);
+            linko::FdCtx::ptr ctx = linko::FdMgr::GetInstance()->get(fd);
+            if (!ctx || ctx->isClosed() || !ctx->isSocket()) {
+                return fcntl_f(fd, cmd, arg);
+            }
+            ctx->setUserNonblock(arg & O_NONBLOCK);
+            if (ctx->getSysNonblock()) {
+                arg |= O_NONBLOCK;
+            } else {
+                arg &= ~O_NONBLOCK;
+            }
+            return fcntl_f(fd, cmd, arg);
+        }
+        break;
+    case F_GETFL:
+        {
+            va_end(va);
+            int arg = fcntl_f(fd, cmd);
+            linko::FdCtx::ptr ctx = linko::FdMgr::GetInstance()->get(fd);
+            if (!ctx || ctx->isClosed() || !ctx->isSocket()) {
+                return arg;
+            }
+            if (ctx->getUserNonblock()) {
+                return arg | O_NONBLOCK;
+            } else {
+                return arg & ~O_NONBLOCK;
+            }
+        }
+        break;
+    case F_DUPFD:
+    case F_DUPFD_CLOEXEC:
+    case F_SETFD:
+    case F_SETSIG:
+    case F_SETOWN:
+    case F_SETLEASE:
+    case F_NOTIFY:
+    case F_SETPIPE_SZ:
+        {
+            int arg = va_arg(va, int);
+            va_end(va);
+            return fcntl_f(fd, cmd, arg);
+        }
+    case F_GETFD:
+    case F_GETOWN:
+    case F_GETSIG:
+    case F_GETLEASE:
+    case F_GETPIPE_SZ:
+        {
+            va_end(va);
+            return fcntl_f(fd, cmd);
+        }
+        break;
+    case F_SETLK:
+    case F_SETLKW:
+    case F_GETLK:
+        {
+            struct flock* arg = va_arg(va, struct flock*);
+            va_end(va);
+            return fcntl_f(fd, cmd, arg);
+        }
+        break;
+    case F_GETOWN_EX:
+    case F_SETOWN_EX:
+        {
+            struct f_owner_exlock* arg = va_arg(va, struct f_owner_exlock*);
+            va_end(va);
+            return fcntl_f(fd, cmd, arg);
+        }
+        break;
+    default:
+        va_end(va);
+        return fcntl_f(fd, cmd);
+    }
 }
 
-int ioctl(int d, unsigned long int request, ...) {
+int ioctl(int fd, unsigned long int request, ...) {
+    va_list va;
+    va_start(va, request);
+    void* arg = va_arg(va, void*);
+    va_end(va);
 
+    if (FIONBIO == request) {
+        bool user_nonblock = !!*(int*)arg;
+        linko::FdCtx::ptr ctx = linko::FdMgr::GetInstance()->get(fd);
+        if (!ctx || ctx->isClosed() || !ctx->isSocket()) {
+           return ioctl_f(fd, request, arg);
+        }
+        ctx->setUserNonblock(user_nonblock);
+    }
+    return ioctl_f(fd, request, arg);
 }
 
 int getsockopt(int sockfd, int level, int optname, void *optval, socklen_t *optlen) {
-
+    return getsockopt_f(sockfd, level, optname, optval, optlen);
 }
 
 int setsockopt(int sockfd, int level, int optname, const void *optval, socklen_t optlen) {
+    if (!linko::t_hook_enable) {
+        return setsockopt_f(sockfd, level, optname, optval, optlen);
+    }
 
+    if (level == SOL_SOCKET) {
+        if (optname == SO_RCVTIMEO || optname == SO_SNDTIMEO) {
+            linko::FdCtx::ptr ctx = linko::FdMgr::GetInstance()->get(sockfd);
+            if (ctx) {
+                const timeval* tv = (const timeval*)optval;
+                ctx->setTimeout(optname, tv->tv_sec * 1000 + tv->tv_usec / 1000);
+            }
+        }
+    }
+    return setsockopt_f(sockfd, level, optname, optval, optlen);
 }
 
 }
