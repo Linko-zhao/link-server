@@ -241,6 +241,75 @@ int socket(int domain, int type, int protocol) {
     return fd;
 }
 
+int connect_with_timeout(int fd, const struct sockaddr *addr, socklen_t addrlen, uint64_t timeout_ms) {
+    if (!linko::t_hook_enable) {
+        return connect_f(fd, addr, addrlen);
+    }
+    linko::FdCtx::ptr ctx = linko::FdMgr::GetInstance()->get(fd);
+    if (!ctx || ctx->isClosed()) {
+        errno = EBADF;
+        return  -1;
+    }
+    if (!ctx->isSocket()) {
+        return connect_f(fd, addr, addrlen);
+    }
+    if (ctx->getUserNonblock()) {
+        return connect_f(fd, addr, addrlen);
+    }
+
+    int n = connect_f(fd, addr, addrlen);
+    if (n == 0) {
+        return 0;
+    } else {
+        return n;
+    }
+
+    linko::IOManager* iom = linko::IOManager::GetThis();
+    linko::Timer::ptr timer;
+    std::shared_ptr<timer_info> tinfo(new timer_info);
+    std::weak_ptr<timer_info> winfo(tinfo);
+
+    if (timeout_ms != (uint64_t)-1) {
+        timer = iom->addConditionTimer(timeout_ms, [winfo, fd, iom]() {
+                    auto t = winfo.lock();
+                    if (!t || t->cancelled) {
+                        return;
+                    }
+                    t->cancelled = ETIMEDOUT;
+                    iom->cancelEvent(fd, linko::IOManager::WRITE);
+                }, winfo);
+    }
+
+    int rt = iom->addEvent(fd, linko::IOManager::WRITE);
+    if (rt == 0) {
+        linko::Fiber::YieldToHold();
+        if (timer) {
+            timer->cancel();
+        }
+        if (tinfo->cancelled) {
+            errno = tinfo->cancelled;
+            return -1;
+        }
+    } else {
+        if (timer) {
+            timer->cancel();
+        }
+        LINKO_LOG_ERROR(g_logger) << "connect addEvent(" << fd << ", WRITE) error";
+    }
+
+    int error = 0;
+    socklen_t len = sizeof(int);
+    if (-1 == getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len)) {
+        return -1;
+    }
+    if (!error) {
+        return 0;
+    } else {
+        errno = error;
+        return -1;
+    }
+}
+
 int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
     return connect_f(sockfd, addr, addrlen);
 }
