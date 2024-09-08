@@ -16,6 +16,7 @@ set(LIB_SRC
     linko/hook.cc
     linko/log.cc
     linko/mutex.cc
+    linko/fd_manager.cc
     linko/scheduler.cc
     linko/thread.cc
     linko/util.cc

@@ -1,6 +1,7 @@
 #include "hook.h"
 #include <dlfcn.h>
 
+#include "config.h"
 #include "log.h"
 #include "fiber.h"
 #include "iomanager.h"
@@ -9,6 +10,9 @@
 linko::Logger::ptr g_logger = LINKO_LOG_NAME("system");
 
 namespace linko {
+
+static linko::ConfigVar<int>::ptr g_tcp_connect_timeout = 
+    linko::Config::Lookup("tcp.connect.timeout", 5000, "tcp connect timeout");
 
 static thread_local bool t_hook_enable = false;
 
@@ -45,9 +49,16 @@ void hook_init() {
 #undef XX
 }
 
+static uint64_t s_connect_timeout = -1;
 struct _HookIniter {
     _HookIniter() {
         hook_init();
+        s_connect_timeout = g_tcp_connect_timeout->getValue();
+        g_tcp_connect_timeout->addListener([](const int& old_value, const int& new_value){
+                LINKO_LOG_INFO(g_logger) << "tcp connect timeout changed from "
+                                        << old_value << " to " << new_value;
+                s_connect_timeout = new_value;
+            });
     }
 };
 
@@ -311,7 +322,7 @@ int connect_with_timeout(int fd, const struct sockaddr *addr, socklen_t addrlen,
 }
 
 int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
-    return connect_f(sockfd, addr, addrlen);
+    return connect_with_timeout(sockfd, addr, addrlen, linko::s_connect_timeout);
 }
 
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen) {
