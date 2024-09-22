@@ -271,7 +271,7 @@ int connect_with_timeout(int fd, const struct sockaddr *addr, socklen_t addrlen,
     int n = connect_f(fd, addr, addrlen);
     if (n == 0) {
         return 0;
-    } else {
+    } else if (n != -1 || errno != EINPROGRESS){
         return n;
     }
 

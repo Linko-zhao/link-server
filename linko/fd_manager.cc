@@ -29,11 +29,13 @@ bool FdCtx::init() {
     m_sendTimeout = -1;
 
     struct stat fd_stat;
+    //0: success  -1: fail
     if (-1 == fstat(m_fd, &fd_stat)) {
         m_isInit = false;
         m_isSocket = false;
     } else {
         m_isInit = true;
+        //判断文件是否为socket
         m_isSocket = S_ISSOCK(fd_stat.st_mode);
     }
 
