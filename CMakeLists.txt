@@ -11,6 +11,7 @@ include_directories(/usr/local/include)
 link_directories(/usr/local/lib)
 
 set(LIB_SRC
+    linko/address.cc
     linko/config.cc
     linko/fiber.cc
     linko/hook.cc
