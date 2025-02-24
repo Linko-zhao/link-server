@@ -3,20 +3,37 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/un.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
+#include <arpa/inet.h>
 #include <iostream>
+#include <map>
 
 namespace linko {
 
+class IPAddress;
 class Address {
 public:
     typedef std::shared_ptr<Address> ptr;
 
     static Address::ptr Create(const sockaddr* addr, socklen_t addrlen);
+    static bool Lookup(std::vector<Address::ptr>& result, const std::string& host,
+            int family = AF_UNSPEC, int type = 0, int protocol = 0);
+    static Address::ptr LookupAny(const std::string& host,
+            int family = AF_UNSPEC, int type = 0, int protocol = 0);
+    static std::shared_ptr<IPAddress> LookupAnyIPAddress(const std::string& host,
+            int family = AF_UNSPEC, int type = 0, int protocol = 0);
+
+    static bool GetInterfaceAddress(std::multimap<std::string, std::pair<Address::ptr, uint32_t> >&result
+            , const std::string& iface, int family = AF_UNSPEC);
+    
+    static bool GetInterfaceAddress(std::vector<std::pair<Address::ptr, uint32_t> >&result
+            , const std::string& iface, int family = AF_UNSPEC);
+
     virtual ~Address() {}
 
     int getFamily() const;
@@ -108,6 +125,7 @@ private:
 class UnknownAddress : public Address {
 public:
     typedef std::shared_ptr<UnknownAddress> ptr;
+    UnknownAddress(const sockaddr& addr);
     UnknownAddress(int family);
 
     const sockaddr* getAddr() const override;
