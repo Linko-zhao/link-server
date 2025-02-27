@@ -16,22 +16,37 @@
 namespace linko {
 
 class IPAddress;
+
 class Address {
 public:
     typedef std::shared_ptr<Address> ptr;
 
+    // 通过sockaddr指针创建Address
     static Address::ptr Create(const sockaddr* addr, socklen_t addrlen);
+
+    // 通过host地址返回对应条件的所有Address
+    // result: 返回满足条件的Address
+    // host: 域名、服务器名等
+    // family: 协议族 AF_INET\AF_INET6\AF_UNIX
+    // type: 套接字类型SOCK_STREAM\SOCK_DGRAM
+    // protocol: 协议 IPPROTO_TCP\IPPROTO_UDP
     static bool Lookup(std::vector<Address::ptr>& result, const std::string& host,
             int family = AF_UNSPEC, int type = 0, int protocol = 0);
+    // 返回对应条件的任意Address
     static Address::ptr LookupAny(const std::string& host,
             int family = AF_UNSPEC, int type = 0, int protocol = 0);
+    // 返回对饮条件的任意IPAddress
     static std::shared_ptr<IPAddress> LookupAnyIPAddress(const std::string& host,
             int family = AF_UNSPEC, int type = 0, int protocol = 0);
 
-    static bool GetInterfaceAddress(std::multimap<std::string, std::pair<Address::ptr, uint32_t> >&result
-            , const std::string& iface, int family = AF_UNSPEC);
+    // 返回本机所有网卡的<网卡名, 地址, 子网掩码位数>
+    static bool GetInterfaceAddress(
+            std::multimap<std::string, std::pair<Address::ptr, uint32_t> >&result
+            , int family = AF_UNSPEC);
     
-    static bool GetInterfaceAddress(std::vector<std::pair<Address::ptr, uint32_t> >&result
+    // 获取指定网卡的地址和子网掩码位数
+    static bool GetInterfaceAddress(
+            std::vector<std::pair<Address::ptr, uint32_t> >&result
             , const std::string& iface, int family = AF_UNSPEC);
 
     virtual ~Address() {}
@@ -41,6 +56,7 @@ public:
     virtual const sockaddr* getAddr() const = 0;
     virtual socklen_t getAddrLen() const = 0;
 
+    // 可读性输出
     virtual std::ostream& insert(std::ostream& os) const = 0;
     std::string toString();
     
@@ -52,10 +68,14 @@ public:
 class IPAddress : public Address {
 public:
     typedef std::shared_ptr<IPAddress> ptr;
-    static IPAddress::ptr Create(const char* address, uint32_t port);
+    static IPAddress::ptr Create(const char* address, uint32_t port = 0);
 
+    // 获取该地址的广播地址
+    // prefix_len: 子网掩码位数
     virtual IPAddress::ptr broadcastAddress(uint32_t prefix_len) = 0;
+    // 获取该地址的网段
     virtual IPAddress::ptr networdAddress(uint32_t prefix_len) = 0;
+    // 获取子网掩码地址
     virtual IPAddress::ptr subnetMask(uint32_t prefix_len) = 0;
 
     virtual uint32_t getPort() const = 0;

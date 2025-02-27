@@ -107,7 +107,7 @@ bool Address::Lookup(std::vector<Address::ptr>& result, const std::string& host,
 
 bool Address::GetInterfaceAddress(
         std::multimap<std::string, std::pair<Address::ptr, uint32_t> >&result
-        , const std::string& iface, int family) {
+        , int family) {
     struct ifaddrs *next, *results;
     if (getifaddrs(&results) != 0) {
         LINKO_LOG_ERROR(g_logger) << "Address::GetInterfaceAddress getifaddrs "
@@ -171,7 +171,7 @@ bool Address::GetInterfaceAddress(std::vector<std::pair<Address::ptr, uint32_t> 
 
     std::multimap<std::string, std::pair<Address::ptr, uint32_t> > results;
     
-    if (!GetInterfaceAddress(results, iface, family)) {
+    if (!GetInterfaceAddress(results, family)) {
         return false;
     }
 
