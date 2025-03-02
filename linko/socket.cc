@@ -1,12 +1,54 @@
 #include "socket.h"
 #include "fd_manager.h"
+#include "iomanager.h"
 #include "log.h"
 #include "macro.h"
-
+#include "hook.h"
 
 namespace linko {
 
 static linko::Logger::ptr g_logger = LINKO_LOG_NAME("SYSTEM");
+
+Socket::ptr Socket::CreateTCP(linko::Address::ptr address) {
+    Socket::ptr sock(new Socket(address->getFamily(), TCP));
+    return sock;
+}
+Socket::ptr Socket::CreateUDP(linko::Address::ptr address) {
+    Socket::ptr sock(new Socket(address->getFamily(), UDP));
+    return sock;
+}
+
+Socket::ptr Socket::CreateTCPSocket() {
+    Socket::ptr sock(new Socket(IPv4, TCP));
+    return sock;
+}
+Socket::ptr Socket::CreateUDPSocket() {
+    Socket::ptr sock(new Socket(IPv4, UDP));
+    return sock;
+}
+
+Socket::ptr Socket::CreateTCPSocket6() {
+    Socket::ptr sock(new Socket(IPv6, TCP));
+    return sock;
+}
+
+Socket::ptr Socket::CreateUDPSocket6() {
+
+    Socket::ptr sock(new Socket(IPv6, UDP));
+    return sock;
+}
+
+Socket::ptr Socket::CreateUnixTCPSocket() {
+
+    Socket::ptr sock(new Socket(UNIX, TCP));
+    return sock;
+}
+Socket::ptr Socket::CreateUnixUDPSocket() {
+
+    Socket::ptr sock(new Socket(UNIX, UDP));
+    return sock;
+}
+
 
 Socket::Socket(int family, int type, int protocol)
     : m_sock(-1)
@@ -21,7 +63,7 @@ Socket::~Socket() {
     close();
 }
 
-int64_t Socket::getSendTimeout(){
+int64_t Socket::getSendTimeout() {
     FdCtx::ptr ctx = FdMgr::GetInstance()->get(m_sock);
     if (ctx) {
         return ctx->getTimeout(SO_SNDTIMEO);
@@ -29,12 +71,12 @@ int64_t Socket::getSendTimeout(){
     return -1;
 }
 
-bool Socket::setSendTimeout(int64_t v){
+bool Socket::setSendTimeout(int64_t v) {
     struct timeval tv{ int(v / 1000), int(v % 1000 * 1000) };
     return setOption(SOL_SOCKET, SO_SNDTIMEO, tv);
 }
 
-int64_t Socket::getRecvTimeout(){
+int64_t Socket::getRecvTimeout() {
      FdCtx::ptr ctx = FdMgr::GetInstance()->get(m_sock);
     if (ctx) {
         return ctx->getTimeout(SO_RCVTIMEO);
@@ -42,12 +84,12 @@ int64_t Socket::getRecvTimeout(){
     return -1;
 }
 
-bool Socket::setRecvTimeout(int64_t v){
+bool Socket::setRecvTimeout(int64_t v) {
     struct timeval tv{ int(v / 1000), int(v % 1000 * 1000) };
     return setOption(SOL_SOCKET, SO_SNDTIMEO, tv);
 }
 
-bool Socket::getOption(int level, int option, void* result, size_t* len){
+bool Socket::getOption(int level, int option, void* result, size_t* len) {
     int rt = getsockopt(m_sock, level, option, result, (socklen_t*)len);
     if (rt) {
         LINKO_LOG_DEBUG(g_logger) << "getOption sock=" << m_sock
@@ -58,7 +100,7 @@ bool Socket::getOption(int level, int option, void* result, size_t* len){
     return true;
 }
 
-bool Socket::setOption(int level, int option, const void* result, size_t len){
+bool Socket::setOption(int level, int option, const void* result, size_t len) {
     if (setsockopt(m_sock, level, option, result, (socklen_t)len)) {
         LINKO_LOG_DEBUG(g_logger) << "setOption sock=" << m_sock
             << " level=" << level << " option=" << option
@@ -68,7 +110,7 @@ bool Socket::setOption(int level, int option, const void* result, size_t len){
     return true;
 }
 
-Socket::ptr Socket::accept(){
+Socket::ptr Socket::accept() {
     Socket::ptr sock(new Socket(m_family, m_type, m_protocol));
     int newsock = ::accept(m_sock, nullptr, nullptr);
     if (newsock == -1) {
@@ -79,9 +121,10 @@ Socket::ptr Socket::accept(){
     if (sock->init(newsock)) {
         return sock;
     }
+    return nullptr;
 }
 
-bool Socket::init(int sock){
+bool Socket::init(int sock) {
     FdCtx::ptr ctx = FdMgr::GetInstance()->get(sock);
     if (ctx && ctx->isSocket() && !ctx->isClosed()) {
         m_sock = sock;
@@ -93,34 +136,284 @@ bool Socket::init(int sock){
     }
     return false;
 }
-bool Socket::bind(const Address::ptr addr){}
-bool Socket::connect(const Address::ptr addr, uint64_t timeout_ms){}
-bool Socket::listen(int backlog){}
-bool Socket::close(){}
+bool Socket::bind(const Address::ptr addr) {
+    if (!isValid()) {
+        newSock();
+        if (LINKO_UNLIKELY(!isValid())) {
+            return false;
+        }
+    }
 
-int Socket::send(const void* buffer, size_t length, int flags){}
-int Socket::send(const iovec* buffers, size_t length, int flags){}
-int Socket::sendTo(const void* buffer, size_t length, const Address::ptr to, int flags){}
-int Socket::sendTo(const iovec* buffers, size_t length, const Address::ptr to, int flags){}
+    if (addr->getFamily() != m_family) {
+        LINKO_LOG_ERROR(g_logger) << "bind sock.family("
+            << m_family << ") addr.family(" << addr->getFamily()
+            << ") not equal, addr=" << addr->toString();
+        return false;
+    }
 
-int Socket::recv(void* buffer, size_t length, int flags){}
-int Socket::recv(iovec* buffers, size_t length, int flags){}
-int Socket::recvFrom(void* buffer, size_t length, Address::ptr from, int flags){}
-int Socket::recvFrom(iovec* buffers, size_t length, Address::ptr from, int flags){}
+    if (::bind(m_sock, addr->getAddr(), addr->getAddrLen())) {
+        LINKO_LOG_ERROR(g_logger) << "bind errno=" << errno
+            << " strerr=" << strerror(errno);
+        return false;
+    }
+    getLocalAddress();
+    return true;
+}
 
-Address::ptr Socket::getRemoteAddress(){}
-Address::ptr Socket::getLocalAddress(){}
+bool Socket::connect(const Address::ptr addr, uint64_t timeout_ms) {
+    if (!isValid()) {
+        newSock();
+        if (LINKO_UNLIKELY(!isValid())) {
+            return false;
+        }
+    }
 
-bool Socket::isValid() const{}
-int Socket::getError(){}
+    if (addr->getFamily() != m_family) {
+        LINKO_LOG_ERROR(g_logger) << "connect sock.family("
+            << m_family << ") addr.family(" << addr->getFamily()
+            << ") not equal, addr=" << addr->toString();
+        return false;
+    }
 
-std::ostream& Socket::dump(std::ostream& os) const{}
-int Socket::getSocket() const{}
+    if (timeout_ms == (uint64_t)-1) {
+        if (::connect(m_sock, addr->getAddr(), addr->getAddrLen())) {
+            LINKO_LOG_ERROR(g_logger) << "sock=" << m_sock << " connect(" << addr->toString()
+                << ") error errno=" << errno << " errstr=" << strerror(errno);
+            close();
+            return false;
+        }
+    } else {
+        if (::connect_with_timeout(m_sock, addr->getAddr(), addr->getAddrLen(), timeout_ms)) {
+            LINKO_LOG_ERROR(g_logger) << "sock=" << m_sock << " connect(" << addr->toString()
+                << ") timeout=" << timeout_ms
+                << " error errno=" << errno << " errstr=" << strerror(errno);
+            close();
+            return false;
+        }
+    }
+    m_isConnected = true;
+    getRemoteAddress();
+    getLocalAddress();
 
-bool Socket::cancelRead(){}
-bool Socket::cancelWrite(){}
-bool Socket::cancelAccept(){}
-bool Socket::cancelAll(){}
+    return true;
+}
+
+bool Socket::listen(int backlog) {
+    if (!isValid()) {
+        LINKO_LOG_ERROR(g_logger) << "listen error sock=-1";
+        return false;
+    }
+
+    if (::listen(m_sock, backlog) == 0) {
+        LINKO_LOG_ERROR(g_logger) << "listen error errno=" << errno
+            << " errstr=" << strerror(errno);
+        return false;
+    }
+    return true;
+}
+
+bool Socket::close() {
+    if (!m_isConnected && m_sock == -1) {
+        return true;
+    }
+    m_isConnected = false;
+    if (m_sock != -1) {
+        ::close(m_sock);
+        m_sock = -1;
+    }
+    return false;
+}
+
+int Socket::send(const void* buffer, size_t length, int flags) {
+    if (isConnected()) {
+        return ::send(m_sock, buffer, length, flags);
+    }
+    return -1;
+}
+
+int Socket::send(const iovec* buffers, size_t length, int flags) {
+    if (isConnected()) {
+        msghdr msg;
+        memset(&msg, 0, sizeof(msg));
+        msg.msg_iov = (iovec*)buffers;
+        msg.msg_iovlen = length;
+        return ::sendmsg(m_sock, &msg, flags);
+    }
+    return -1;
+}
+
+int Socket::sendTo(const void* buffer, size_t length, const Address::ptr to, int flags) {
+    if (!isConnected()) {
+        return ::sendto(m_sock, buffer, length, flags, to->getAddr(), to->getAddrLen());
+    }
+    return -1;
+}
+
+int Socket::sendTo(const iovec* buffers, size_t length, const Address::ptr to, int flags) {
+    if (isConnected()) {
+        msghdr msg;
+        memset(&msg, 0, sizeof(msg));
+        msg.msg_iov = (iovec*)buffers;
+        msg.msg_iovlen = length;
+        msg.msg_name = (void*)to->getAddr();
+        msg.msg_namelen = to->getAddrLen();
+        return ::sendmsg(m_sock, &msg, flags);
+    }
+    return -1;
+}
+
+int Socket::recv(void* buffer, size_t length, int flags) {
+    if (isConnected()) {
+        return ::recv(m_sock, buffer, length, flags);
+    }
+    return -1;
+}
+
+int Socket::recv(iovec* buffers, size_t length, int flags) {
+    if (isConnected()) {
+        msghdr msg;
+        memset(&msg, 0, sizeof(msg));
+        msg.msg_iov = (iovec*)buffers;
+        msg.msg_iovlen = length;
+        return ::recvmsg(m_sock, &msg, flags);
+    }
+    return -1;
+}
+
+int Socket::recvFrom(void* buffer, size_t length, Address::ptr from, int flags) {
+    if (isConnected()) {
+        socklen_t len = from->getAddrLen();
+        return ::recvfrom(m_sock, buffer, length, flags, from->getAddr(), &len);
+    }
+    return -1;
+}
+
+int Socket::recvFrom(iovec* buffers, size_t length, Address::ptr from, int flags) {
+    if (isConnected()) {
+        msghdr msg;
+        memset(&msg, 0, sizeof(msg));
+        msg.msg_iov = (iovec*)buffers;
+        msg.msg_iovlen = length;
+        msg.msg_name = from->getAddr();
+        msg.msg_namelen = from->getAddrLen();
+        return ::recvmsg(m_sock, &msg, flags);
+    }
+    return -1;
+}
+
+Address::ptr Socket::getRemoteAddress() {
+    if (m_remoteAddress) {
+        return m_remoteAddress;
+    }
+
+    Address::ptr result;
+    switch (m_family) {
+        case AF_INET:
+            result.reset(new IPv4Address());
+            break;
+        case AF_INET6:
+            result.reset(new IPv6Address());
+            break;
+        case AF_UNIX:
+            result.reset(new UnixAddress());
+            break;
+        default:
+            result.reset(new UnknownAddress(m_family));
+            break;
+    }
+    socklen_t addrlen = result->getAddrLen();
+    if (getpeername(m_sock, result->getAddr(), &addrlen)) {
+        LINKO_LOG_ERROR(g_logger) << "getpeername error sock=" << m_sock
+            << " errno=" << errno << " errstr=" << strerror(errno);
+        return Address::ptr(new UnknownAddress(m_family));
+    }
+    if (m_family == AF_UNIX) {
+        UnixAddress::ptr addr = std::dynamic_pointer_cast<UnixAddress>(result);
+        addr->setAddrLen(addrlen);
+    }
+    m_remoteAddress = result;
+    return m_remoteAddress;
+}
+
+Address::ptr Socket::getLocalAddress() {
+    if (m_localAddress) {
+        return m_localAddress;
+    }
+
+    Address::ptr result;
+    switch (m_family) {
+        case AF_INET:
+            result.reset(new IPv4Address());
+            break;
+        case AF_INET6:
+            result.reset(new IPv6Address());
+            break;
+        case AF_UNIX:
+            result.reset(new UnixAddress());
+            break;
+        default:
+            result.reset(new UnknownAddress(m_family));
+            break;
+    }
+    socklen_t addrlen = result->getAddrLen();
+    if (getsockname(m_sock, result->getAddr(), &addrlen)) {
+        LINKO_LOG_ERROR(g_logger) << "getsockname error sock=" << m_sock
+            << " errno=" << errno << " errstr=" << strerror(errno);
+        return Address::ptr(new UnknownAddress(m_family));
+    }
+    if (m_family == AF_UNIX) {
+        UnixAddress::ptr addr = std::dynamic_pointer_cast<UnixAddress>(result);
+        addr->setAddrLen(addrlen);
+    }
+    m_localAddress = result;
+    return m_localAddress;
+
+}
+
+bool Socket::isValid() const{
+    return m_sock != -1;
+}
+
+int Socket::getError() {
+    int error = 0;
+    size_t len = sizeof(error);
+    if (!getOption(SOL_SOCKET, SO_ERROR, &error, &len)) {
+        return -1;
+    }
+    return error;
+}
+
+std::ostream& Socket::dump(std::ostream& os) const {
+    os << "[Socket sock=" << m_sock
+        << " is_connected=" << m_isConnected
+        << " family=" << m_family
+        << " type=" << m_type
+        << " protocol=" << m_protocol;
+    if (m_localAddress) {
+        os << " local_address" << m_localAddress->toString();
+    }
+    if (m_remoteAddress) {
+        os << " local_address" << m_remoteAddress->toString();
+    }
+    os << "]";
+    return os;
+}
+
+bool Socket::cancelRead() {
+    return IOManager::GetThis()->cancelEvent(m_sock, linko::IOManager::READ);
+}
+
+bool Socket::cancelWrite() {
+    return IOManager::GetThis()->cancelEvent(m_sock, linko::IOManager::WRITE);
+}
+
+bool Socket::cancelAccept() {
+    return IOManager::GetThis()->cancelEvent(m_sock, linko::IOManager::READ);
+}
+
+bool Socket::cancelAll() {
+    return IOManager::GetThis()->cancelAll(m_sock);
+}
 
 void Socket::initSock() {
     int val = 1;

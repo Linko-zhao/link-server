@@ -9,11 +9,13 @@ namespace linko {
 
 static linko::Logger::ptr g_logger = LINKO_LOG_ROOT();
 
+// 根据前缀长度计算掩码(主机返回)
 template<class T>
 static T CreateMask(uint32_t bits) {
     return (1 << (sizeof(T) * 8 - bits)) - 1;
 }
 
+// 根据掩码计算前缀长度
 template<class T>
 static uint32_t CountBytes(T value) {
     uint32_t result = 0;
@@ -21,6 +23,72 @@ static uint32_t CountBytes(T value) {
         value &= value - 1;
     }
     return result;
+}
+
+bool Address::Lookup(std::vector<Address::ptr>& result, const std::string& host,
+            int family, int type, int protocol) {
+    addrinfo hints, *results, *next;
+    hints.ai_flags = 0;
+    hints.ai_family = family;
+    hints.ai_socktype = type;
+    hints.ai_protocol = protocol;
+    hints.ai_addrlen = 0;
+    hints.ai_canonname = NULL;
+    hints.ai_addr = NULL;
+    hints.ai_next = NULL;
+
+    std::string node; //ip地址
+    const char* service = NULL; //端口号
+
+    // 检查ipv6address service
+    // ipv6格式: [ipv6address]:port
+    if (!host.empty() && host[0] == '[') {
+        const char* endipv6 = (const char*)memchr(host.c_str() + 1, ']', host.size() - 1);
+        if (endipv6) {
+            // 判断是否有端口号
+            if (*(endipv6 + 1) == ':') {
+                service = endipv6 + 2;
+            }
+            // 获取ipv6地址
+            node = host.substr(1, endipv6 - host.c_str() - 1);
+        }
+    }
+
+    // 检查 node service
+    // ipv4格式: ipv4address:port
+    if (node.empty()) {
+        service = (const char*)memchr(host.c_str(), ':', host.size());
+        if (service) {
+            if (!memchr(service + 1, ':', host.c_str() + host.size() - service - 1)) {
+                node = host.substr(0, service - host.c_str());
+                ++service;
+            }
+        }
+    }
+
+    if (node.empty()) {
+        node = host;
+    }
+
+    // 解析ip地址, 获取对应的addrinfo
+    // hints用于指定期望返回的地址类型和协议
+    int error = getaddrinfo(node.c_str(), service, &hints, &results);
+    if (error) {
+        LINKO_LOG_ERROR(g_logger) << "Address::Lookup getaddress(" << host << ", "
+            << family << ", " << type << ") err=" << error 
+            << " errstr=" << strerror(errno);
+        return false;
+    }
+
+    // 遍历获取到结果列表
+    next = results;
+    while (next) {
+        result.push_back(Create(next->ai_addr, (socklen_t)next->ai_addrlen));
+        next = next->ai_next;
+    }
+
+    freeaddrinfo(results);
+    return true;
 }
 
 Address::ptr Address::LookupAny(const std::string& host,
@@ -44,65 +112,6 @@ IPAddress::ptr Address::LookupAnyIPAddress(const std::string& host,
         }
     }
     return nullptr;
-}
-
-bool Address::Lookup(std::vector<Address::ptr>& result, const std::string& host,
-            int family, int type, int protocol) {
-    addrinfo hints, *results, *next;
-    hints.ai_flags = 0;
-    hints.ai_family = family;
-    hints.ai_socktype = type;
-    hints.ai_protocol = protocol;
-    hints.ai_addrlen = 0;
-    hints.ai_canonname = NULL;
-    hints.ai_addr = NULL;
-    hints.ai_next = NULL;
-
-    std::string node;
-    const char* service = NULL;
-
-    //检查 ipv6address service
-    if (!host.empty() && host[0] == '[') {
-        const char* endipv6 = (const char*)memchr(host.c_str() + 1, ']', host.size() - 1);
-        if (endipv6) {
-            if (*(endipv6 + 1) == ':') {
-                service = endipv6 + 2;
-            }
-            node = host.substr(1, endipv6 - host.c_str() - 1);
-        }
-    }
-
-    //检查 node service
-    if (node.empty()) {
-        service = (const char*)memchr(host.c_str(), ':', host.size());
-        if (service) {
-            if (!memchr(service + 1, ':', host.c_str() + host.size() - service - 1)) {
-                node = host.substr(0, service - host.c_str());
-                ++service;
-            }
-        }
-    }
-
-    if (node.empty()) {
-        node = host;
-    }
-
-    int error = getaddrinfo(node.c_str(), service, &hints, &results);
-    if (error) {
-        LINKO_LOG_ERROR(g_logger) << "Address::Lookup getaddress(" << host << ", "
-            << family << ", " << type << ") err=" << error 
-            << " errstr=" << strerror(errno);
-        return false;
-    }
-
-    next = results;
-    while (next) {
-        result.push_back(Create(next->ai_addr, (socklen_t)next->ai_addrlen));
-        next = next->ai_next;
-    }
-
-    freeaddrinfo(results);
-    return true;
 }
 
 bool Address::GetInterfaceAddress(
@@ -234,7 +243,7 @@ bool Address::operator!=(const Address& rhs) const {
     return !(*this == rhs);
 }
 
-IPAddress::ptr IPAddress::Create(const char* address, uint32_t port) {
+IPAddress::ptr IPAddress::Create(const char* address, uint16_t port) {
     addrinfo hints, *results;
     memset(&hints, 0, sizeof(addrinfo));
 
@@ -263,7 +272,7 @@ IPAddress::ptr IPAddress::Create(const char* address, uint32_t port) {
     }
 }
 
-IPv4Address::ptr IPv4Address::Create(const char* address, uint32_t port) {
+IPv4Address::ptr IPv4Address::Create(const char* address, uint16_t port) {
     IPv4Address::ptr rt(new IPv4Address);
     rt->m_addr.sin_port = byteswapOnLittleEndian(port);
     int result = inet_pton(AF_INET, address, &rt->m_addr.sin_addr);
@@ -280,13 +289,17 @@ IPv4Address::IPv4Address(const sockaddr_in& address) {
     m_addr = address;
 }
 
-IPv4Address::IPv4Address(uint32_t address, uint32_t port) {
+IPv4Address::IPv4Address(uint32_t address, uint16_t port) {
     memset(&m_addr, 0, sizeof(m_addr));
     m_addr.sin_family = AF_INET;
     m_addr.sin_port = byteswapOnLittleEndian(port); 
     m_addr.sin_addr.s_addr = byteswapOnLittleEndian(address);
 }
-    
+
+sockaddr* IPv4Address::getAddr() {
+    return (sockaddr*)&m_addr;
+}   
+
 const sockaddr* IPv4Address::getAddr() const {
     return (sockaddr*)&m_addr;
 }
@@ -343,11 +356,11 @@ uint32_t IPv4Address::getPort() const {
     return byteswapOnLittleEndian(m_addr.sin_port);
 }
 
-void IPv4Address::setPort(uint32_t v) {
+void IPv4Address::setPort(uint16_t v) {
     m_addr.sin_port = byteswapOnLittleEndian(v);
 }
 
-IPv6Address::ptr IPv6Address::Create(const char *address, uint32_t port) {
+IPv6Address::ptr IPv6Address::Create(const char *address, uint16_t port) {
     IPv6Address::ptr rt(new IPv6Address);
     rt->m_addr.sin6_port = byteswapOnLittleEndian(port);
     int result = inet_pton(AF_INET6, address, &rt->m_addr.sin6_addr);
@@ -369,13 +382,17 @@ IPv6Address::IPv6Address(const sockaddr_in6& address) {
     m_addr = address;
 }
 
-IPv6Address::IPv6Address(const uint8_t address[16], uint32_t port) {
+IPv6Address::IPv6Address(const uint8_t address[16], uint16_t port) {
     memset(&m_addr, 0, sizeof(m_addr));
     m_addr.sin6_family = AF_INET6;
     m_addr.sin6_port = byteswapOnLittleEndian(port);
     memcpy(&m_addr.sin6_addr.s6_addr, address, 16);
 }
-    
+
+sockaddr* IPv6Address::getAddr() {
+    return (sockaddr*)&m_addr;
+}   
+
 const sockaddr* IPv6Address::getAddr() const {
     return (sockaddr*)&m_addr;
 }
@@ -445,7 +462,7 @@ uint32_t IPv6Address::getPort() const {
     return byteswapOnLittleEndian(m_addr.sin6_port);
 }
 
-void IPv6Address::setPort(uint32_t v) {
+void IPv6Address::setPort(uint16_t v) {
     m_addr.sin6_port = byteswapOnLittleEndian(v);
 }
 
@@ -473,12 +490,20 @@ UnixAddress::UnixAddress(const std::string& path) {
     m_length += offsetof(sockaddr_un, sun_path);
 }
 
+sockaddr* UnixAddress::getAddr() {
+    return (sockaddr*)&m_addr;
+}
+
 const sockaddr* UnixAddress::getAddr() const {
     return (sockaddr*)&m_addr;
 }
 
 socklen_t UnixAddress::getAddrLen() const {
     return m_length;
+}
+
+void UnixAddress::setAddrLen(uint32_t v) {
+    m_length = v;
 }
 
 std::ostream& UnixAddress::insert(std::ostream& os) const {
@@ -497,6 +522,10 @@ UnknownAddress::UnknownAddress(const sockaddr& addr) {
 UnknownAddress::UnknownAddress(int family) {
     memset(&m_addr, 0, sizeof(m_addr));
     m_addr.sa_family = family;
+}
+
+sockaddr* UnknownAddress::getAddr() {
+    return (sockaddr*)&m_addr;
 }
 
 const sockaddr* UnknownAddress::getAddr() const {
