@@ -9,10 +9,10 @@ namespace linko {
 
 static linko::Logger::ptr g_logger = LINKO_LOG_ROOT();
 
-// 根据前缀长度计算掩码(主机返回)
+// 根据前缀长度计算子网掩码
 template<class T>
 static T CreateMask(uint32_t bits) {
-    return (1 << (sizeof(T) * 8 - bits)) - 1;
+    return ~(1 << (sizeof(T) * 8 - bits)) - 1;
 }
 
 // 根据掩码计算前缀长度
@@ -128,6 +128,7 @@ bool Address::GetInterfaceAddress(
         for (next = results; next; next = next->ifa_next) {
             Address::ptr addr;
             uint32_t prefix_length = ~0u;
+            // 地址簇确定 && 与解析出来的地址簇不一致 则跳过
             if (family != AF_UNSPEC && family != next->ifa_addr->sa_family) {
                 continue;
             }
@@ -144,6 +145,7 @@ bool Address::GetInterfaceAddress(
                         addr = Create(next->ifa_addr, sizeof(sockaddr_in6));
                         in6_addr& netmask = ((sockaddr_in6*)next->ifa_netmask)->sin6_addr;
                         prefix_length = 0;
+                        // 16个字节逐个计算
                         for (int i = 0; i < 16; ++i) {
                             prefix_length += CountBytes(netmask.s6_addr[i]);
                         }
@@ -154,6 +156,7 @@ bool Address::GetInterfaceAddress(
             }
 
             if (addr) {
+                // 网卡名，地址和前缀长度
                 result.insert(std::make_pair(next->ifa_name, 
                             std::make_pair(addr, prefix_length)));
             }
@@ -170,6 +173,7 @@ bool Address::GetInterfaceAddress(
 bool Address::GetInterfaceAddress(std::vector<std::pair<Address::ptr, uint32_t> >&result
         , const std::string& iface, int family) {
     if (iface.empty() || iface == "*") {
+        // 创建任意IP地址的连接请求
         if (family == AF_INET || family == AF_UNSPEC) {
             result.push_back(std::make_pair(Address::ptr(new IPv4Address()), 0u));
         }
@@ -184,6 +188,7 @@ bool Address::GetInterfaceAddress(std::vector<std::pair<Address::ptr, uint32_t> 
         return false;
     }
 
+    // 返回符合指定网卡地址的迭代器
     auto its = results.equal_range(iface);
     for (; its.first != its.second; ++its.first) {
         result.push_back(its.first->second);
@@ -247,7 +252,7 @@ IPAddress::ptr IPAddress::Create(const char* address, uint16_t port) {
     addrinfo hints, *results;
     memset(&hints, 0, sizeof(addrinfo));
 
-    hints.ai_flags = AI_NUMERICHOST;
+    //hints.ai_flags = AI_NUMERICHOST;
     hints.ai_family = AF_UNSPEC;
 
     int error = getaddrinfo(address, NULL, &hints, &results);
@@ -275,6 +280,7 @@ IPAddress::ptr IPAddress::Create(const char* address, uint16_t port) {
 IPv4Address::ptr IPv4Address::Create(const char* address, uint16_t port) {
     IPv4Address::ptr rt(new IPv4Address);
     rt->m_addr.sin_port = byteswapOnLittleEndian(port);
+    // 将IP地址字符串转换为二进制格式
     int result = inet_pton(AF_INET, address, &rt->m_addr.sin_addr);
     if (result <= 0) {
         LINKO_LOG_ERROR(g_logger) << "IPv4Address::Create(" << address << ", "
@@ -324,7 +330,8 @@ IPAddress::ptr IPv4Address::broadcastAddress(uint32_t prefix_len) {
     } 
 
     sockaddr_in baddr(m_addr);
-    baddr.sin_addr.s_addr |= byteswapOnLittleEndian(
+    // 主机号设置为全1
+    baddr.sin_addr.s_addr |= ~byteswapOnLittleEndian(
             CreateMask<uint32_t>(prefix_len));
     
     return IPv4Address::ptr(new IPv4Address(baddr));
@@ -336,6 +343,7 @@ IPAddress::ptr IPv4Address::networdAddress(uint32_t prefix_len) {
     } 
 
     sockaddr_in naddr(m_addr);
+    // 主机号全为0的网络地址
     naddr.sin_addr.s_addr &= byteswapOnLittleEndian(
             CreateMask<uint32_t>(prefix_len));
     
@@ -346,7 +354,7 @@ IPAddress::ptr IPv4Address::subnetMask(uint32_t prefix_len) {
     sockaddr_in subnet;
     memset(&subnet, 0, sizeof(subnet));
     subnet.sin_family = AF_INET;
-    subnet.sin_addr.s_addr = ~byteswapOnLittleEndian(
+    subnet.sin_addr.s_addr = byteswapOnLittleEndian(
             CreateMask<uint32_t>(prefix_len));
 
     return IPv4Address::ptr(new IPv4Address(subnet));
@@ -428,8 +436,12 @@ std::ostream& IPv6Address::insert(std::ostream& os) const {
 
 IPAddress::ptr IPv6Address::broadcastAddress(uint32_t prefix_len) {
     sockaddr_in6 baddr(m_addr);
+    // prefix_len / 8  找到前缀结尾所在字节
+    // prefix_len % 8  确定在该字节第几位
     baddr.sin6_addr.s6_addr[prefix_len / 8] |=
-        CreateMask<uint8_t>(prefix_len % 8);
+        ~CreateMask<uint8_t>(prefix_len % 8);
+
+    // 剩余字节置为1
     for (int i = prefix_len / 8 + 1; i < 16; ++i) {
         baddr.sin6_addr.s6_addr[i] = 0xff;
     }
@@ -440,9 +452,11 @@ IPAddress::ptr IPv6Address::networdAddress(uint32_t prefix_len) {
     sockaddr_in6 baddr(m_addr);
     baddr.sin6_addr.s6_addr[prefix_len / 8] &=
         CreateMask<uint8_t>(prefix_len % 8);
-    //for (int i = prefix_len / 8 + 1; i < 16; ++i) {
-        //baddr.sin6_addr.s6_addr[i] = 0xff;
-    //}
+
+    // 剩余字节置为0
+    for (int i = prefix_len / 8 + 1; i < 16; ++i) {
+        baddr.sin6_addr.s6_addr[i] = 0x00;
+    }
     return IPv6Address::ptr(new IPv6Address(baddr));
 }
 
@@ -451,7 +465,8 @@ IPAddress::ptr IPv6Address::subnetMask(uint32_t prefix_len) {
     memset(&subnet, 0, sizeof(subnet));
     subnet.sin6_family = AF_INET6;
     subnet.sin6_addr.s6_addr[prefix_len / 8] =
-        ~CreateMask<uint8_t>(prefix_len % 8);
+        CreateMask<uint8_t>(prefix_len % 8);
+    // 前缀全置为1
     for (uint32_t i = 0; i < prefix_len / 8; ++i) {
         subnet.sin6_addr.s6_addr[i] = 0xff;
     }

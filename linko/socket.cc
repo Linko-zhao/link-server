@@ -33,18 +33,15 @@ Socket::ptr Socket::CreateTCPSocket6() {
 }
 
 Socket::ptr Socket::CreateUDPSocket6() {
-
     Socket::ptr sock(new Socket(IPv6, UDP));
     return sock;
 }
 
 Socket::ptr Socket::CreateUnixTCPSocket() {
-
     Socket::ptr sock(new Socket(UNIX, TCP));
     return sock;
 }
 Socket::ptr Socket::CreateUnixUDPSocket() {
-
     Socket::ptr sock(new Socket(UNIX, UDP));
     return sock;
 }
@@ -417,8 +414,13 @@ bool Socket::cancelAll() {
 
 void Socket::initSock() {
     int val = 1;
+    // SO_REUSEADDR 允许地址复用功能，optval不为0时打开
     setOption(SOL_SOCKET, SO_REUSEADDR, val);
     if (m_type == SOCK_STREAM) {
+        // Nagle算法将小数据包合并为大数据包发送，减小小数据包的发送频率
+        // 优点：降低网络拥塞和提供传输效率，适合批量数据传输
+        // 缺点：增加延迟，不适合实时应用
+        // TCP_NODELAY 禁用Nagle算法
         setOption(IPPROTO_TCP, TCP_NODELAY, val);
     }
 }
