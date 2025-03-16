@@ -3,6 +3,9 @@
 
 #include <memory>
 #include <string>
+#include <vector>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 namespace linko {
 
@@ -17,8 +20,8 @@ public:
         ~Node();
 
         char* ptr;
-        Node* next;
         size_t size;
+        Node* next;
     };
 
     ByteArray(size_t base_size = 4096);
@@ -76,6 +79,7 @@ public:
 
     void write(const void* buf, size_t size);
     void read(void* buf, size_t size);
+    void read(void* buf, size_t size, size_t position) const;
     
     size_t getPosition() const { return m_position; }
     void setPosition(size_t v);
@@ -90,6 +94,15 @@ public:
 
     bool isLittleEndian() const;
     void setIsLittleEndian(bool val);
+
+    std::string toString() const;
+    std::string toHexString() const;
+
+    uint64_t getReadBuffers(std::vector<iovec>& buffers, uint64_t len = ~0ull) const;
+    uint64_t getReadBuffers(std::vector<iovec>& buffers, uint64_t len, uint64_t position) const;
+    uint64_t getWriteBuffers(std::vector<iovec>& buffers, uint64_t len);
+
+    size_t getSize() const { return m_size; }
 
 private:
     // 扩容size长度

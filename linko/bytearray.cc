@@ -6,6 +6,7 @@
 #include <string>
 #include <stdexcept>
 #include <fstream>
+#include <iomanip>
 
 namespace linko {
 
@@ -36,9 +37,9 @@ ByteArray::ByteArray(size_t base_size)
     , m_position(0)
     , m_capacity(base_size)
     , m_size(0) 
+    , m_endian(LINKO_BIG_ENDIAN)
     , m_root(new Node(base_size))
-    , m_cur(m_root) 
-    , m_endian(LINKO_BIG_ENDIAN) {
+    , m_cur(m_root) {
 
 }
 ByteArray::~ByteArray() {
@@ -113,20 +114,13 @@ void ByteArray::writeFuint64(uint64_t value) {
 }
 
 // Zigzag编码用于将正数和负数交替映射为无符号数
+// 负数->奇数 正数->偶数
 static uint32_t EncodeZigzag32(const int32_t& v) {
-    if (v < 0) {
-        return ((uint32_t)(-v)) * 2 - 1;
-    } else {
-        return v * 2;
-    }
+    return (v << 1) ^ (v >> 31);
 }
 
 static uint64_t EncodeZigzag64(const int64_t& v) {
-    if (v < 0) {
-        return ((uint64_t)(-v)) * 2 - 1;
-    } else {
-        return v * 2;
-    }
+    return (v << 1) ^ (v >> 31);
 }
 
 static int32_t DecodeZigzag32(const uint32_t& v) {
@@ -417,6 +411,42 @@ void ByteArray::read(void* buf, size_t size) {
     }
 }
 
+void ByteArray::read(void* buf, size_t size, size_t position) const {
+    // 如果要读取的数据长度超过当前已有数据大小
+    if (size > getReadSize()) {
+        throw std::out_of_range("not enough len");
+    }
+
+    // 内存块内的位置
+    size_t npos = position % m_baseSize;
+    // 当前内存块剩余容量
+    size_t ncap = m_cur->size - npos;
+    // buf中开始读取的位置
+    size_t bpos = 0;
+    Node* cur = m_cur;
+
+    while (size > 0) {
+        // 如果当前内存块剩余容量大于需要读取的数据长度
+        if (ncap >= size) {
+            memcpy((char*)buf + bpos, cur->ptr + npos, size);
+            if (cur->size == (npos + size)) {
+                cur = cur->next;
+            }
+            position += ncap;
+            bpos += size;
+            size = 0;
+        } else {
+            memcpy((char*)buf + bpos, cur->ptr + npos, ncap);
+            position += ncap;
+            bpos += ncap;
+            size -= ncap;
+            cur = cur->next;
+            ncap = cur->size;
+            npos = 0;
+        }
+    }
+}
+
 void ByteArray::setPosition(size_t v) {
     if (v > m_size) {
         throw std::out_of_range("set_position out of range");
@@ -484,7 +514,7 @@ void ByteArray::addCapacity(size_t size) {
         return;
     }
 
-    int old_cap = getCapacity();
+    size_t old_cap = getCapacity();
     if (old_cap >= size) {
         return;
     }
@@ -511,5 +541,124 @@ void ByteArray::addCapacity(size_t size) {
     }
 }
 
+std::string ByteArray::toString() const {
+    std::string str;
+    str.resize(getReadSize());
+    if (str.empty()) {
+        return str;
+    }
+    read(&str[0], str.size(), m_position);
+    return str;
+}
 
+std::string ByteArray::toHexString() const {
+    std::string str = toString();
+    std::stringstream ss;
+
+    for (size_t i = 0; i < str.size(); ++i) {
+        if (i > 0 && i % 32 == 0) {
+            ss << std::endl;
+        }
+        ss << std::setw(2) << std::setfill('0') << std::hex
+            << (int)(uint8_t)str[i] << " ";
+    }
+
+    return ss.str();
+}
+
+uint64_t ByteArray::getReadBuffers(std::vector<iovec>& buffers, uint64_t len) const {
+    len = len > getReadSize() ? getReadSize() : len;
+    if (len == 0) {
+        return 0;
+    }
+
+    uint64_t size = len;
+
+    size_t npos = m_position % m_baseSize;
+    size_t ncap = m_cur->size - npos;
+    struct iovec iov;
+    Node* cur = m_cur;
+
+    while (len > 0) {
+        if (ncap >= len) {
+            iov.iov_base = cur->ptr + npos;
+            iov.iov_len = len;
+            len = 0;
+        } else {
+            iov.iov_base = cur->ptr + npos;
+            iov.iov_len = ncap;
+            len -= ncap;
+            ncap = cur->size;
+            npos = 0;
+        }
+        buffers.push_back(iov);
+    }
+    return size;
+}
+
+uint64_t ByteArray::getReadBuffers(
+        std::vector<iovec>& buffers, uint64_t len, uint64_t position) const {
+    len = len > getReadSize() ? getReadSize() : len;
+    if (len == 0) {
+        return 0;
+    }
+
+    uint64_t size = len;
+
+    size_t npos = position % m_baseSize;
+    size_t count = position / m_baseSize;
+    Node* cur = m_root;
+    while (count > 0) {
+        cur = cur->next;
+        --count;
+    }
+    size_t ncap = cur->size - npos;
+    struct iovec iov;
+
+    while (len > 0) {
+        if (ncap >= len) {
+            iov.iov_base = cur->ptr + npos;
+            iov.iov_len = len;
+            len = 0;
+        } else {
+            iov.iov_base = cur->ptr + npos;
+            iov.iov_len = ncap;
+            len -= ncap;
+            ncap = cur->size;
+            npos = 0;
+        }
+        buffers.push_back(iov);
+    }
+    return size;
+}
+
+uint64_t ByteArray::getWriteBuffers(std::vector<iovec>& buffers, uint64_t len) {
+    if (len == 0) {
+        return 0;
+    }
+
+    addCapacity(len);
+    uint64_t size = len;
+
+    size_t npos = m_position % m_baseSize;
+    size_t ncap = m_cur->size - npos;
+    struct iovec iov;
+    Node* cur = m_cur;
+    while (len > 0) {
+        if (ncap >= len) {
+            iov.iov_base = cur->ptr + npos;
+            iov.iov_len = len;
+            len = 0;
+        } else {
+            iov.iov_base = cur->ptr + npos;
+            iov.iov_len = ncap;
+            len -= ncap;
+            cur = cur->next;
+            ncap = cur->size;
+            npos = 0;
+        }
+        buffers.push_back(iov);
+    }
+    return size;
+}
 }
