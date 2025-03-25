@@ -185,6 +185,7 @@ int httpclient_parser_execute(httpclient_parser *parser, const char *buffer, siz
     parser->mark = 0;
     parser->field_len = len;
     parser->field_start = 0;
+
     const char *p, *pe;
     int cs = parser->cs;
 

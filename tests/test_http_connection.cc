@@ -6,7 +6,7 @@
 static linko::Logger::ptr g_logger = LINKO_LOG_ROOT();
 
 void run() {
-    linko::Address::ptr addr = linko::Address::LookupAnyIPAddress("www.bing.com:80");
+    linko::Address::ptr addr = linko::Address::LookupAnyIPAddress("www.sylar.top:80");
     if (!addr) {
         LINKO_LOG_INFO(g_logger) << "get addr error";
         return;
@@ -21,7 +21,8 @@ void run() {
 
     linko::http::HttpConnection::ptr conn(new linko::http::HttpConnection(sock));
     linko::http::HttpRequest::ptr req(new linko::http::HttpRequest);
-    req->setHeader("host", "www.bing.com");
+    req->setPath("/blog/");
+    req->setHeader("host", "www.sylar.top");
     LINKO_LOG_INFO(g_logger) << "req:" << std::endl << *req;
     conn->sendRequest(req);
     auto rsp = conn->recvResponse();

@@ -98,6 +98,7 @@ int httpclient_parser_execute(httpclient_parser *parser, const char *buffer, siz
     parser->mark = 0;
     parser->field_len = len;
     parser->field_start = 0;
+
     const char *p, *pe;
     int cs = parser->cs;
 
@@ -111,7 +112,7 @@ int httpclient_parser_execute(httpclient_parser *parser, const char *buffer, siz
 
 
     
-#line 102 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 103 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	{
 	if ( p == pe )
 		goto _test_eof;
@@ -140,7 +141,7 @@ st2:
 	if ( ++p == pe )
 		goto _test_eof2;
 case 2:
-#line 129 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 130 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr3;
 		case 13: goto tr4;
@@ -238,7 +239,7 @@ st120:
 	if ( ++p == pe )
 		goto _test_eof120;
 case 120:
-#line 215 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 216 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	goto st0;
 tr4:
 #line 94 "/home/links/Code/link-server/linko/http/httpclient_parser.rl"
@@ -286,7 +287,7 @@ st3:
 	if ( ++p == pe )
 		goto _test_eof3;
 case 3:
-#line 256 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 257 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	if ( (*p) == 10 )
 		goto tr7;
 	goto st0;
@@ -330,7 +331,7 @@ st4:
 	if ( ++p == pe )
 		goto _test_eof4;
 case 4:
-#line 294 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 295 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 33: goto tr8;
 		case 124: goto tr8;
@@ -362,7 +363,7 @@ st5:
 	if ( ++p == pe )
 		goto _test_eof5;
 case 5:
-#line 324 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 325 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr9;
 		case 13: goto tr10;
@@ -402,7 +403,7 @@ st6:
 	if ( ++p == pe )
 		goto _test_eof6;
 case 6:
-#line 361 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 362 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 33: goto tr14;
 		case 124: goto tr14;
@@ -434,7 +435,7 @@ st7:
 	if ( ++p == pe )
 		goto _test_eof7;
 case 7:
-#line 391 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 392 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr15;
 		case 13: goto tr16;
@@ -469,7 +470,7 @@ st8:
 	if ( ++p == pe )
 		goto _test_eof8;
 case 8:
-#line 424 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 425 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	if ( (*p) == 84 )
 		goto st9;
 	goto st0;
@@ -537,7 +538,7 @@ st16:
 	if ( ++p == pe )
 		goto _test_eof16;
 case 16:
-#line 490 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 491 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	if ( 48 <= (*p) && (*p) <= 57 )
 		goto tr27;
 	goto st0;
@@ -549,7 +550,7 @@ st17:
 	if ( ++p == pe )
 		goto _test_eof17;
 case 17:
-#line 500 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 501 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	if ( (*p) == 32 )
 		goto tr28;
 	if ( 48 <= (*p) && (*p) <= 57 )
@@ -568,7 +569,7 @@ st18:
 	if ( ++p == pe )
 		goto _test_eof18;
 case 18:
-#line 517 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 518 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	if ( (*p) == 10 )
 		goto st0;
 	goto tr30;
@@ -580,7 +581,7 @@ st19:
 	if ( ++p == pe )
 		goto _test_eof19;
 case 19:
-#line 527 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 528 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr32;
 		case 13: goto tr33;
@@ -645,7 +646,7 @@ st20:
 	if ( ++p == pe )
 		goto _test_eof20;
 case 20:
-#line 582 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 583 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr7;
 		case 13: goto st3;
@@ -691,7 +692,7 @@ st21:
 	if ( ++p == pe )
 		goto _test_eof21;
 case 21:
-#line 624 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 625 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 33: goto st21;
 		case 58: goto tr39;
@@ -730,7 +731,7 @@ st22:
 	if ( ++p == pe )
 		goto _test_eof22;
 case 22:
-#line 660 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 661 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr42;
 		case 13: goto tr43;
@@ -747,7 +748,7 @@ st23:
 	if ( ++p == pe )
 		goto _test_eof23;
 case 23:
-#line 675 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 676 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr45;
 		case 13: goto tr46;
@@ -794,7 +795,7 @@ st24:
 	if ( ++p == pe )
 		goto _test_eof24;
 case 24:
-#line 715 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 716 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	if ( (*p) == 10 )
 		goto st20;
 	goto st0;
@@ -814,7 +815,7 @@ st25:
 	if ( ++p == pe )
 		goto _test_eof25;
 case 25:
-#line 731 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 732 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 33: goto st21;
 		case 58: goto tr39;
@@ -1125,7 +1126,7 @@ st35:
 	if ( ++p == pe )
 		goto _test_eof35;
 case 35:
-#line 1039 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 1040 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr60;
 		case 13: goto tr61;
@@ -1150,7 +1151,7 @@ st36:
 	if ( ++p == pe )
 		goto _test_eof36;
 case 36:
-#line 1061 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 1062 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr64;
 		case 13: goto st89;
@@ -1253,7 +1254,7 @@ st43:
 	if ( ++p == pe )
 		goto _test_eof43;
 case 43:
-#line 1162 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 1163 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr74;
 		case 13: goto tr75;
@@ -1299,7 +1300,7 @@ st44:
 	if ( ++p == pe )
 		goto _test_eof44;
 case 44:
-#line 1204 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 1205 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 33: goto st21;
 		case 58: goto tr39;
@@ -1815,7 +1816,7 @@ st61:
 	if ( ++p == pe )
 		goto _test_eof61;
 case 61:
-#line 1717 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 1718 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr97;
 		case 13: goto tr98;
@@ -1840,7 +1841,7 @@ st62:
 	if ( ++p == pe )
 		goto _test_eof62;
 case 62:
-#line 1739 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 1740 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr101;
 		case 13: goto st72;
@@ -1894,7 +1895,7 @@ st64:
 	if ( ++p == pe )
 		goto _test_eof64;
 case 64:
-#line 1791 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 1792 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 72: goto st65;
 		case 104: goto st65;
@@ -1966,7 +1967,7 @@ st71:
 	if ( ++p == pe )
 		goto _test_eof71;
 case 71:
-#line 1861 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 1862 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	if ( (*p) == 10 )
 		goto tr113;
 	goto st0;
@@ -1983,7 +1984,7 @@ st121:
 	if ( ++p == pe )
 		goto _test_eof121;
 case 121:
-#line 1876 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 1877 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 32: goto st63;
 		case 67: goto tr104;
@@ -2015,7 +2016,7 @@ st73:
 	if ( ++p == pe )
 		goto _test_eof73;
 case 73:
-#line 1905 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 1906 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 33: goto st21;
 		case 58: goto tr39;
@@ -2238,7 +2239,7 @@ st80:
 	if ( ++p == pe )
 		goto _test_eof80;
 case 80:
-#line 2125 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2126 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto st62;
 		case 32: goto st63;
@@ -2256,7 +2257,7 @@ st81:
 	if ( ++p == pe )
 		goto _test_eof81;
 case 81:
-#line 2141 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2142 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr45;
 		case 13: goto tr46;
@@ -2340,7 +2341,7 @@ st88:
 	if ( ++p == pe )
 		goto _test_eof88;
 case 88:
-#line 2223 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2224 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	if ( (*p) == 10 )
 		goto st43;
 	goto st0;
@@ -2357,7 +2358,7 @@ st122:
 	if ( ++p == pe )
 		goto _test_eof122;
 case 122:
-#line 2238 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2239 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 32: goto st37;
 		case 67: goto st38;
@@ -2387,7 +2388,7 @@ st90:
 	if ( ++p == pe )
 		goto _test_eof90;
 case 90:
-#line 2266 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2267 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 33: goto st21;
 		case 58: goto tr39;
@@ -2550,7 +2551,7 @@ st95:
 	if ( ++p == pe )
 		goto _test_eof95;
 case 95:
-#line 2426 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2427 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto st36;
 		case 32: goto st37;
@@ -2568,7 +2569,7 @@ st96:
 	if ( ++p == pe )
 		goto _test_eof96;
 case 96:
-#line 2442 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2443 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr45;
 		case 13: goto tr46;
@@ -2957,7 +2958,7 @@ st112:
 	if ( ++p == pe )
 		goto _test_eof112;
 case 112:
-#line 2828 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2829 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr150;
 		case 13: goto tr151;
@@ -2983,7 +2984,7 @@ st113:
 	if ( ++p == pe )
 		goto _test_eof113;
 case 113:
-#line 2851 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2852 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr154;
 		case 13: goto st116;
@@ -3037,7 +3038,7 @@ st115:
 	if ( ++p == pe )
 		goto _test_eof115;
 case 115:
-#line 2903 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2904 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr158;
 		case 13: goto tr159;
@@ -3058,7 +3059,7 @@ st123:
 	if ( ++p == pe )
 		goto _test_eof123;
 case 123:
-#line 2922 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2923 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	if ( (*p) == 32 )
 		goto st114;
 	if ( (*p) > 13 ) {
@@ -3091,7 +3092,7 @@ st117:
 	if ( ++p == pe )
 		goto _test_eof117;
 case 117:
-#line 2952 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2953 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr158;
 		case 13: goto tr159;
@@ -3132,7 +3133,7 @@ st118:
 	if ( ++p == pe )
 		goto _test_eof118;
 case 118:
-#line 2990 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 2991 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto st113;
 		case 32: goto st114;
@@ -3151,7 +3152,7 @@ st119:
 	if ( ++p == pe )
 		goto _test_eof119;
 case 119:
-#line 3007 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
+#line 3008 "/home/links/Code/link-server/linko/http/httpclient_parser.rl.cc"
 	switch( (*p) ) {
 		case 10: goto tr158;
 		case 13: goto tr159;
@@ -3287,7 +3288,7 @@ case 119:
 	_out: {}
 	}
 
-#line 201 "/home/links/Code/link-server/linko/http/httpclient_parser.rl"
+#line 202 "/home/links/Code/link-server/linko/http/httpclient_parser.rl"
 
     parser->cs = cs;
     parser->nread += p - (buffer + off);

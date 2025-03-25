@@ -41,6 +41,7 @@ set(LIB_SRC
 
 ragelmaker(linko/http/http11_parser.rl LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/linko/http)
 ragelmaker(linko/http/httpclient_parser.rl LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/linko/http)
+ragelmaker(linko/uri.rl LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/linko)
 
 add_library(linko SHARED ${LIB_SRC})
 force_redefine_file_macro_for_sources(linko)
@@ -139,6 +140,11 @@ add_executable(test_http_connection tests/test_http_connection.cc)
 add_dependencies(test_http_connection linko)
 force_redefine_file_macro_for_sources(test_http_connection)
 target_link_libraries(test_http_connection ${LIBS})
+
+add_executable(test_uri tests/test_uri.cc)
+add_dependencies(test_uri linko)
+force_redefine_file_macro_for_sources(test_uri)
+target_link_libraries(test_uri ${LIBS})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

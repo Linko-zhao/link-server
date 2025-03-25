@@ -21,15 +21,18 @@ HttpRequest::ptr HttpSession::recvRequest() {
     do {
         int len = read(data + offset, buff_size - offset);
         if (len <= 0) {
+            close();
             return nullptr;
         }
         len += offset;
         size_t nparse = parser->execute(data, len);
         if (parser->hasError()) {
+            close();
             return nullptr;
         }
         offset = len - nparse;
         if (offset == (int)buff_size) {
+            close();
             return nullptr;
         }
         if (parser->isFinished()) {
@@ -53,6 +56,7 @@ HttpRequest::ptr HttpSession::recvRequest() {
         length -= offset;
         if (length > 0) {
             if (readFixSize(&body[len], length) <= 0) {
+                close();
                 return nullptr;
             }
         }
