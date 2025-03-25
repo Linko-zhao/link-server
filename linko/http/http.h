@@ -6,6 +6,9 @@
 #include <map>
 #include <boost/lexical_cast.hpp>
 
+#include "http11_parser.h"
+#include "httpclient_parser.h"
+
 namespace linko {
 namespace http {
 
@@ -138,6 +141,37 @@ struct CaseInsensitiveLess {
     bool operator()(const std::string& lhs, const std::string& rhs) const;
 };
 
+template<class MapType, class T>
+bool checkGetAs(const MapType& m, const std::string& key, T& val, const T& def = T()) {
+    auto it = m.find(key);
+    if (it == m.end()) {
+        val = def;
+        return false;
+    }
+    try {
+        val = boost::lexical_cast<T>(it->second);
+        return true;
+    } catch (...) {
+        val = def;
+    }
+    return false;
+}
+
+template<class MapType, class T>
+T getAs(const MapType& m, const std::string& key, const T& def = T()) {
+    auto it = m.find(key);
+    if (it == m.end()) {
+        return def;
+    }
+    try {
+        return boost::lexical_cast<T>(it->second);
+    } catch (...) {
+        
+    }
+    return def;
+}
+
+
 class HttpRequest {
 public:
     typedef std::shared_ptr<HttpRequest> ptr;
@@ -162,6 +196,9 @@ public:
     void setQuery(const std::string& v) { m_query = v; }
     void setFragment(const std::string& v) { m_fragment = v; }
     void setBody(const std::string& v) { m_body = v; }
+
+    bool isClose() const { return m_close; }
+    void setClose(bool v) { m_close = v; }
 
     void setHeaders(const MapType& v) { m_headers = v; }
     void setParams(const MapType& v) { m_params = v; }
@@ -213,38 +250,8 @@ public:
         return getAs(m_cookies, key, def);
     }
 
-    std::ostream& dump(std::ostream& os);
-
-private:
-    template<class T>
-    bool checkGetAs(const MapType& m, const std::string& key, T& val, const T& def = T()) {
-        auto it = m.find(key);
-        if (it == m.end()) {
-            val = def;
-            return false;
-        }
-        try {
-            val = boost::lexical_cast<T>(it->second);
-            return true;
-        } catch (...) {
-            val = def;
-        }
-        return false;
-    }
-
-    template<class T>
-    T getAs(const MapType& m, const std::string& key, const T& def = T()) {
-        auto it = m.find(key);
-        if (it == m.end()) {
-            return def;
-        }
-        try {
-            return boost::lexical_cast<T>(it->second);
-        } catch (...) {
-            
-        }
-        return def;
-    }
+    std::ostream& dump(std::ostream& os) const;
+    std::string toString() const;
 
 private:
     HttpMethod m_method;
@@ -261,6 +268,56 @@ private:
     MapType m_params;
     MapType m_cookies;
 };
+
+class HttpResponse {
+public:
+    typedef std::shared_ptr<HttpResponse> ptr;
+    typedef std::map<std::string, std::string, CaseInsensitiveLess> MapType;
+    HttpResponse(uint8_t version = 0x11, bool close = true);
+
+    HttpStatus getStatus() const { return m_status; }
+    uint8_t getVersion() const { return m_version; }
+    const std::string& getBody() const { return m_body; }
+    const std::string& getReason() const { return m_reason; }
+    const MapType& getHeaders() const { return m_headers; }
+
+    void setStatus(HttpStatus v) { m_status = v; }
+    void setVersion(uint8_t v) { m_version = v; }
+    void setBody(const std::string& v) { m_body = v; }
+    void setReason(const std::string& v) { m_reason = v; }
+    void setHeaders(const MapType& v) { m_headers = v; }
+
+    bool isClose() const { return m_close; }
+    void setClose(bool v) { m_close = v; }
+
+    std::string getHeader(const std::string& key, const std::string& def = "") const;
+    void setHeader(const std::string& key, const std::string& val);
+    void delHeader(const std::string& key);
+
+    template<class T>
+    bool checkGetHeaderAs(const std::string& key, T& val, const T& def = T()) {
+        return checkGetAs(m_headers, key, val, def);
+    }
+
+    template<class T>
+    T getHeaderAs(const std::string& key, const T& def = T()) {
+        return getAs(m_headers, key, def);
+    }
+
+    std::ostream& dump(std::ostream& os) const;
+    std::string toString() const;
+
+private:
+    HttpStatus m_status;
+    uint8_t m_version;
+    bool m_close;
+    std::string m_body;
+    std::string m_reason;
+    MapType m_headers;
+};
+
+std::ostream& operator<<(std::ostream& os, const HttpRequest& req);
+std::ostream& operator<<(std::ostream& os, const HttpResponse& req);
 
 }
 }

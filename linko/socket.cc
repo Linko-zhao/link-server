@@ -7,7 +7,7 @@
 
 namespace linko {
 
-static linko::Logger::ptr g_logger = LINKO_LOG_NAME("SYSTEM");
+static linko::Logger::ptr g_logger = LINKO_LOG_NAME("system");
 
 Socket::ptr Socket::CreateTCP(linko::Address::ptr address) {
     Socket::ptr sock(new Socket(address->getFamily(), TCP));
@@ -201,7 +201,7 @@ bool Socket::listen(int backlog) {
         return false;
     }
 
-    if (::listen(m_sock, backlog) == 0) {
+    if (::listen(m_sock, backlog)) {
         LINKO_LOG_ERROR(g_logger) << "listen error errno=" << errno
             << " errstr=" << strerror(errno);
         return false;
@@ -396,6 +396,12 @@ std::ostream& Socket::dump(std::ostream& os) const {
     return os;
 }
 
+std::string Socket::toString() const {
+    std::stringstream ss;
+    dump(ss);
+    return ss.str();
+}
+
 bool Socket::cancelRead() {
     return IOManager::GetThis()->cancelEvent(m_sock, linko::IOManager::READ);
 }
@@ -434,6 +440,10 @@ void Socket::newSock() {
             << ", " << m_type << ", " << m_protocol << ") errno="
             << errno << " errstr=" << strerror(errno);
     }
+}
+
+std::ostream& operator<<(std::ostream& os, const Socket& sock) {
+    return sock.dump(os);
 }
 
 }

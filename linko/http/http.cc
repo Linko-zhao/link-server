@@ -7,7 +7,7 @@ HttpMethod StringToHttpMethod(const std::string& m) {
 #define XX(num, name, string) \
     if (strcmp(#string, m.c_str()) == 0) { \
         return HttpMethod::name; \
-    } \
+    }
     HTTP_METHOD_MAP(XX);
 #undef XX
     return HttpMethod::INVALID_METHOD; 
@@ -15,9 +15,9 @@ HttpMethod StringToHttpMethod(const std::string& m) {
 
 HttpMethod CharsToHttpMethod(const char* m) {
 #define XX(num, name, string) \
-    if (strcmp(#string, m.c_str()) == 0) { \
+    if (strncmp(#string, m, strlen(#string)) == 0) { \
         return HttpMethod::name; \
-    } \
+    }
     HTTP_METHOD_MAP(XX);
 #undef XX
     return HttpMethod::INVALID_METHOD; 
@@ -57,7 +57,8 @@ bool CaseInsensitiveLess::operator()(
 HttpRequest::HttpRequest(uint8_t version, bool close)
     : m_method(HttpMethod::GET)
     , m_version(version)
-    , m_close(close) {
+    , m_close(close)
+    , m_path("/") {
 }
 
 std::string HttpRequest::getHeader(const std::string& key, const std::string& def) const {
@@ -130,7 +131,7 @@ bool HttpRequest::hasCookie(const std::string& key, std::string* val) {
     return true;
 }
 
-std::ostream& HttpRequest::dump(std::ostream& os) {
+std::ostream& HttpRequest::dump(std::ostream& os) const {
     os << HttpMethodToString(m_method) << " "
        << m_path
        << (m_query.empty() ? "" : "?")
@@ -160,6 +161,70 @@ std::ostream& HttpRequest::dump(std::ostream& os) {
     }
 
     return os;
+}
+std::string HttpRequest::toString() const {
+    std::stringstream ss;
+    dump(ss);
+    return ss.str();
+}
+
+HttpResponse::HttpResponse(uint8_t version, bool close) 
+    : m_status(HttpStatus::OK) 
+    , m_version(version)
+    , m_close(close) {
+}
+
+std::string HttpResponse::getHeader(const std::string& key, const std::string& def) const {
+    auto it = m_headers.find(key);
+    return it == m_headers.end() ? def : it->second;
+}
+
+void HttpResponse::setHeader(const std::string& key, const std::string& val) {
+    m_headers[key] = val;
+}
+
+void HttpResponse::delHeader(const std::string& key) {
+    m_headers.erase(key);
+}
+
+std::ostream& HttpResponse::dump(std::ostream& os) const {
+    os << " HTTP/"
+       << ((uint32_t)(m_version >> 4))
+       << "."
+       << ((uint32_t)(m_version & 0x0F))
+       << " "
+       << (m_reason.empty() ? HttpStatusToString(m_status) : m_reason)
+       << "\r\n";
+
+    for (auto& i : m_headers) {
+        if (strcasecmp(i.first.c_str(), "connection") == 0) {
+            continue;
+        }
+        os << i.first << ": " << i.second << "\r\n";
+    }
+    os << "connection:" << (m_close ? "close" : "keep-alive") << "\r\n";
+
+    if (!m_body.empty()) {
+        os << "content-length:" << m_body.size() << "\r\n\r\n"
+           << m_body;
+    } else {
+        os << "\r\n";
+    }
+    return os;
+}
+
+std::string HttpResponse::toString() const {
+    std::stringstream ss;
+    dump(ss);
+    return ss.str();
+}
+
+std::ostream& operator<<(std::ostream& os, const HttpRequest& req) {
+    return req.dump(os);
+}
+
+std::ostream& operator<<(std::ostream& os, const HttpResponse& req) {
+    return req.dump(os);
 }
 
 }

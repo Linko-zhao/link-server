@@ -17,16 +17,30 @@ set(LIB_SRC
     linko/config.cc
     linko/fiber.cc
     linko/http/http.cc
+    linko/http/http_parser.cc
+    linko/http/http11_parser.rl.cc
+    linko/http/httpclient_parser.rl.cc
+    linko/http/http_session.cc
+    linko/http/http_connection.cc
+    linko/http/http_server.cc
+    linko/http/servlet.cc
     linko/hook.cc
     linko/log.cc
     linko/mutex.cc
     linko/fd_manager.cc
     linko/scheduler.cc
-    linko/thread.cc
-    linko/util.cc
+    linko/socket.cc
+    linko/stream.cc
+    linko/socket_stream.cc
     linko/iomanager.cc
+    linko/thread.cc
     linko/timer.cc
+    linko/tcp_server.cc
+    linko/util.cc
     )
+
+ragelmaker(linko/http/http11_parser.rl LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/linko/http)
+ragelmaker(linko/http/httpclient_parser.rl LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/linko/http)
 
 add_library(linko SHARED ${LIB_SRC})
 force_redefine_file_macro_for_sources(linko)
@@ -95,6 +109,36 @@ add_executable(test_bytearray tests/test_bytearray.cc)
 add_dependencies(test_bytearray linko)
 force_redefine_file_macro_for_sources(test_bytearray)
 target_link_libraries(test_bytearray ${LIBS})
+
+add_executable(test_http tests/test_http.cc)
+add_dependencies(test_http linko)
+force_redefine_file_macro_for_sources(test_http)
+target_link_libraries(test_http ${LIBS})
+
+add_executable(test_http_parser tests/test_http_parser.cc)
+add_dependencies(test_http_parser linko)
+force_redefine_file_macro_for_sources(test_http_parser)
+target_link_libraries(test_http_parser ${LIBS})
+
+add_executable(test_tcp_server tests/test_tcp_server.cc)
+add_dependencies(test_tcp_server linko)
+force_redefine_file_macro_for_sources(test_tcp_server)
+target_link_libraries(test_tcp_server ${LIBS})
+
+add_executable(echo_server examples/echo_server.cc)
+add_dependencies(echo_server linko)
+force_redefine_file_macro_for_sources(echo_server)
+target_link_libraries(echo_server ${LIBS})
+
+add_executable(test_http_server tests/test_http_server.cc)
+add_dependencies(test_http_server linko)
+force_redefine_file_macro_for_sources(test_http_server)
+target_link_libraries(test_http_server ${LIBS})
+
+add_executable(test_http_connection tests/test_http_connection.cc)
+add_dependencies(test_http_connection linko)
+force_redefine_file_macro_for_sources(test_http_connection)
+target_link_libraries(test_http_connection ${LIBS})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)

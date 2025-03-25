@@ -102,6 +102,8 @@ public:
     int getError();
 
     std::ostream& dump(std::ostream& os) const;
+    virtual std::string toString() const;
+    
     int getSocket() const { return m_sock; };
 
     bool cancelRead();
@@ -124,6 +126,8 @@ private:
     Address::ptr m_localAddress;
     Address::ptr m_remoteAddress;
 };
+
+std::ostream& operator<<(std::ostream& os, const Socket& sock);
 
 }
 
