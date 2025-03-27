@@ -37,6 +37,7 @@ set(LIB_SRC
     linko/timer.cc
     linko/tcp_server.cc
     linko/util.cc
+    linko/uri.rl.cc
     )
 
 ragelmaker(linko/http/http11_parser.rl LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/linko/http)

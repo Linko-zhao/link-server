@@ -33,6 +33,13 @@ void run() {
     }
     LINKO_LOG_INFO(g_logger) << "rsp:" << std::endl
         << *rsp;
+
+    LINKO_LOG_INFO(g_logger) << "=======";
+    
+    auto r = linko::http::HttpConnection::DoGet("http://www.sylar.top/", 300);
+    LINKO_LOG_INFO(g_logger) << "result=" << r->resutl
+        << " error=" << r->error
+        << " rsp=" << (r->response ? r->response->toString() : "");
 }
 
 int main(int argc, char** argv) {
