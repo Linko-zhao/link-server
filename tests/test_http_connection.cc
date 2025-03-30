@@ -5,6 +5,16 @@
 
 static linko::Logger::ptr g_logger = LINKO_LOG_ROOT();
 
+void test_pool() {
+    linko::http::HttpConnectionPool::ptr pool(new linko::http::HttpConnectionPool(
+                "www.sylar.top", "", 80, 10, 1000 * 30, 5));
+
+    linko::IOManager::GetThis()->addTimer(1000, [pool](){
+            auto r = pool->doGet("/", 300);
+            LINKO_LOG_INFO(g_logger) << r->toString();
+    }, true);
+}
+
 void run() {
     linko::Address::ptr addr = linko::Address::LookupAnyIPAddress("www.sylar.top:80");
     if (!addr) {
@@ -36,10 +46,13 @@ void run() {
 
     LINKO_LOG_INFO(g_logger) << "=======";
     
-    auto r = linko::http::HttpConnection::DoGet("http://www.sylar.top/", 300);
-    LINKO_LOG_INFO(g_logger) << "result=" << r->resutl
+    auto r = linko::http::HttpConnection::DoGet("http://www.sylar.top/blog/", 300);
+    LINKO_LOG_INFO(g_logger) << "result=" << r->result
         << " error=" << r->error
         << " rsp=" << (r->response ? r->response->toString() : "");
+
+    LINKO_LOG_INFO(g_logger) << "=======";
+    test_pool();
 }
 
 int main(int argc, char** argv) {
