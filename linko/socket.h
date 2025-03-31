@@ -27,6 +27,7 @@ public:
         UNIX = AF_UNIX
     };
 
+    // 根据地址创建TCP/UDP套接字
     static Socket::ptr CreateTCP(linko::Address::ptr address);
     static Socket::ptr CreateUDP(linko::Address::ptr address);
 
@@ -34,7 +35,6 @@ public:
     static Socket::ptr CreateUDPSocket();
     static Socket::ptr CreateTCPSocket6();
     static Socket::ptr CreateUDPSocket6();
-
     static Socket::ptr CreateUnixTCPSocket();
     static Socket::ptr CreateUnixUDPSocket();
 
@@ -49,6 +49,7 @@ public:
     int64_t getRecvTimeout();
     bool setRecvTimeout(int64_t v);
 
+    // 获取socketfd信息
     bool getOption(int level, int option, void* result, size_t* len);
     template<class T>
     bool getOption(int level, int option, T& result) {
@@ -56,6 +57,7 @@ public:
         return getOption(level, option, &result, &length);
     }
 
+    // 设置socketfd信息
     bool setOption(int level, int option, const void* result, size_t len);
     template<class T>
     bool setOption(int level, int option, const T& value) {
@@ -118,8 +120,11 @@ private:
 
 private:
     int m_sock;
+    // 协议簇
     int m_family;
+    // 类型
     int m_type;
+    // 协议
     int m_protocol;
     bool m_isConnected;
 

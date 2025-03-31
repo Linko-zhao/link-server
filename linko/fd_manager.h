@@ -1,3 +1,6 @@
+/*
+ * 文件句柄管理类
+ */
 #ifndef __LINKO_FD_MANAGER_H__
 #define __LINKO_FD_MANAGER_H__
 
@@ -8,6 +11,10 @@
 
 namespace linko {
 
+/*
+ * 文件句柄上下文类
+ * 管理文件句柄类型(是否socket)
+ */
 class FdCtx : public std::enable_shared_from_this<FdCtx>  {
 public:
     typedef std::shared_ptr<FdCtx> ptr;
@@ -30,17 +37,20 @@ public:
     uint64_t getTimeout(int type);
 
 private:
-    bool m_isInit: 1;       //是否初始化
-    bool m_isSocket: 1;     //是否socket
-    bool m_sysNonblock: 1;  //是否hook非阻塞
-    bool m_userNonblock: 1; //是否用户主动设置非阻塞
-    bool m_isClosed: 1;     //是否关闭
-    int m_fd;
-    uint64_t m_recvTimeout; //读超时时间
-    uint64_t m_sendTimeout; //写超时时间
+    bool m_isInit: 1;       // 是否初始化
+    bool m_isSocket: 1;     // 是否socket
+    bool m_sysNonblock: 1;  // 是否hook非阻塞
+    bool m_userNonblock: 1; // 是否用户主动设置非阻塞
+    bool m_isClosed: 1;     // 是否关闭
+    int m_fd;               // 文件句柄
+    uint64_t m_recvTimeout; // 读超时时间
+    uint64_t m_sendTimeout; // 写超时时间
 
 };
 
+/*
+ * 文件句柄管理类
+ */
 class FdManager {
 public:
     typedef RWMutex RWMutexType;
@@ -51,9 +61,11 @@ public:
 
 private:
     RWMutexType m_mutex;
+    // 文件句柄合集
     std::vector<FdCtx::ptr> m_datas;
 };
 
+// 单例模式
 typedef Singleton<FdManager> FdMgr;
 
 }
