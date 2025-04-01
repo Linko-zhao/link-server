@@ -132,15 +132,18 @@ enum HttpStatus {
 #undef XX
 };
 
+// 枚举值和字符串转换
 HttpMethod StringToHttpMethod(const std::string& m);
 HttpMethod CharsToHttpMethod(const char* m);
 const char* HttpMethodToString(const HttpMethod& m);
 const char* HttpStatusToString(const HttpStatus& s);
 
+// 忽略大小写比较
 struct CaseInsensitiveLess {
     bool operator()(const std::string& lhs, const std::string& rhs) const;
 };
 
+// 获取Map中的key值, 并转换为对应类型, 返回是否成功
 template<class MapType, class T>
 bool checkGetAs(const MapType& m, const std::string& key, T& val, const T& def = T()) {
     auto it = m.find(key);
@@ -157,6 +160,7 @@ bool checkGetAs(const MapType& m, const std::string& key, T& val, const T& def =
     return false;
 }
 
+// 获取Map中的key值, 并转换为对应类型
 template<class MapType, class T>
 T getAs(const MapType& m, const std::string& key, const T& def = T()) {
     auto it = m.find(key);
@@ -171,11 +175,11 @@ T getAs(const MapType& m, const std::string& key, const T& def = T()) {
     return def;
 }
 
-
 class HttpRequest {
 public:
     typedef std::shared_ptr<HttpRequest> ptr;
     typedef std::map<std::string, std::string, CaseInsensitiveLess> MapType;
+
     HttpRequest(uint8_t version = 0x11, bool close = true);
 
     HttpMethod getMethod() const { return m_method; }
