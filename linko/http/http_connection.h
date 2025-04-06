@@ -11,6 +11,9 @@
 namespace linko {
 namespace http {
 
+/*
+ * HTTP响应结果
+ */
 struct HttpResult {
     typedef std::shared_ptr<HttpResult> ptr;
     enum Error {
@@ -25,13 +28,17 @@ struct HttpResult {
         POOL_GET_CONNECTION_FAIL = 8,
         POOL_INVALIDE_CONNECTION = 9,
     };
+
+    // _result: 错误码, _response: 响应构造体, _error: 错误描述
     HttpResult(int _result
             , HttpResponse::ptr _response
             , const std::string& _error)
         : result(_result)
         , response(_response)
         , error(_error) {}
+
     std::string toString() const;
+
     int result;
     HttpResponse::ptr response;
     std::string error;
@@ -39,11 +46,15 @@ struct HttpResult {
 
 class HttpConnectionPool;
 
+/*
+ * HTTP客户端类
+ */
 class HttpConnection : public SocketStream {
 friend class HttpConnectionPool;
 public:
     typedef std::shared_ptr<HttpConnection> ptr;
 
+    // 发送GET请求
     static HttpResult::ptr DoGet(const std::string& url
                                 , uint64_t timeout_ms
                                 , const std::map<std::string, std::string>& headers = {}
@@ -54,6 +65,7 @@ public:
                                 , const std::map<std::string, std::string>& headers = {}
                                 , const std::string& body = "");
 
+    // 发送POST请求
     static HttpResult::ptr DoPost(const std::string& url
                                 , uint64_t timeout_ms
                                 , const std::map<std::string, std::string>& headers = {}
@@ -64,6 +76,7 @@ public:
                                 , const std::map<std::string, std::string>& headers = {}
                                 , const std::string& body = "");
 
+    // 发送HTTP请求
     static HttpResult::ptr DoRequest(HttpMethod method
                                     , const std::string& url
                                     , uint64_t timeout_ms
@@ -82,7 +95,10 @@ public:
 
     HttpConnection(Socket::ptr sock, bool owner = true);
     ~HttpConnection();
+
+    // 接收HTTP响应
     HttpResponse::ptr recvResponse();
+    // 发送HTTP请求
     int sendRequest(HttpRequest::ptr rsp);
 
 private:

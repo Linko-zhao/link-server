@@ -175,11 +175,15 @@ T getAs(const MapType& m, const std::string& key, const T& def = T()) {
     return def;
 }
 
+/*
+ * HTTP请求结构
+ */
 class HttpRequest {
 public:
     typedef std::shared_ptr<HttpRequest> ptr;
     typedef std::map<std::string, std::string, CaseInsensitiveLess> MapType;
 
+    // version: 版本, close: 是否keepalive
     HttpRequest(uint8_t version = 0x11, bool close = true);
 
     HttpMethod getMethod() const { return m_method; }
@@ -188,10 +192,6 @@ public:
     const std::string& getPath() const { return m_path; }
     const std::string& getQuery() const { return m_query; }
     const std::string& getBody() const { return m_body; }
-
-    const MapType& getHeaders() const { return m_headers; }
-    const MapType& getParams() const { return m_params; }
-    const MapType& getCookies() const { return m_cookies; }
 
     void setMethod(HttpMethod v) { m_method = v; }
     void setStatus(HttpStatus v) { m_status = v; }
@@ -203,6 +203,10 @@ public:
 
     bool isClose() const { return m_close; }
     void setClose(bool v) { m_close = v; }
+
+    const MapType& getHeaders() const { return m_headers; }
+    const MapType& getParams() const { return m_params; }
+    const MapType& getCookies() const { return m_cookies; }
 
     void setHeaders(const MapType& v) { m_headers = v; }
     void setParams(const MapType& v) { m_params = v; }
@@ -258,14 +262,21 @@ public:
     std::string toString() const;
 
 private:
+    // HTTP方法
     HttpMethod m_method;
     HttpStatus m_status;
+    // HTTP版本
     uint8_t m_version;
+    // 是否自动关闭
     bool m_close;
 
+    // 请求路径
     std::string m_path;
+    // 请求参数
     std::string m_query;
+    // 请求锚点
     std::string m_fragment;
+    // 请求消息体
     std::string m_body;
 
     MapType m_headers;
@@ -277,6 +288,7 @@ class HttpResponse {
 public:
     typedef std::shared_ptr<HttpResponse> ptr;
     typedef std::map<std::string, std::string, CaseInsensitiveLess> MapType;
+
     HttpResponse(uint8_t version = 0x11, bool close = true);
 
     HttpStatus getStatus() const { return m_status; }

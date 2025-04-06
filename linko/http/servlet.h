@@ -15,11 +15,14 @@ namespace http {
 class Servlet {
 public:
     typedef std::shared_ptr<Servlet> ptr;
+
     Servlet(const std::string& name) : m_name(name) {}
     virtual ~Servlet() {}
     virtual int32_t handle(linko::http::HttpRequest::ptr request
             , linko::http::HttpResponse::ptr response
             , linko::http::HttpSession::ptr session) = 0;
+
+    const std::string& getName() const { return m_name; }
 
 protected:
     std::string m_name;
@@ -28,6 +31,7 @@ protected:
 class FunctionServlet : public Servlet {
 public:
     typedef std::shared_ptr<FunctionServlet> ptr;
+    // 函数回调类型定义
     typedef std::function<int32_t (linko::http::HttpRequest::ptr request
             , linko::http::HttpResponse::ptr response
             , linko::http::HttpSession::ptr session)> callback;
@@ -41,6 +45,9 @@ private:
     callback m_cb;
 };
 
+/*
+ * Servlet分发器
+ */
 class ServletDispatch : public Servlet {
 public:
     typedef std::shared_ptr<ServletDispatch> ptr;
@@ -69,7 +76,9 @@ public:
 
 private:
     RWMutexType m_mutex;
+    // 精准匹配
     std::unordered_map<std::string, Servlet::ptr> m_datas;
+    // 模糊匹配
     std::vector<std::pair<std::string, Servlet::ptr>> m_globs;
     Servlet::ptr m_default;
 };

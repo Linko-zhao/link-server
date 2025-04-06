@@ -11,7 +11,6 @@ HttpSession::HttpSession(Socket::ptr sock, bool owner) \
 HttpRequest::ptr HttpSession::recvRequest() {
     HttpRequestParser::ptr parser(new HttpRequestParser);
     uint64_t buff_size = HttpRequestParser::GetHttpRequestBufferSize(); 
-    //uint64_t buff_size = 200;
     std::shared_ptr<char> buffer(
             new char[buff_size], [](char* ptr){
                 delete[] ptr;
@@ -24,12 +23,16 @@ HttpRequest::ptr HttpSession::recvRequest() {
             close();
             return nullptr;
         }
+        // 当前已读取的数据长度
         len += offset;
+        // execute会将data指针向后移动nparse个字节
+        // nparse为已成功解析的字节数
         size_t nparse = parser->execute(data, len);
         if (parser->hasError()) {
             close();
             return nullptr;
         }
+        // 因为解析时移动了缓冲区头指针, 所以需要减去已解析部分数据长度
         offset = len - nparse;
         if (offset == (int)buff_size) {
             close();
@@ -46,6 +49,7 @@ HttpRequest::ptr HttpSession::recvRequest() {
         body.resize(length);
 
         int len = 0;
+        // 如果body长度比缓冲区剩余的还大，将缓冲区全部加入
         if (length >= offset) {
             body.append(data, offset);
             len = offset;
@@ -54,6 +58,7 @@ HttpRequest::ptr HttpSession::recvRequest() {
             len = length;
         }
         length -= offset;
+        // 如果缓冲区数据不满足消息体大小，则继续读取到指定长度
         if (length > 0) {
             if (readFixSize(&body[len], length) <= 0) {
                 close();

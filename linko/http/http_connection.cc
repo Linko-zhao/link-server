@@ -31,7 +31,6 @@ HttpConnection::~HttpConnection() {
 HttpResponse::ptr HttpConnection::recvResponse() {
     HttpResponseParser::ptr parser(new HttpResponseParser);
     uint64_t buff_size = HttpResponseParser::GetHttpResponseBufferSize(); 
-    //uint64_t buff_size = 200;
     std::shared_ptr<char> buffer(
             new char[buff_size + 1], [](char* ptr){
                 delete[] ptr;

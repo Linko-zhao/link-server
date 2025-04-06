@@ -19,6 +19,7 @@ public:
 
     HttpRequest::ptr getData() { return m_data; }
 
+    // 获取消息体长度
     uint64_t getContentLength();
     const http_parser& getParser() const { return m_parser; }
 

@@ -44,6 +44,7 @@ bool TcpServer::bind(const std::vector<Address::ptr>& addrs
             fails.push_back(addr);
             continue;
         }
+        // 将套接字设为监听模式，等待连接请求
         if (!sock->listen()) {
             LINKO_LOG_ERROR(g_logger) << "listen fail errno="
                 << errno << " errstr=" << strerror(errno)
@@ -54,6 +55,7 @@ bool TcpServer::bind(const std::vector<Address::ptr>& addrs
         m_socks.push_back(sock);
     }
 
+    // 有绑定失败的地址, 清空监听socket数组
     if (!fails.empty()) {
         m_socks.clear();
         return false;
@@ -66,10 +68,13 @@ bool TcpServer::bind(const std::vector<Address::ptr>& addrs
 }
 
 void TcpServer::startAccept(Socket::ptr sock) {
+    // 服务器不停止, 一直接收连接
     while (!m_isStop) {
         Socket::ptr client = sock->accept();
         if (client) {
             client->setRecvTimeout(m_recvTimeout);
+            // handleClient结束前tcpserver不能结束, 
+            // 使用shared_from_this创建智能指针维持生命
             m_worker->schedule(std::bind(&TcpServer::handleClient,
                         shared_from_this(), client));
         } else {
