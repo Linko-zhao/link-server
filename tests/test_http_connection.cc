@@ -44,15 +44,15 @@ void run() {
     LINKO_LOG_INFO(g_logger) << "rsp:" << std::endl
         << *rsp;
 
-    LINKO_LOG_INFO(g_logger) << "=======";
+    //LINKO_LOG_INFO(g_logger) << "=======";
     
-    auto r = linko::http::HttpConnection::DoGet("http://www.sylar.top/blog/", 300);
-    LINKO_LOG_INFO(g_logger) << "result=" << r->result
-        << " error=" << r->error
-        << " rsp=" << (r->response ? r->response->toString() : "");
+    //auto r = linko::http::HttpConnection::DoGet("http://www.sylar.top/blog/", 300);
+    //LINKO_LOG_INFO(g_logger) << "result=" << r->result
+        //<< " error=" << r->error
+        //<< " rsp=" << (r->response ? r->response->toString() : "");
 
-    LINKO_LOG_INFO(g_logger) << "=======";
-    test_pool();
+    //LINKO_LOG_INFO(g_logger) << "=======";
+    //test_pool();
 }
 
 int main(int argc, char** argv) {

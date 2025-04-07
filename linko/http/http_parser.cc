@@ -75,6 +75,7 @@ static _RequestSizeIniter _init;
 
 }
 
+// Request
 void on_request_method(void *data, const char *at, size_t length) {
     HttpRequestParser* parser = static_cast<HttpRequestParser*>(data);
     HttpMethod m = CharsToHttpMethod(at);
@@ -163,6 +164,7 @@ uint64_t HttpRequestParser::getContentLength() {
     return m_data->getHeaderAs<uint64_t>("content-length", 0);
 }
 
+// Response
 void on_response_reason(void *data, const char *at, size_t length) {
     HttpResponseParser* parser = static_cast<HttpResponseParser*>(data);
     parser->getData()->setReason(std::string(at, length));

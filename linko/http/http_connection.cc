@@ -32,7 +32,7 @@ HttpResponse::ptr HttpConnection::recvResponse() {
     HttpResponseParser::ptr parser(new HttpResponseParser);
     uint64_t buff_size = HttpResponseParser::GetHttpResponseBufferSize(); 
     std::shared_ptr<char> buffer(
-            new char[buff_size + 1], [](char* ptr){
+            new char[buff_size], [](char* ptr){
                 delete[] ptr;
             });
     char* data = buffer.get();
@@ -44,6 +44,7 @@ HttpResponse::ptr HttpConnection::recvResponse() {
             return nullptr;
         }
         len += offset;
+        // httpclient_parser_execute解析时数据最后需要用'\0'结尾
         data[len] = '\0';
         size_t nparse = parser->execute(data, len, false);
         if (parser->hasError()) {
@@ -61,10 +62,12 @@ HttpResponse::ptr HttpConnection::recvResponse() {
     }while (true);
 
     auto& client_parser = parser->getParser();
+    // 是否为chunked分块
     if (client_parser.chunked) {
         std::string body;
         int len = offset;
         do {
+            // 继续读取下一块数据报头
             do {
                 int rt = read(data + len, buff_size - len);
                 if (rt <= 0) {
@@ -83,16 +86,19 @@ HttpResponse::ptr HttpConnection::recvResponse() {
                     close();
                     return nullptr;
                 }
-            }while (!parser->isFinished());
+            } while (!parser->isFinished());
             len -= 2;
 
             LINKO_LOG_INFO(g_logger) << "content_len=" << client_parser.content_len;
+
+            // body长度小于缓冲区剩余数据长度
             if (client_parser.content_len <= len) {
                 body.append(data, client_parser.content_len);
                 memmove(data, data + client_parser.content_len
                         , len - client_parser.content_len);
                 len -= client_parser.content_len;
             } else {
+                // 将缓冲区数据全部加入, 并继续读取剩余body
                 body.append(data, len);
                 int left = client_parser.content_len - len;
                 while (left > 0) {
@@ -106,7 +112,7 @@ HttpResponse::ptr HttpConnection::recvResponse() {
                 }
                 len = 0;
             }
-        }while (!client_parser.chunks_done);
+        } while (!client_parser.chunks_done);
         parser->getData()->setBody(body);
     } else {
         int64_t length = parser->getContentLength();
