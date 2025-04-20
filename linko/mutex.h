@@ -15,6 +15,9 @@
 
 namespace linko {
 
+/*
+ * 信号量
+ */
 class Semaphore : Noncopyable {
 public:
     Semaphore(uint32_t count = 0);
@@ -123,6 +126,9 @@ private:
     bool m_locked;
 };
 
+/*
+ * 互斥锁
+ */
 class Mutex : Noncopyable {
 public:
     typedef ScopedLockImpl<Mutex> Lock;
@@ -146,6 +152,9 @@ private:
     pthread_mutex_t m_mutex;
 };
 
+/*
+ * 读写锁
+ */
 class RWMutex : Noncopyable {
 public:
     typedef ReadScopedLockImpl<RWMutex> ReadLock;
@@ -174,6 +183,9 @@ private:
     pthread_rwlock_t m_lock;
 };
 
+/*
+ * 自旋锁
+ */
 class SpinLock : Noncopyable {
 public:
     typedef ScopedLockImpl<SpinLock> Lock;
@@ -196,6 +208,9 @@ private:
     pthread_spinlock_t m_mutex;
 };
 
+/*
+ * 原子锁
+ */
 class CASLock: Noncopyable {
 public:
     typedef ScopedLockImpl<CASLock> Lock;

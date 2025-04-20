@@ -224,6 +224,7 @@ HttpResult::ptr HttpConnection::DoRequest(HttpMethod method
 
         req->setHeader(i.first, i.second);
     }
+    // 如果没有host, 则用uri的host
     if (!has_host) {
         req->setHeader("Host", uri->getHost());
     }
@@ -234,11 +235,13 @@ HttpResult::ptr HttpConnection::DoRequest(HttpMethod method
 HttpResult::ptr HttpConnection::DoRequest(HttpRequest::ptr req
                              , Uri::ptr uri
                              , uint64_t timeout_ms) {
+    // 通过uri创建address
     Address::ptr addr = uri->createAddress();
     if (!addr) {
         return std::make_shared<HttpResult>((int)HttpResult::Error::INVALID_HOST
                 , nullptr, "invalide host: " + uri->getHost());
     }
+    // 创建TCPsocket
     Socket::ptr sock = Socket::CreateTCP(addr);
     if (!sock) {
         return std::make_shared<HttpResult>((int)HttpResult::Error::CREATE_SOCKET_ERROR
@@ -246,12 +249,15 @@ HttpResult::ptr HttpConnection::DoRequest(HttpRequest::ptr req
                         + " errno=" + std::to_string(errno)
                         + " errstr=" + std::string(std::strerror(errno)));
     }
+    // 发起连接请求
     if (!sock->connect(addr)) {
         return std::make_shared<HttpResult>((int)HttpResult::Error::CONNECT_FAIL
                 , nullptr, "connect fail: " + addr->toString());
     }
+    // 设置接收超时时间
     sock->setRecvTimeout(timeout_ms);
     HttpConnection::ptr conn = std::make_shared<HttpConnection>(sock);
+    // 发送请求报文
     int rt = conn->sendRequest(req);
     if (rt == 0) {
         return std::make_shared<HttpResult>((int)HttpResult::Error::SEND_CLOSE_BY_PEER
@@ -262,6 +268,7 @@ HttpResult::ptr HttpConnection::DoRequest(HttpRequest::ptr req
                 , nullptr, "send request socket error errno=" + std::to_string(errno)
                 + " errstr=" + std::string(std::strerror(errno)));
     }
+    // 接收响应报文
     auto rsp = conn->recvResponse();
     if (!rsp) {
         return std::make_shared<HttpResult>((int)HttpResult::Error::TIMEOUT
@@ -293,10 +300,12 @@ HttpConnection::ptr HttpConnectionPool::getConnection() {
     while (!m_conns.empty()) {
         auto conn = *m_conns.begin();
         m_conns.pop_front();
+        // 不在连接状态
         if (!conn->isConnected()) {
             invalid_conns.push_back(conn);
             continue;
         }
+        // 超过最大连接时间
         if ((conn->m_createTime + m_maxAliveTime) < now_ms) {
             invalid_conns.push_back(conn);
             continue;
