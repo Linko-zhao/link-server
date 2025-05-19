@@ -147,5 +147,7 @@ add_dependencies(test_uri linko)
 force_redefine_file_macro_for_sources(test_uri)
 target_link_libraries(test_uri ${LIBS})
 
+linko_add_executable(my_http_server "samples/my_http_server.cc" linko "${LIBS}")
+
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
