@@ -133,6 +133,7 @@ bool Socket::init(int sock) {
     }
     return false;
 }
+
 bool Socket::bind(const Address::ptr addr) {
     if (!isValid()) {
         newSock();

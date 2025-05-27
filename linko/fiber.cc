@@ -167,7 +167,7 @@ Fiber::ptr Fiber::GetThis() {
     if (t_fiber) {
         return t_fiber->shared_from_this();
     }
-    //创建主协程
+    //如果当前线程不存在协程，则创建主协程
     Fiber::ptr main_fiber(new Fiber);
     LINKO_ASSERT(t_fiber == main_fiber.get());
     t_threadFiber = main_fiber;

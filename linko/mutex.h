@@ -211,7 +211,7 @@ private:
 /*
  * 原子锁
  */
-class CASLock: Noncopyable {
+class CASLock : Noncopyable {
 public:
     typedef ScopedLockImpl<CASLock> Lock;
 
